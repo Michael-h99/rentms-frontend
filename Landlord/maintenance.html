@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maintenance | Landlord Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/landlord.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+              line-height: 1;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> My Plazas</a
+        >
+        <a href="tenants.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Tenants</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link active"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Landlord
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Landlord
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Maintenance Requests</span>
+        <a href="notifications.html" class="topbar-btn"
+          ><i class="bi bi-bell"></i
+        ></a>
+      </div>
+      <div class="content">
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div
+                style="
+                  font-size: 1.6rem;
+                  font-weight: 700;
+                  color: var(--warning);
+                "
+                id="sPending"
+              >
+                0
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                Pending
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div
+                style="font-size: 1.6rem; font-weight: 700; color: #a78bfa"
+                id="sProgress"
+              >
+                0
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                In Progress
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div
+                style="
+                  font-size: 1.6rem;
+                  font-weight: 700;
+                  color: var(--success);
+                "
+                id="sResolved"
+              >
+                0
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                Resolved
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div
+                style="
+                  font-size: 1.6rem;
+                  font-weight: 700;
+                  color: var(--danger);
+                "
+                id="sHigh"
+              >
+                0
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                High Priority
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Filters -->
+        <div class="card mb-4 p-3">
+          <div class="row g-2">
+            <div class="col-md-3">
+              <div class="input-group">
+                <span class="input-group-text"
+                  ><i class="bi bi-search text-muted"></i
+                ></span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search requests..."
+                  id="searchInput"
+                  oninput="filterCards()"
+                />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <select
+                class="form-select"
+                id="filterStatus"
+                onchange="filterCards()"
+              >
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select
+                class="form-select"
+                id="filterPriority"
+                onchange="filterCards()"
+              >
+                <option value="">All Priority</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select
+                class="form-select"
+                id="filterPlaza"
+                onchange="filterCards()"
+              >
+                <option value="">All Plazas</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Cards -->
+        <div class="row g-3" id="reqGrid"></div>
+        <div id="emptyState" class="empty-state">
+          <i class="bi bi-tools"></i>
+          <h6 style="font-weight: 700; color: var(--text-main)">
+            No maintenance requests
+          </h6>
+          <p>Requests submitted by tenants will appear here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal fade" id="reqModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="reqModalTitle">
+              Request Details
+            </h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="row g-3">
+              <div class="col-md-8">
+                <h6
+                  style="font-weight: 700; color: var(--text-main)"
+                  id="reqTitle"
+                >
+                  —
+                </h6>
+                <p
+                  style="font-size: 0.875rem; color: var(--text-muted)"
+                  id="reqDesc"
+                >
+                  —
+                </p>
+                <div class="d-flex gap-2 flex-wrap mt-2" id="reqBadges"></div>
+              </div>
+              <div class="col-md-4">
+                <div
+                  class="p-3 rounded"
+                  style="
+                    background: var(--bg-body);
+                    border: 1px solid var(--border);
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.8rem;
+                      font-weight: 600;
+                      color: var(--text-main);
+                      margin-bottom: 8px;
+                    "
+                  >
+                    Tenant Info
+                  </div>
+                  <div style="font-size: 0.78rem; color: var(--text-muted)">
+                    Name
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      color: var(--text-main);
+                    "
+                    id="reqTenant"
+                  >
+                    —
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      margin-top: 8px;
+                    "
+                  >
+                    Unit · Plaza
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      color: var(--text-main);
+                    "
+                    id="reqUnit"
+                  >
+                    —
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      margin-top: 8px;
+                    "
+                  >
+                    Submitted
+                  </div>
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 600;
+                      color: var(--text-main);
+                    "
+                    id="reqDate"
+                  >
+                    —
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr style="border-color: var(--border)" />
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Update Status</label
+              >
+              <select class="form-select" id="reqStatusSel">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Note to Tenant (optional)</label
+              >
+              <textarea
+                class="form-control"
+                rows="3"
+                id="reqNote"
+                placeholder="e.g. Plumber scheduled for tomorrow..."
+              ></textarea>
+            </div>
+            <div
+              id="reqError"
+              class="text-danger"
+              style="font-size: 0.8rem; display: none"
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button class="btn btn-primary" onclick="updateRequest()">
+              Update Status
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script>
+      LandlordMaintenance.init();
+    </script>
+  </body>
+</html>

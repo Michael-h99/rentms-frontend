@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>My Profile | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      .profile-card {
+        background: linear-gradient(135deg, #0a0f1e, #0f172a);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        display: flex;
+        align-items: flex-start;
+        gap: 24px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+      }
+      .profile-avatar-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .profile-avatar {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--purple), var(--primary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #fff;
+        font-family: inherit;
+        cursor: pointer;
+        border: 3px solid var(--border);
+        overflow: hidden;
+      }
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .avatar-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+        cursor: pointer;
+      }
+      .profile-avatar-wrap:hover .avatar-overlay {
+        opacity: 1;
+      }
+      .profile-info {
+        flex: 1;
+        min-width: 220px;
+      }
+      .profile-name {
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .profile-role {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--purple-light);
+        color: var(--purple-text);
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        margin-top: 6px;
+      }
+      .profile-stats {
+        display: flex;
+        gap: 20px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+      .pstat {
+        text-align: center;
+      }
+      .pstat-val {
+        font-size: 1.2rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .pstat-lab {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 2px;
+      }
+      .profile-tabs {
+        display: flex;
+        border-bottom: 2px solid var(--border);
+        margin-bottom: 24px;
+        gap: 0;
+        overflow-x: auto;
+      }
+      .ptab {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        white-space: nowrap;
+      }
+      .ptab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .ptab:hover {
+        color: var(--text-main);
+      }
+      .profile-panel {
+        display: none;
+      }
+      .profile-panel.active {
+        display: block;
+      }
+      .form-group {
+        margin-bottom: 18px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .pw-strength {
+        height: 4px;
+        border-radius: 2px;
+        margin-top: 6px;
+        transition: all 0.3s;
+      }
+      .pw-strength.weak {
+        background: var(--danger);
+        width: 25%;
+      }
+      .pw-strength.fair {
+        background: var(--warning);
+        width: 50%;
+      }
+      .pw-strength.good {
+        background: var(--primary);
+        width: 75%;
+      }
+      .pw-strength.strong {
+        background: var(--success);
+        width: 100%;
+      }
+      .pw-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin-top: 3px;
+      }
+      .tfa-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+      .qr-placeholder {
+        width: 160px;
+        height: 160px;
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        background: var(--bg-body);
+      }
+      .session-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      .session-card.current {
+        border-color: var(--primary);
+        background: var(--primary-glow);
+      }
+      .session-device {
+        font-size: 0.875rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .session-meta {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+      .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+      .act-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            class="brand-text"
+            style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link active"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted)"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sidebar-overlay"
+      id="overlay"
+      onclick="
+        document.getElementById('sidebar').classList.remove('open');
+        this.classList.remove('show');
+      "
+    ></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">My Profile</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <a href="dashboard.html" class="topbar-btn"
+            ><i class="bi bi-grid"></i
+          ></a>
+          <a href="settings.html" class="topbar-btn"
+            ><i class="bi bi-gear"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Profile Card -->
+        <div class="profile-card">
+          <div class="profile-avatar-wrap">
+            <div
+              class="profile-avatar"
+              id="profileAvatar"
+              onclick="document.getElementById('avatarInput').click()"
+            >
+              <span id="profileInitials">A</span>
+            </div>
+            <div
+              class="avatar-overlay"
+              onclick="document.getElementById('avatarInput').click()"
+            >
+              <i class="bi bi-camera-fill text-white"></i>
+            </div>
+            <input
+              type="file"
+              id="avatarInput"
+              accept="image/*"
+              style="display: none"
+              onchange="AdminProfile.uploadAvatar(this)"
+            />
+          </div>
+          <div class="profile-info">
+            <div class="profile-name" id="profileName">Loading…</div>
+            <div class="profile-role">
+              <i class="bi bi-shield-fill-check"></i
+              ><span id="profileRoleLabel">Super Admin</span>
+            </div>
+            <div
+              style="
+                font-size: 0.875rem;
+                color: var(--text-muted);
+                margin-top: 8px;
+              "
+              id="profileEmail"
+            >
+              —
+            </div>
+            <div class="profile-stats">
+              <div class="pstat">
+                <div class="pstat-val" id="pstatActions">—</div>
+                <div class="pstat-lab">Actions</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-val" id="pstatDays">—</div>
+                <div class="pstat-lab">Days Active</div>
+              </div>
+              <div class="pstat">
+                <div class="pstat-val" id="pstatLogins">—</div>
+                <div class="pstat-lab">Logins</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="flex-fill" style="min-width: 280px">
+            <div
+              style="
+                font-size: 0.75rem;
+                font-weight: 800;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin-bottom: 10px;
+              "
+            >
+              Recent Activity
+            </div>
+            <div id="profileActivity">
+              <div class="text-muted" style="font-size: 0.8rem">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="profile-tabs">
+          <button
+            class="ptab active"
+            onclick="AdminProfile.switchTab('info', this)"
+          >
+            <i class="bi bi-person me-1"></i>Account Info
+          </button>
+          <button
+            class="ptab"
+            onclick="AdminProfile.switchTab('password', this)"
+          >
+            <i class="bi bi-lock me-1"></i>Password
+          </button>
+          <button class="ptab" onclick="AdminProfile.switchTab('tfa', this)">
+            <i class="bi bi-shield-check me-1"></i>Two-Factor Auth
+          </button>
+          <button
+            class="ptab"
+            onclick="AdminProfile.switchTab('sessions', this)"
+          >
+            <i class="bi bi-device-ssd me-1"></i>Sessions
+          </button>
+        </div>
+
+        <!-- Account Info Panel -->
+        <div class="profile-panel active" id="panel-info">
+          <div id="infoMsg"></div>
+          <div class="card">
+            <div class="card-header-custom">
+              <h6>
+                <i class="bi bi-person-circle text-primary me-2"></i>Personal
+                Information
+              </h6>
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>First Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="infoFirstName"
+                      placeholder="First name"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Last Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="infoLastName"
+                      placeholder="Last name"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Email Address</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="infoEmail"
+                      placeholder="admin@rentms.gh"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Phone Number</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="infoPhone"
+                      placeholder="+233 XX XXX XXXX"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Timezone</label>
+                    <select class="form-select" id="infoTimezone">
+                      <option value="Africa/Accra">Africa/Accra (GMT+0)</option>
+                      <option value="Africa/Lagos">Africa/Lagos (GMT+1)</option>
+                      <option value="Europe/London">Europe/London</option>
+                      <option value="America/New_York">America/New_York</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Language</label>
+                    <select class="form-select" id="infoLanguage">
+                      <option value="en">English</option>
+                      <option value="fr">Français</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-group">
+                    <label>Bio</label>
+                    <textarea
+                      class="form-control"
+                      id="infoBio"
+                      rows="2"
+                      placeholder="Short bio (optional)"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end mt-2">
+                <button
+                  class="btn btn-purple"
+                  onclick="AdminProfile.saveInfo()"
+                >
+                  <i class="bi bi-save me-1"></i>Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Panel -->
+        <div class="profile-panel" id="panel-password">
+          <div id="passwordMsg"></div>
+          <div class="card" style="max-width: 480px">
+            <div class="card-header-custom">
+              <h6>
+                <i class="bi bi-lock-fill text-warning me-2"></i>Change Password
+              </h6>
+            </div>
+            <div class="card-body p-4">
+              <div class="form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="currentPw"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="newPw"
+                  placeholder="••••••••"
+                  oninput="AdminProfile.checkPwStrength()"
+                />
+                <div
+                  class="pw-strength"
+                  id="pwStrengthBar"
+                  style="display: none"
+                ></div>
+                <div class="pw-label text-muted" id="pwStrengthLabel"></div>
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="confirmPw"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div class="d-flex justify-content-end">
+                <button
+                  class="btn btn-purple"
+                  onclick="AdminProfile.changePassword()"
+                >
+                  <i class="bi bi-key me-1"></i>Update Password
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2FA Panel -->
+        <div class="profile-panel" id="panel-tfa">
+          <div id="tfaMsg"></div>
+          <div class="card" style="max-width: 540px">
+            <div class="card-header-custom">
+              <h6>
+                <i class="bi bi-shield-check text-success me-2"></i>Two-Factor
+                Authentication
+              </h6>
+              <span class="badge-status" id="tfaStatusBadge">Disabled</span>
+            </div>
+            <div class="card-body p-4">
+              <p
+                class="text-muted"
+                style="font-size: 0.875rem; margin-bottom: 20px"
+              >
+                Add an extra layer of security to your account. When enabled,
+                you'll need to enter a 6-digit code from your authenticator app
+                at each login.
+              </p>
+              <div id="tfaSetup" style="display: none">
+                <div class="tfa-card">
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 700;
+                      margin-bottom: 12px;
+                    "
+                  >
+                    Step 1: Scan QR Code
+                  </div>
+                  <div
+                    class="d-flex align-items-center gap-16"
+                    style="gap: 20px; flex-wrap: wrap"
+                  >
+                    <div class="qr-placeholder">
+                      <i
+                        class="bi bi-qr-code"
+                        style="font-size: 2.5rem; opacity: 0.3"
+                      ></i>
+                      <span>QR code here</span>
+                    </div>
+                    <div>
+                      <div
+                        style="
+                          font-size: 0.8rem;
+                          color: var(--text-muted);
+                          margin-bottom: 6px;
+                        "
+                      >
+                        Or enter this key manually:
+                      </div>
+                      <div
+                        style="
+                          font-family: monospace;
+                          font-size: 0.95rem;
+                          font-weight: 800;
+                          background: var(--bg-body);
+                          padding: 8px 14px;
+                          border-radius: 8px;
+                          border: 1px solid var(--border);
+                          letter-spacing: 0.08em;
+                        "
+                        id="tfaManualKey"
+                      >
+                        JBSW Y3DP EHPK 3PXP
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tfa-card">
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 700;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    Step 2: Enter Verification Code
+                  </div>
+                  <div class="d-flex gap-2 align-items-center">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="tfaCode"
+                      placeholder="000000"
+                      maxlength="6"
+                      style="
+                        max-width: 150px;
+                        font-size: 1.1rem;
+                        letter-spacing: 0.1em;
+                        text-align: center;
+                        font-weight: 800;
+                      "
+                    />
+                    <button
+                      class="btn btn-success btn-sm"
+                      onclick="AdminProfile.enableTFA()"
+                    >
+                      <i class="bi bi-check2 me-1"></i>Verify &amp; Enable
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div id="tfaEnabled" style="display: none">
+                <div
+                  class="tfa-card"
+                  style="
+                    border-color: rgba(16, 185, 129, 0.3);
+                    background: rgba(16, 185, 129, 0.05);
+                  "
+                >
+                  <div class="d-flex align-items-center gap-3">
+                    <i
+                      class="bi bi-shield-fill-check text-success"
+                      style="font-size: 1.5rem"
+                    ></i>
+                    <div>
+                      <div style="font-weight: 800">2FA is Active</div>
+                      <div style="font-size: 0.8rem; color: var(--text-muted)">
+                        Your account is protected with two-factor
+                        authentication.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex gap-2 mt-2">
+                <button
+                  class="btn btn-success btn-sm"
+                  id="tfaEnableBtn"
+                  onclick="AdminProfile.showTFASetup()"
+                  style="display: none"
+                >
+                  <i class="bi bi-shield-plus me-1"></i>Enable 2FA
+                </button>
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  id="tfaDisableBtn"
+                  onclick="AdminProfile.disableTFA()"
+                  style="display: none"
+                >
+                  <i class="bi bi-shield-slash me-1"></i>Disable 2FA
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sessions Panel -->
+        <div class="profile-panel" id="panel-sessions">
+          <div id="sessionsMsg"></div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h6 class="fw-bold mb-0">Active Sessions</h6>
+            <button
+              class="btn btn-outline-danger btn-sm"
+              onclick="AdminProfile.revokeAllSessions()"
+            >
+              <i class="bi bi-door-open me-1"></i>Sign Out All Others
+            </button>
+          </div>
+          <div id="sessionsList">
+            <div class="empty-state" style="padding: 32px">
+              <i class="bi bi-hourglass"></i>
+              <p>Loading sessions…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      AdminProfile.init();
+    </script>
+  </body>
+</html>

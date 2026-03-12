@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Messages | Tenant Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/tenant.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Make Payment</a
+        >
+        <a href="payment-history.html" class="nav-link"
+          ><i class="bi bi-clock-history"></i> Payment History</a
+        >
+        <a href="lease.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> My Lease</a
+        >
+        <div class="nav-section">Support</div>
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link active"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Tenant
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Tenant
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Messages</span>
+        <a href="notifications.html" class="topbar-btn"
+          ><i class="bi bi-bell"></i
+        ></a>
+      </div>
+
+      <div
+        class="content"
+        style="
+          padding-bottom: 0;
+          height: calc(100vh - 64px);
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <div class="chat-wrap" style="flex: 1">
+          <!-- Left: group list -->
+          <div class="chat-left">
+            <div class="chat-left-hd">Conversations</div>
+            <div class="chat-list" id="chatList">
+              <!-- Populated by JS -->
+            </div>
+            <!-- Join new group -->
+            <div
+              style="padding: 12px 14px; border-top: 1px solid var(--border)"
+            >
+              <button
+                class="btn btn-outline-primary btn-sm w-100"
+                data-bs-toggle="modal"
+                data-bs-target="#joinModal"
+              >
+                <i class="bi bi-plus-lg me-1"></i> Join a Group
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: chat area OR gate screen -->
+          <div class="chat-right" id="chatRight">
+            <!-- ── GATE: shown when tenant has NO groups yet ── -->
+            <div class="gate-screen" id="gateScreen">
+              <div class="gate-icon">🔑</div>
+              <h5 style="font-weight: 800; margin-bottom: 8px">
+                Enter Invite Code
+              </h5>
+              <p
+                style="
+                  font-size: 0.85rem;
+                  color: var(--text-muted);
+                  max-width: 300px;
+                  margin-bottom: 20px;
+                  line-height: 1.6;
+                "
+              >
+                Your landlord will give you a group invite code. Enter it below
+                to join the chat.
+              </p>
+              <input
+                class="gate-input"
+                id="gateCode"
+                placeholder="XXXX-XXXX"
+                maxlength="9"
+                oninput="
+                  this.value = this.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, '')
+                    .replace(/(.{4})(?=.)/, '$1-')
+                "
+                onkeydown="if (event.key === 'Enter') joinFromGate();"
+              />
+              <div class="gate-error" id="gateError"></div>
+              <button
+                class="btn btn-primary px-5 mt-3"
+                onclick="joinFromGate()"
+                id="gateBtn"
+              >
+                Join Group
+              </button>
+            </div>
+
+            <!-- ── CHAT: shown after joining ── -->
+            <div
+              id="chatActive"
+              style="
+                display: none;
+                flex: 1;
+                flex-direction: column;
+                height: 100%;
+              "
+            >
+              <div class="chat-hd">
+                <div
+                  style="
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50%;
+                    background: var(--primary);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.82rem;
+                    font-weight: 800;
+                    color: #fff;
+                  "
+                  id="chatAvatar"
+                >
+                  ?
+                </div>
+                <div style="flex: 1; min-width: 0">
+                  <div
+                    style="
+                      font-weight: 800;
+                      font-size: 0.9rem;
+                      color: var(--text-main);
+                    "
+                    id="chatGroupName"
+                  >
+                    Group
+                  </div>
+                  <div
+                    style="font-size: 0.72rem; color: var(--text-muted)"
+                    id="chatMemberCount"
+                  >
+                    — members
+                  </div>
+                </div>
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  style="font-size: 0.72rem"
+                  data-bs-toggle="modal"
+                  data-bs-target="#joinModal"
+                >
+                  <i class="bi bi-plus me-1"></i> Join Another
+                </button>
+              </div>
+
+              <div class="chat-messages" id="chatMessages">
+                <div
+                  style="
+                    text-align: center;
+                    color: var(--text-muted);
+                    font-size: 0.8rem;
+                    padding: 24px 0;
+                  "
+                >
+                  Say hello 👋
+                </div>
+              </div>
+
+              <div class="chat-input-bar">
+                <div class="attach-preview" id="attachPreview"></div>
+                <div class="input-row">
+                  <div class="attach-btns">
+                    <button
+                      class="attach-btn"
+                      title="Send image"
+                      onclick="document.getElementById('imgPicker').click()"
+                    >
+                      <i class="bi bi-image"></i>
+                    </button>
+                    <button
+                      class="attach-btn"
+                      title="Attach file"
+                      onclick="document.getElementById('filePicker').click()"
+                    >
+                      <i class="bi bi-paperclip"></i>
+                    </button>
+                  </div>
+                  <input
+                    type="file"
+                    id="imgPicker"
+                    accept="image/*"
+                    multiple
+                    style="display: none"
+                    onchange="handleFiles(this.files, 'image')"
+                  />
+                  <input
+                    type="file"
+                    id="filePicker"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,.csv"
+                    multiple
+                    style="display: none"
+                    onchange="handleFiles(this.files, 'file')"
+                  />
+                  <textarea
+                    class="chat-input-field"
+                    id="msgInput"
+                    placeholder="Type a message…"
+                    rows="1"
+                    oninput="
+                      this.style.height = 'auto';
+                      this.style.height =
+                        Math.min(this.scrollHeight, 100) + 'px';
+                    "
+                    onkeydown="
+                      if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault();
+                        sendMsg();
+                      }
+                    "
+                  ></textarea>
+                  <button class="chat-send" onclick="sendMsg()" id="sendBtn">
+                    <i class="bi bi-send-fill"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /chat-right -->
+        </div>
+        <!-- /chat-wrap -->
+      </div>
+    </div>
+
+    <!-- Join group modal (can be used any time) -->
+    <div class="modal fade" id="joinModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">
+              <i class="bi bi-key me-2"></i>Join a Group
+            </h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <p
+              style="
+                font-size: 0.82rem;
+                color: var(--text-muted);
+                margin-bottom: 14px;
+              "
+            >
+              Enter the invite code given to you by your landlord.
+            </p>
+            <label class="form-label fw-semibold">Invite Code</label>
+            <input
+              class="form-control text-center fw-bold"
+              id="modalCode"
+              placeholder="XXXX-XXXX"
+              maxlength="9"
+              style="
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                font-size: 1.05rem;
+              "
+              oninput="
+                this.value = this.value
+                  .toUpperCase()
+                  .replace(/[^A-Z0-9]/g, '')
+                  .replace(/(.{4})(?=.)/, '$1-')
+              "
+            />
+            <div class="gate-error" id="modalError"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary w-100" onclick="joinFromModal()">
+              <i class="bi bi-arrow-right-circle me-1"></i> Join Group
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="img-lightbox" id="imgLightbox" onclick="closeLightbox()">
+      <button class="img-lightbox-close" onclick="closeLightbox()">
+        &times;
+      </button>
+      <img id="lightboxImg" src="" alt="" />
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script src="../js/tenant.js"></script>
+    <script>
+      /* ── State ── */
+      let currentGroupId = null;
+      let pendingAttachments = [];
+      let groups = [];
+
+      /* ── Boot ── */
+      document.addEventListener("DOMContentLoaded", async () => {
+        // init sidebar
+        const u = JSON.parse(localStorage.getItem("user") || "{}");
+        const sn = document.getElementById("sidebarName");
+        const sa = document.getElementById("sidebarAvatar");
+        if (sn && u.username) sn.textContent = u.username;
+        if (sa && u.username)
+          sa.textContent = u.username.charAt(0).toUpperCase();
+
+        // Check saved group from last session
+        const savedGroupId = localStorage.getItem("t_groupId");
+        await loadGroups();
+
+        if (groups.length) {
+          const target = savedGroupId
+            ? groups.find((g) => g.id == savedGroupId)
+            : groups[0];
+          if (target) openGroup(target);
+        } else {
+          showGate();
+        }
+      });
+
+      /* ── Load groups ── */
+      async function loadGroups() {
+        try {
+          const res = await fetch("/api/tenant/groups", {
+            headers: {
+              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+            },
+          });
+          const data = await res.json();
+          groups = data?.groups || [];
+          renderGroupList();
+        } catch {
+          groups = [];
+        }
+      }
+
+      function renderGroupList() {
+        const el = document.getElementById("chatList");
+        if (!el) return;
+        if (!groups.length) {
+          el.innerHTML = `<div style="padding:16px;text-align:center;font-size:0.8rem;color:var(--text-muted)">No groups yet</div>`;
+          return;
+        }
+        el.innerHTML = groups
+          .map(
+            (g) => `
+          <div class="chat-item ${g.id === currentGroupId ? "active" : ""}" onclick="openGroup(${JSON.stringify(g).replace(/"/g, "&quot;")})">
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#fff;flex-shrink:0">
+                ${g.name.charAt(0).toUpperCase()}
+              </div>
+              <div style="flex:1;min-width:0">
+                <div class="ci-name">${g.name}</div>
+                <div class="ci-preview">${g.last_message || "No messages yet"}</div>
+              </div>
+              ${g.unread ? `<span style="background:var(--primary);color:#fff;border-radius:100px;font-size:0.6rem;font-weight:800;padding:2px 6px;flex-shrink:0">${g.unread}</span>` : ""}
+            </div>
+          </div>`,
+          )
+          .join("");
+      }
+
+      /* ── Open a group chat ── */
+      async function openGroup(g) {
+        currentGroupId = g.id;
+        localStorage.setItem("t_groupId", g.id);
+        document.getElementById("gateScreen").style.display = "none";
+        const chatActive = document.getElementById("chatActive");
+        chatActive.style.display = "flex";
+
+        document.getElementById("chatAvatar").textContent = g.name
+          .charAt(0)
+          .toUpperCase();
+        document.getElementById("chatGroupName").textContent = g.name;
+        document.getElementById("chatMemberCount").textContent =
+          `${g.member_count || "?"} members`;
+
+        renderGroupList(); // refresh active state
+        await loadMessages();
+      }
+
+      /* ── Show gate ── */
+      function showGate() {
+        document.getElementById("gateScreen").style.display = "flex";
+        document.getElementById("chatActive").style.display = "none";
+      }
+
+      /* ── Join via gate ── */
+      async function joinFromGate() {
+        const code = document.getElementById("gateCode").value.trim();
+        const errEl = document.getElementById("gateError");
+        await joinWithCode(code, errEl, document.getElementById("gateBtn"));
+      }
+
+      /* ── Join via modal ── */
+      async function joinFromModal() {
+        const code = document.getElementById("modalCode").value.trim();
+        const errEl = document.getElementById("modalError");
+        const btn = document.querySelector("#joinModal .btn-primary");
+        const joined = await joinWithCode(code, errEl, btn);
+        if (joined)
+          bootstrap.Modal.getInstance(
+            document.getElementById("joinModal"),
+          )?.hide();
+      }
+
+      /* ── Core join logic ── */
+      async function joinWithCode(code, errEl, btn) {
+        errEl.textContent = "";
+        if (!code || code.replace("-", "").length < 8) {
+          errEl.textContent = "Please enter a valid invite code.";
+          return false;
+        }
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="spinner-border spinner-border-sm me-2"></span>Joining…';
+        try {
+          const res = await fetch("/api/tenant/groups/join", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+            },
+            body: JSON.stringify({ invite_code: code }),
+          });
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.message || "Invalid or expired invite code.");
+          await loadGroups();
+          const joined =
+            groups.find((g) => g.id === data.group?.id) || groups[0];
+          if (joined) openGroup(joined);
+          return true;
+        } catch (err) {
+          errEl.textContent = err.message;
+          btn.disabled = false;
+          btn.innerHTML =
+            code === document.getElementById("gateCode")?.value
+              ? "Join Group"
+              : '<i class="bi bi-arrow-right-circle me-1"></i> Join Group';
+          return false;
+        }
+      }
+
+      /* ── Load messages ── */
+      async function loadMessages() {
+        if (!currentGroupId) return;
+        try {
+          const res = await fetch(
+            `/api/tenant/groups/${currentGroupId}/messages`,
+            {
+              headers: {
+                Authorization:
+                  "Bearer " + (localStorage.getItem("token") || ""),
+              },
+            },
+          );
+          const data = await res.json();
+          renderMessages(data?.messages || []);
+        } catch {
+          renderMessages([]);
+        }
+      }
+
+      function renderMessages(msgs) {
+        const box = document.getElementById("chatMessages");
+        const me = JSON.parse(localStorage.getItem("user") || "{}").id;
+        if (!box) return;
+        if (!msgs.length) {
+          box.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:0.8rem;padding:24px 0">No messages yet — say hello 👋</div>`;
+          return;
+        }
+        box.innerHTML = "";
+        msgs.forEach((m) => box.appendChild(buildMsgEl(m, m.sender_id == me)));
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function buildMsgEl(m, mine) {
+        const wrap = document.createElement("div");
+        wrap.className = "msg " + (mine ? "mine" : "theirs");
+        if (!mine) {
+          const sender = document.createElement("div");
+          sender.className = "msg-sender";
+          sender.textContent = m.sender_name || "Landlord";
+          wrap.appendChild(sender);
+        }
+        if (m.message) {
+          const bubble = document.createElement("div");
+          bubble.className = "msg-bubble";
+          bubble.textContent = m.message;
+          wrap.appendChild(bubble);
+        }
+        if (m.attachments) {
+          m.attachments.forEach((att) => {
+            const attDiv = document.createElement("div");
+            attDiv.className = "msg-attachment";
+            if (att.type === "image") {
+              const img = document.createElement("img");
+              img.src = att.url;
+              img.alt = att.name;
+              img.onclick = () => openLightbox(att.url);
+              attDiv.appendChild(img);
+            } else {
+              attDiv.innerHTML = `<a class="msg-file-card" href="${att.url}" download="${att.name}" onclick="event.stopPropagation()">
+                <i class="bi ${fileIcon(att.ext)} msg-file-icon"></i>
+                <div class="msg-file-info"><div class="msg-file-name">${att.name}</div><div class="msg-file-size">${att.size || ""}</div></div>
+                <i class="bi bi-download" style="margin-left:auto;opacity:0.7;font-size:0.9rem"></i></a>`;
+            }
+            wrap.appendChild(attDiv);
+          });
+        }
+        const ts = document.createElement("div");
+        ts.className = "msg-time";
+        ts.textContent = m.created_at
+          ? new Date(m.created_at).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "now";
+        wrap.appendChild(ts);
+        return wrap;
+      }
+
+      /* ── Send message ── */
+      async function sendMsg() {
+        const input = document.getElementById("msgInput");
+        const text = input?.value.trim();
+        if (!text && !pendingAttachments.length) return;
+
+        // Optimistic render
+        const me = JSON.parse(localStorage.getItem("user") || "{}");
+        const fakeMsg = {
+          message: text,
+          sender_id: me.id,
+          sender_name: "You",
+          created_at: new Date().toISOString(),
+          attachments: pendingAttachments.map((a) => ({
+            type: a.type,
+            url: a.dataUrl,
+            name: a.file.name,
+            ext: a.file.name.split(".").pop().toUpperCase(),
+            size: formatBytes(a.file.size),
+          })),
+        };
+        const box = document.getElementById("chatMessages");
+        box.appendChild(buildMsgEl(fakeMsg, true));
+        box.scrollTop = box.scrollHeight;
+
+        // Clear
+        if (input) {
+          input.value = "";
+          input.style.height = "auto";
+        }
+        pendingAttachments = [];
+        renderPreview();
+
+        // API (if available)
+        if (currentGroupId) {
+          try {
+            await fetch(`/api/tenant/groups/${currentGroupId}/messages`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization:
+                  "Bearer " + (localStorage.getItem("token") || ""),
+              },
+              body: JSON.stringify({ message: text }),
+            });
+          } catch {}
+        }
+      }
+
+      /* ── Attachment handling ── */
+      function handleFiles(files, type) {
+        Array.from(files).forEach((file) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            pendingAttachments.push({ type, file, dataUrl: e.target.result });
+            renderPreview();
+          };
+          reader.readAsDataURL(file);
+        });
+        document.getElementById("imgPicker").value = "";
+        document.getElementById("filePicker").value = "";
+      }
+
+      function renderPreview() {
+        const strip = document.getElementById("attachPreview");
+        strip.innerHTML = "";
+        pendingAttachments.forEach((item, i) => {
+          const thumb = document.createElement("div");
+          thumb.className = "attach-thumb";
+          if (item.type === "image") {
+            thumb.innerHTML = `<img src="${item.dataUrl}" alt=""/>`;
+          } else {
+            const ext = item.file.name.split(".").pop().toUpperCase();
+            thumb.innerHTML = `<div class="file-icon"><i class="bi ${fileIcon(ext)}"></i><span>${item.file.name}</span></div>`;
+          }
+          const rm = document.createElement("button");
+          rm.className = "attach-remove";
+          rm.innerHTML = "&times;";
+          rm.onclick = () => {
+            pendingAttachments.splice(i, 1);
+            renderPreview();
+          };
+          thumb.appendChild(rm);
+          strip.appendChild(thumb);
+        });
+      }
+
+      function fileIcon(ext) {
+        const map = {
+          PDF: "bi-file-pdf-fill",
+          DOC: "bi-file-word-fill",
+          DOCX: "bi-file-word-fill",
+          XLS: "bi-file-excel-fill",
+          XLSX: "bi-file-excel-fill",
+          ZIP: "bi-file-zip-fill",
+          RAR: "bi-file-zip-fill",
+          TXT: "bi-file-text-fill",
+          CSV: "bi-filetype-csv",
+        };
+        return map[ext?.toUpperCase()] || "bi-file-earmark-fill";
+      }
+      function formatBytes(b) {
+        if (b < 1024) return b + " B";
+        if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
+        return (b / 1048576).toFixed(1) + " MB";
+      }
+
+      /* ── Lightbox ── */
+      function openLightbox(src) {
+        document.getElementById("lightboxImg").src = src;
+        document.getElementById("imgLightbox").classList.add("open");
+      }
+      function closeLightbox() {
+        document.getElementById("imgLightbox").classList.remove("open");
+        document.getElementById("lightboxImg").src = "";
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeLightbox();
+      });
+
+      /* ── Drag & drop ── */
+      const chatActive = document.getElementById("chatActive");
+      chatActive.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        chatActive.style.outline = "2px dashed var(--primary)";
+      });
+      chatActive.addEventListener("dragleave", () => {
+        chatActive.style.outline = "";
+      });
+      chatActive.addEventListener("drop", (e) => {
+        e.preventDefault();
+        chatActive.style.outline = "";
+        const files = Array.from(e.dataTransfer.files);
+        handleFiles(
+          files.filter((f) => f.type.startsWith("image/")),
+          "image",
+        );
+        handleFiles(
+          files.filter((f) => !f.type.startsWith("image/")),
+          "file",
+        );
+      });
+    </script>
+  </body>
+</html>

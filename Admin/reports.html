@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Reports | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      /* ── Bootstrap white-bg + colour overrides ── */
+      .form-control,
+      .form-select {
+        background: var(--bg-input) !important;
+        color: var(--text-main) !important;
+        border-color: var(--border) !important;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        background: var(--bg-input) !important;
+        border-color: var(--primary) !important;
+        box-shadow: none !important;
+      }
+      .input-group-text {
+        background: var(--bg-input) !important;
+        border-color: var(--border) !important;
+        color: var(--text-muted) !important;
+      }
+      .table {
+        background: transparent !important;
+      }
+      .table > :not(caption) > * > * {
+        background: transparent !important;
+        color: var(--text-main) !important;
+        border-color: var(--border) !important;
+      }
+      .table thead th {
+        background: var(--bg-card) !important;
+        color: var(--text-muted) !important;
+      }
+      .table tbody tr:hover > * {
+        background: rgba(37, 99, 235, 0.04) !important;
+      }
+
+      /* Text visibility — all Bootstrap colour classes → theme CSS vars */
+      .text-muted {
+        color: var(--text-muted) !important;
+      }
+      .text-success {
+        color: var(--success-text) !important;
+      }
+      .text-warning {
+        color: var(--warning-text) !important;
+      }
+      .text-danger {
+        color: var(--danger-text) !important;
+      }
+      .text-primary {
+        color: var(--primary) !important;
+      }
+      h4,
+      h5,
+      h6 {
+        color: var(--text-main) !important;
+      }
+
+      /* ── Page-specific ── */
+      .kpi-strip {
+        display: flex;
+        gap: 1px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+      .kpi-item {
+        flex: 1;
+        background: var(--bg-card);
+        padding: 20px 18px;
+        text-align: center;
+      }
+      .kpi-item:not(:last-child) {
+        border-right: 1px solid var(--border);
+      }
+      /* kpi-val has no default colour — must be set explicitly */
+      .kpi-val {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--text-main);
+      }
+      .kpi-lab {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 4px;
+      }
+      .kpi-delta {
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin-top: 5px;
+        color: var(--text-muted);
+      }
+      .kpi-delta.up {
+        color: var(--success-text);
+      }
+      .kpi-delta.down {
+        color: var(--danger-text);
+      }
+
+      .report-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .report-section-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .report-section-header h6 {
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin: 0;
+        color: var(--text-main) !important;
+      }
+
+      .bar-chart-container {
+        padding: 20px;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        height: 200px;
+      }
+      .bar-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+      }
+      .bar-wrap {
+        width: 100%;
+        flex: 1;
+        background: var(--border);
+        border-radius: 6px 6px 0 0;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+      }
+      .bar-fill {
+        width: 100%;
+        background: linear-gradient(180deg, var(--primary) 0%, #818cf8 100%);
+        border-radius: 6px 6px 0 0;
+        transition: height 0.6s var(--snap);
+        min-height: 4px;
+      }
+      .bar-label {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .bar-val {
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--primary);
+        flex-shrink: 0;
+      }
+
+      .maint-stat {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        text-align: center;
+      }
+      /* maint-val has no default colour — must be set per instance */
+      .maint-val {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--text-main);
+      }
+      .maint-lab {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            style="font-size: 1.1rem; font-weight: 800; color: var(--purple)"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link active"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">Reports &amp; Analytics</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <a href="dashboard.html" class="topbar-btn"
+            ><i class="bi bi-grid"></i
+          ></a>
+          <button
+            class="btn btn-purple btn-sm"
+            onclick="AdminReports.exportReport()"
+          >
+            <i class="bi bi-download me-1"></i>Export PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Heading -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4
+              style="
+                font-weight: 800;
+                margin-bottom: 4px;
+                color: var(--text-main);
+              "
+            >
+              Platform Analytics
+            </h4>
+            <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0">
+              Key metrics, revenue trends, and operational insights
+            </p>
+          </div>
+          <div class="d-flex gap-2">
+            <select
+              class="form-select form-select-sm"
+              id="reportPeriod"
+              onchange="AdminReports.changePeriod()"
+              style="width: auto"
+            >
+              <option value="6m">Last 6 Months</option>
+              <option value="3m">Last 3 Months</option>
+              <option value="1y">Last 12 Months</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- KPI Strip — inline styles instead of Bootstrap colour classes -->
+        <div class="kpi-strip">
+          <div class="kpi-item">
+            <div
+              class="kpi-val"
+              style="color: var(--success-text)"
+              id="rRevenue"
+            >
+              —
+            </div>
+            <div class="kpi-lab">Total Revenue</div>
+            <div class="kpi-delta up" id="rRevenueDelta">—</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-val" style="color: var(--primary)" id="rUsers">
+              —
+            </div>
+            <div class="kpi-lab">New Users</div>
+            <div class="kpi-delta up" id="rUsersDelta">—</div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-val" id="rOccupancy">—</div>
+            <div class="kpi-lab">Avg Occupancy</div>
+            <div class="kpi-delta up" id="rOccDelta">—</div>
+          </div>
+          <div class="kpi-item">
+            <div
+              class="kpi-val"
+              style="color: var(--success-text)"
+              id="rCollection"
+            >
+              —
+            </div>
+            <div class="kpi-lab">Collection Rate</div>
+            <div class="kpi-delta up" id="rCollDelta">—</div>
+          </div>
+        </div>
+
+        <!-- Revenue Chart -->
+        <div class="report-section mb-4">
+          <div class="report-section-header">
+            <h6>
+              <i
+                class="bi bi-bar-chart-fill me-2"
+                style="color: var(--primary)"
+              ></i
+              >Monthly Revenue
+            </h6>
+            <span
+              style="font-size: 0.75rem; color: var(--text-muted)"
+              id="chartSubtitle"
+              >Last 6 months</span
+            >
+          </div>
+          <div class="bar-chart-container" id="reportsRevenueChart">
+            <div class="empty-state" style="padding: 20px; width: 100%">
+              <i class="bi bi-hourglass"></i>
+              <p>Loading…</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <!-- Top Landlords -->
+          <div class="col-lg-7">
+            <div class="report-section" style="margin-bottom: 0">
+              <div class="report-section-header">
+                <h6>
+                  <i
+                    class="bi bi-trophy-fill me-2"
+                    style="color: var(--warning-text)"
+                  ></i
+                  >Top Performing Landlords
+                </h6>
+                <a href="users.html" class="btn btn-outline-secondary btn-sm"
+                  >View All</a
+                >
+              </div>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Landlord</th>
+                      <th>Plazas</th>
+                      <th>Tenants</th>
+                      <th>Revenue</th>
+                      <th>Trend</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rTopLandlords">
+                    <tr>
+                      <td colspan="6">
+                        <div class="empty-state" style="padding: 20px">
+                          <i class="bi bi-hourglass"></i>
+                          <p>Loading…</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Maintenance Stats -->
+          <div class="col-lg-5">
+            <div class="report-section" style="margin-bottom: 0; height: 100%">
+              <div class="report-section-header">
+                <h6>
+                  <i
+                    class="bi bi-tools me-2"
+                    style="color: var(--warning-text)"
+                  ></i
+                  >Maintenance Summary
+                </h6>
+                <a
+                  href="maintenance.html"
+                  class="btn btn-outline-secondary btn-sm"
+                  >View</a
+                >
+              </div>
+              <div class="p-4">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="maint-stat">
+                      <div
+                        class="maint-val"
+                        style="color: var(--danger-text)"
+                        id="rMaintOpen"
+                      >
+                        —
+                      </div>
+                      <div class="maint-lab">Open</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="maint-stat">
+                      <div
+                        class="maint-val"
+                        style="color: var(--warning-text)"
+                        id="rMaintProgress"
+                      >
+                        —
+                      </div>
+                      <div class="maint-lab">In Progress</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="maint-stat">
+                      <div
+                        class="maint-val"
+                        style="color: var(--success-text)"
+                        id="rMaintResolved"
+                      >
+                        —
+                      </div>
+                      <div class="maint-lab">Resolved</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="maint-stat">
+                      <div
+                        class="maint-val"
+                        style="color: var(--primary)"
+                        id="rMaintAvg"
+                      >
+                        —
+                      </div>
+                      <div class="maint-lab">Avg Days</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Methods Breakdown -->
+        <div class="report-section">
+          <div class="report-section-header">
+            <h6>
+              <i
+                class="bi bi-pie-chart-fill me-2"
+                style="color: var(--success-text)"
+              ></i
+              >Payment Method Breakdown
+            </h6>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Transactions</th>
+                  <th>Volume</th>
+                  <th>Share</th>
+                  <th>Trend</th>
+                </tr>
+              </thead>
+              <tbody id="rPayMethods">
+                <tr>
+                  <td colspan="5">
+                    <div class="empty-state" style="padding: 20px">
+                      <i class="bi bi-hourglass"></i>
+                      <p>Loading…</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      document.getElementById("overlay").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      });
+      AdminReports.init();
+    </script>
+  </body>
+</html>

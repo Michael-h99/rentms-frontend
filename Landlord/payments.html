@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payments | Landlord Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/landlord.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+              line-height: 1;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> My Plazas</a
+        >
+        <a href="tenants.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Tenants</a
+        >
+        <a href="payments.html" class="nav-link active"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Landlord
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Landlord
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <!-- end .sidebar -->
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Payments</span>
+        <div class="d-flex align-items-center gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+          <button class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-download me-1"></i> Export
+          </button>
+          <button
+            class="btn btn-warning btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#bulkModal"
+          >
+            <i class="bi bi-envelope me-1"></i> Bulk Reminder
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: var(--text-main);
+                  "
+                  id="statCollected"
+                >
+                  GHS 0
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted)">
+                  Collected
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon yellow">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: var(--text-main);
+                  "
+                  id="statPending"
+                >
+                  GHS 0
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted)">
+                  Pending
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="bi bi-exclamation-circle"></i>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: var(--text-main);
+                  "
+                  id="statOverdue"
+                >
+                  GHS 0
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted)">
+                  Overdue
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: var(--text-main);
+                  "
+                  id="statPaid"
+                >
+                  0/0
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted)">
+                  Tenants Paid
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tabAll"
+              >All Payments</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tabReceipts"
+              >Receipts</a
+            >
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tabAll">
+            <!-- Filters -->
+            <div class="card mb-3 p-3">
+              <div class="row g-2">
+                <div class="col-md-3">
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"
+                      ><i class="bi bi-search text-muted"></i></span
+                    ><input
+                      type="text"
+                      class="form-control border-start-0"
+                      placeholder="Search..."
+                      id="paySearch"
+                      oninput="filterPayments()"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <select
+                    class="form-select"
+                    id="payPlaza"
+                    onchange="filterPayments()"
+                  >
+                    <option value="">All Plazas</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <select
+                    class="form-select"
+                    id="payStatus"
+                    onchange="filterPayments()"
+                  >
+                    <option value="">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <input
+                    type="month"
+                    class="form-control"
+                    id="payMonth"
+                    onchange="filterPayments()"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Tenant</th>
+                      <th>Plaza</th>
+                      <th>Amount</th>
+                      <th>Method</th>
+                      <th>Date</th>
+                      <th>Reference</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="payRows"></tbody>
+                </table>
+              </div>
+              <div id="emptyPayments" class="empty-state">
+                <i class="bi bi-credit-card"></i>
+                <h6 style="font-weight: 700; color: var(--text-main)">
+                  No payments yet
+                </h6>
+                <p>Payments will appear here once tenants make payments.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="tabReceipts">
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Receipt #</th>
+                      <th>Tenant</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                      <th>Reference</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="receiptRows"></tbody>
+                </table>
+              </div>
+              <div id="emptyReceipts" class="empty-state">
+                <i class="bi bi-receipt"></i>
+                <h6 style="font-weight: 700; color: var(--text-main)">
+                  No receipts yet
+                </h6>
+                <p>Receipts are generated automatically after each payment.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="modal fade" id="receiptModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">
+              <i class="bi bi-receipt me-2"></i>Payment Receipt
+            </h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="text-center mb-3">
+              <div style="font-weight: 700; color: var(--text-main)">
+                Rent Management System
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                Official Payment Receipt
+              </div>
+            </div>
+            <div
+              id="receiptContent"
+              style="
+                background: #f8fafc;
+                border-radius: 8px;
+                padding: 20px;
+                border: 1px solid var(--border);
+              "
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button class="btn btn-primary" id="downloadReceiptBtn">
+              <i class="bi bi-download me-1"></i> Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Reminder Modal -->
+    <div class="modal fade" id="bulkModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Send Bulk Reminders</h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <p style="font-size: 0.875rem; color: var(--text-muted)">
+              Send payment reminders to all tenants with pending or overdue
+              payments.
+            </p>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Filter by Plaza</label
+              >
+              <select class="form-select" id="bulkPlaza">
+                <option value="">All Plazas</option>
+              </select>
+            </div>
+            <div
+              id="bulkResult"
+              class="alert alert-success d-none"
+              style="font-size: 0.85rem"
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-warning px-4" onclick="sendBulkReminder()">
+              Send Reminders
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/landlord.js"></script>
+    <script>
+      LandlordPayments.init();
+    </script>
+    <!-- DEV MODE BANNER — remove when going live -->
+    <div
+      id="devBanner"
+      style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: #f59e0b;
+        color: #000;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: center;
+        padding: 5px;
+        letter-spacing: 0.05em;
+      "
+    >
+      ⚙️ DEV MODE — Authentication disabled. Set
+      <code>DEV_MODE = false</code> in landlord.js to go live.
+    </div>
+    <script>
+      // Hide banner automatically when DEV_MODE is off
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
+          const b = document.getElementById("devBanner");
+          if (b) b.remove();
+        }
+      });
+    </script>
+  </body>
+</html>

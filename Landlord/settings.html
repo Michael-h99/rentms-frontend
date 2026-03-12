@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | Landlord Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/landlord.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+              line-height: 1;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> My Plazas</a
+        >
+        <a href="tenants.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Tenants</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link active"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Landlord
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Landlord
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <!-- end .sidebar -->
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Settings</span>
+        <a href="notifications.html" class="topbar-btn"
+          ><i class="bi bi-bell"></i
+        ></a>
+      </div>
+
+      <div class="content">
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tabGeneral"
+              ><i class="bi bi-sliders me-1"></i> General</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tabNotifications"
+              ><i class="bi bi-bell me-1"></i> Notifications</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tabSecurity"
+              ><i class="bi bi-shield-lock me-1"></i> Security</a
+            >
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- General Tab -->
+          <div class="tab-pane fade show active" id="tabGeneral">
+            <div class="card mb-4">
+              <div class="card-header-custom">
+                <i class="bi bi-building text-primary"></i>
+                <h6>Business Information</h6>
+              </div>
+              <div class="p-4">
+                <div id="generalMsg"></div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Business / Company Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="bizName"
+                      placeholder="e.g. Mensah Properties"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Business Email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="bizEmail"
+                      placeholder="business@example.com"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Phone</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="bizPhone"
+                      placeholder="+233 20 000 0000"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Timezone</label>
+                    <select class="form-select" id="bizTimezone">
+                      <option value="Africa/Accra">Africa/Accra (GMT+0)</option>
+                      <option value="Africa/Lagos">Africa/Lagos (GMT+1)</option>
+                      <option value="Africa/Nairobi">
+                        Africa/Nairobi (GMT+3)
+                      </option>
+                      <option value="Europe/London">
+                        Europe/London (GMT+0/+1)
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Currency</label>
+                    <select class="form-select" id="bizCurrency">
+                      <option value="GHS">GHS – Ghanaian Cedi</option>
+                      <option value="NGN">NGN – Nigerian Naira</option>
+                      <option value="USD">USD – US Dollar</option>
+                      <option value="GBP">GBP – British Pound</option>
+                      <option value="EUR">EUR – Euro</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Date Format</label>
+                    <select class="form-select" id="bizDateFormat">
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                    </select>
+                  </div>
+                  <div class="col-12 pt-2">
+                    <button
+                      class="btn btn-primary px-4"
+                      onclick="saveGeneral()"
+                    >
+                      Save General Settings
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications Tab -->
+          <div class="tab-pane fade" id="tabNotifications">
+            <div class="card mb-4">
+              <div class="card-header-custom">
+                <i class="bi bi-envelope text-primary"></i>
+                <h6>Email Notifications</h6>
+              </div>
+              <div class="p-4">
+                <div id="notifMsg"></div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Payment Received</div>
+                    <div class="toggle-desc">
+                      Email me when a tenant makes a payment
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailPayment"
+                      checked
+                    />
+                  </div>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Maintenance Request</div>
+                    <div class="toggle-desc">
+                      Email me when a tenant submits a maintenance request
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailMaint"
+                      checked
+                    />
+                  </div>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Lease Expiring</div>
+                    <div class="toggle-desc">
+                      Email me 30 days before a lease expires
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailLease"
+                      checked
+                    />
+                  </div>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Overdue Payment Alert</div>
+                    <div class="toggle-desc">
+                      Email me when a tenant's payment becomes overdue
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailOverdue"
+                      checked
+                    />
+                  </div>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">New Tenant Joined</div>
+                    <div class="toggle-desc">
+                      Email me when a new tenant registers under my plaza
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailNewTenant"
+                    />
+                  </div>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Monthly Summary</div>
+                    <div class="toggle-desc">
+                      Receive a monthly report of payments and occupancy
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="emailSummary"
+                      checked
+                    />
+                  </div>
+                </div>
+                <div class="pt-3">
+                  <button
+                    class="btn btn-primary px-4"
+                    onclick="saveNotifSettings()"
+                  >
+                    Save Notification Settings
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header-custom">
+                <i class="bi bi-phone text-primary"></i>
+                <h6>In-App Notifications</h6>
+              </div>
+              <div class="p-4">
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Push Notifications</div>
+                    <div class="toggle-desc">
+                      Show browser notifications for important events
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="pushAll"
+                      checked
+                    />
+                  </div>
+                </div>
+                <div class="toggle-row">
+                  <div>
+                    <div class="toggle-label">Sound Alerts</div>
+                    <div class="toggle-desc">
+                      Play a sound for new notifications
+                    </div>
+                  </div>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="pushSound"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Tab -->
+          <div class="tab-pane fade" id="tabSecurity">
+            <div class="card mb-4">
+              <div class="card-header-custom">
+                <i class="bi bi-key-fill text-primary"></i>
+                <h6>Login Sessions</h6>
+              </div>
+              <div class="p-4">
+                <p style="font-size: 0.875rem; color: var(--text-muted)">
+                  Active sessions for your account. You can sign out of other
+                  devices below.
+                </p>
+                <div id="sessionList">
+                  <div
+                    style="
+                      padding: 14px;
+                      border: 1px solid var(--border);
+                      border-radius: 8px;
+                      display: flex;
+                      align-items: center;
+                      gap: 12px;
+                    "
+                  >
+                    <i class="bi bi-laptop text-primary fs-4"></i>
+                    <div>
+                      <div style="font-weight: 600; font-size: 0.875rem">
+                        Current Session
+                      </div>
+                      <div style="font-size: 0.78rem; color: var(--text-muted)">
+                        This device · Active now
+                      </div>
+                    </div>
+                    <span
+                      style="
+                        margin-left: auto;
+                        background: #d1fae5;
+                        color: #065f46;
+                        padding: 3px 10px;
+                        border-radius: 20px;
+                        font-size: 0.72rem;
+                        font-weight: 600;
+                      "
+                      >Current</span
+                    >
+                  </div>
+                </div>
+                <button
+                  class="btn btn-outline-danger btn-sm mt-3"
+                  onclick="signOutAll()"
+                >
+                  <i class="bi bi-box-arrow-right me-1"></i> Sign Out All Other
+                  Devices
+                </button>
+                <div id="secMsg" class="mt-2"></div>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="danger-zone">
+              <h6 style="font-weight: 700; color: #991b1b; margin-bottom: 4px">
+                <i class="bi bi-exclamation-triangle me-2"></i>Danger Zone
+              </h6>
+              <p
+                style="
+                  font-size: 0.875rem;
+                  color: var(--text-muted);
+                  margin-bottom: 16px;
+                "
+              >
+                These actions are irreversible. Please be certain before
+                proceeding.
+              </p>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteAccountModal"
+              >
+                <i class="bi bi-trash me-1"></i> Delete My Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 12px; border: none">
+          <div
+            class="modal-header"
+            style="
+              background: #991b1b;
+              color: #fff;
+              border-radius: 12px 12px 0 0;
+            "
+          >
+            <h5 class="modal-title fw-bold">
+              <i class="bi bi-exclamation-triangle me-2"></i>Delete Account
+            </h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <p style="font-size: 0.875rem">
+              This will permanently delete your account, all plazas, tenant
+              records and payment history.
+              <strong>This cannot be undone.</strong>
+            </p>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Type <strong>DELETE</strong> to confirm</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="deleteConfirmInput"
+                placeholder="DELETE"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Enter your password</label
+              >
+              <input
+                type="password"
+                class="form-control"
+                id="deleteConfirmPw"
+                placeholder="••••••••"
+              />
+            </div>
+            <div
+              id="deleteErr"
+              class="text-danger"
+              style="font-size: 0.8rem; display: none"
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-danger px-4" onclick="deleteAccount()">
+              Delete My Account
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/landlord.js"></script>
+    <script>
+      LandlordSettings.init();
+    </script>
+    <!-- DEV MODE BANNER — remove when going live -->
+    <div
+      id="devBanner"
+      style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: #f59e0b;
+        color: #000;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: center;
+        padding: 5px;
+        letter-spacing: 0.05em;
+      "
+    >
+      ⚙️ DEV MODE — Authentication disabled. Set
+      <code>DEV_MODE = false</code> in landlord.js to go live.
+    </div>
+    <script>
+      // Hide banner automatically when DEV_MODE is off
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
+          const b = document.getElementById("devBanner");
+          if (b) b.remove();
+        }
+      });
+    </script>
+  </body>
+</html>

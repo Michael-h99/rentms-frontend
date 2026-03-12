@@ -1,0 +1,884 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Roles &amp; Permissions | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      /* ── Bootstrap white-bg + colour overrides ── */
+      .text-muted {
+        color: var(--text-muted) !important;
+      }
+      .text-primary {
+        color: var(--primary) !important;
+      }
+      .text-success {
+        color: var(--success-text) !important;
+      }
+      .text-danger {
+        color: var(--danger-text) !important;
+      }
+      h4,
+      h5,
+      h6 {
+        color: var(--text-main) !important;
+      }
+
+      /* Checkbox dark-theme fix — Bootstrap renders white bg on checkboxes */
+      .form-check-input {
+        background-color: var(--bg-input) !important;
+        border-color: var(--border) !important;
+      }
+      .form-check-input:checked {
+        background-color: var(--primary) !important;
+        border-color: var(--primary) !important;
+      }
+
+      /* ── Page-specific ── */
+      .role-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin-bottom: 28px;
+      }
+      .role-header {
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .role-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .role-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      /* role-name had no colour — invisible on dark bg */
+      .role-name {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--text-main);
+      }
+      .role-desc {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .perm-group {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+      }
+      .perm-group:last-child {
+        border-bottom: none;
+      }
+      .perm-group-title {
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 14px;
+      }
+      .perm-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+      }
+      .perm-row:not(:last-child) {
+        border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+      }
+      /* perm-label had no colour — invisible on dark bg */
+      .perm-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+      .perm-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+
+      .perm-check {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--primary);
+      }
+
+      .role-users-count {
+        background: var(--primary-glow);
+        color: var(--primary);
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            style="font-size: 1.1rem; font-weight: 800; color: var(--purple)"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link active"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">Roles &amp; Permissions</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <a href="dashboard.html" class="topbar-btn"
+            ><i class="bi bi-grid"></i
+          ></a>
+          <button class="btn btn-purple btn-sm" onclick="AdminRoles.saveAll()">
+            <i class="bi bi-save me-1"></i>Save All Changes
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Heading -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4
+              style="
+                font-weight: 800;
+                margin-bottom: 4px;
+                color: var(--text-main);
+              "
+            >
+              Roles &amp; Permissions
+            </h4>
+            <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0">
+              Define what each user role can see and do on the platform
+            </p>
+          </div>
+          <div class="d-flex gap-2 align-items-center">
+            <span style="font-size: 0.8rem; color: var(--text-muted)"
+              >Last saved:
+              <span
+                id="lastSaved"
+                style="color: var(--text-main); font-weight: 600"
+                >never</span
+              ></span
+            >
+          </div>
+        </div>
+
+        <div id="rolesMsg"></div>
+
+        <!-- ── Super Admin ── -->
+        <div class="role-card">
+          <div class="role-header">
+            <div class="role-title">
+              <div
+                class="role-icon"
+                style="
+                  background: var(--danger-light);
+                  color: var(--danger-text);
+                "
+              >
+                <i class="bi bi-shield-fill-exclamation"></i>
+              </div>
+              <div>
+                <div class="role-name">Super Admin</div>
+                <div class="role-desc">
+                  Full platform access — cannot be restricted
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <!-- user count populated by JS via id -->
+              <span class="role-users-count" id="superAdminCount">— users</span>
+              <span class="badge-status badge-active">Full Access</span>
+            </div>
+          </div>
+          <div class="perm-group">
+            <div
+              style="
+                padding: 8px 0;
+                color: var(--text-muted);
+                font-size: 0.875rem;
+              "
+            >
+              <i
+                class="bi bi-info-circle me-2"
+                style="color: var(--primary)"
+              ></i>
+              Super Admins have unrestricted access to all features and cannot
+              have permissions modified.
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Admin ── -->
+        <div class="role-card">
+          <div class="role-header">
+            <div class="role-title">
+              <div
+                class="role-icon"
+                style="
+                  background: var(--purple-light);
+                  color: var(--purple-text);
+                "
+              >
+                <i class="bi bi-shield-fill-check"></i>
+              </div>
+              <div>
+                <div class="role-name">Admin</div>
+                <div class="role-desc">
+                  Platform administrators with broad access
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="role-users-count" id="adminCount">— users</span>
+              <span
+                class="badge-status"
+                style="
+                  background: var(--purple-light);
+                  color: var(--purple-text);
+                "
+                >Configurable</span
+              >
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-people me-1"></i>User Management
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Users</div>
+                <div class="perm-desc">
+                  See user list, profiles, and activity
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_view_users"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Create / Invite Users</div>
+                <div class="perm-desc">
+                  Send invitations and create accounts
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_create_users"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Suspend / Delete Users</div>
+                <div class="perm-desc">
+                  Deactivate or permanently remove accounts
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_delete_users"
+                checked
+              />
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-buildings me-1"></i>Property Management
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Plazas &amp; Units</div>
+                <div class="perm-desc">
+                  Browse all properties on the platform
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_view_plazas"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Edit Plaza Details</div>
+                <div class="perm-desc">
+                  Modify plaza name, location, and settings
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_edit_plazas"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Manage Leases</div>
+                <div class="perm-desc">
+                  View, renew, and terminate lease agreements
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_manage_leases"
+                checked
+              />
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-credit-card me-1"></i>Financial Access
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Payments</div>
+                <div class="perm-desc">See all payment transactions</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_view_payments"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Mark Payments Paid</div>
+                <div class="perm-desc">Override payment status to paid</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_mark_paid"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Export Financial Data</div>
+                <div class="perm-desc">Download reports and CSV exports</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_export_finance"
+                checked
+              />
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-gear me-1"></i>System Access
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Audit Log</div>
+                <div class="perm-desc">See all admin activity history</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="admin_view_audit"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Manage Settings</div>
+                <div class="perm-desc">Change platform configuration</div>
+              </div>
+              <input type="checkbox" class="perm-check" id="admin_settings" />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Backup &amp; Restore</div>
+                <div class="perm-desc">Create and restore platform backups</div>
+              </div>
+              <input type="checkbox" class="perm-check" id="admin_backup" />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Manage Roles &amp; Permissions</div>
+                <div class="perm-desc">Edit this page — high privilege</div>
+              </div>
+              <input type="checkbox" class="perm-check" id="admin_roles" />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Landlord ── -->
+        <div class="role-card">
+          <div class="role-header">
+            <div class="role-title">
+              <div
+                class="role-icon"
+                style="background: var(--primary-glow); color: var(--primary)"
+              >
+                <i class="bi bi-house-fill"></i>
+              </div>
+              <div>
+                <div class="role-name">Landlord</div>
+                <div class="role-desc">
+                  Property owners managing their plazas and tenants
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="role-users-count" id="landlordCount">— users</span>
+              <span
+                class="badge-status"
+                style="background: var(--primary-glow); color: var(--primary)"
+                >Configurable</span
+              >
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-buildings me-1"></i>Property Controls
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Create Plazas</div>
+                <div class="perm-desc">
+                  Register new properties on the platform
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_create_plaza"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Add / Remove Units</div>
+                <div class="perm-desc">
+                  Manage individual rental units in plazas
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_manage_units"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Manage Tenants</div>
+                <div class="perm-desc">
+                  Assign, move, and remove tenant accounts
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_manage_tenants"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Generate Invite Codes</div>
+                <div class="perm-desc">Create codes for tenant onboarding</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_invite_codes"
+                checked
+              />
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-credit-card me-1"></i>Financial
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Record Payments</div>
+                <div class="perm-desc">Log and track rent payments</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_payments"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Export Payment Reports</div>
+                <div class="perm-desc">
+                  Download their own financial reports
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_export_payments"
+                checked
+              />
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-chat me-1"></i>Communication
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Send Announcements</div>
+                <div class="perm-desc">Broadcast messages to their tenants</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_announcements"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Maintenance Requests</div>
+                <div class="perm-desc">
+                  See and respond to tenant maintenance issues
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_maintenance"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Send Messages to Tenants</div>
+                <div class="perm-desc">Direct messaging with their tenants</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="ll_messages"
+                checked
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Tenant ── -->
+        <div class="role-card">
+          <div class="role-header">
+            <div class="role-title">
+              <div
+                class="role-icon"
+                style="
+                  background: var(--success-light);
+                  color: var(--success-text);
+                "
+              >
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <div>
+                <div class="role-name">Tenant</div>
+                <div class="role-desc">
+                  Renters with access to their unit and payment portal
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="role-users-count" id="tenantCount">— users</span>
+              <span
+                class="badge-status"
+                style="
+                  background: var(--success-light);
+                  color: var(--success-text);
+                "
+                >Configurable</span
+              >
+            </div>
+          </div>
+
+          <div class="perm-group">
+            <div class="perm-group-title">
+              <i class="bi bi-house me-1"></i>Tenant Portal
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Lease Details</div>
+                <div class="perm-desc">
+                  See their lease terms, dates, and amount
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_view_lease"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Pay Rent Online</div>
+                <div class="perm-desc">
+                  Make rent payments via MoMo, bank, etc.
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_pay_rent"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Payment History</div>
+                <div class="perm-desc">See past payment records</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_payment_history"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Submit Maintenance Requests</div>
+                <div class="perm-desc">Report issues to their landlord</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_maintenance"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">View Announcements</div>
+                <div class="perm-desc">
+                  Read messages from landlord and platform
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_announcements"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Message Landlord</div>
+                <div class="perm-desc">
+                  Direct messaging with their landlord
+                </div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_messages"
+                checked
+              />
+            </div>
+            <div class="perm-row">
+              <div>
+                <div class="perm-label">Download Receipts</div>
+                <div class="perm-desc">Export payment receipts as PDF</div>
+              </div>
+              <input
+                type="checkbox"
+                class="perm-check"
+                id="t_receipts"
+                checked
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Save footer -->
+        <div class="d-flex justify-content-end gap-2 mt-2 mb-4">
+          <button
+            class="btn btn-outline-secondary"
+            onclick="AdminRoles.resetToDefaults()"
+          >
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Reset to Defaults
+          </button>
+          <button class="btn btn-purple" onclick="AdminRoles.saveAll()">
+            <i class="bi bi-save me-1"></i>Save All Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      document.getElementById("overlay").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      });
+      AdminRoles.init();
+    </script>
+  </body>
+</html>

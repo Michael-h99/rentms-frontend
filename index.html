@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RentMS | Free Smart Property & Rent Management for Ghana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+  </head>
+  <body class="dark-mode">
+    <!-- ── HEADER ── -->
+    <header id="main-header">
+      <div class="container">
+        <nav class="nav-container">
+          <a href="index.html" class="logo">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>RentMS</span>
+          </a>
+          <button class="mobile-nav-toggle" aria-label="Toggle Menu">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <div class="nav-actions">
+            <a href="auth/login.html" class="btn btn-secondary">Login</a>
+            <a href="auth/register.html" class="btn btn-primary">Get Started</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ── HERO ── -->
+      <section class="hero">
+        <div class="container">
+          <div class="hero-content reveal">
+            <span class="badge">100% Free Early Access</span>
+            <h1>Smart Property Management<br />for Modern Ghana</h1>
+            <p>
+              Experience the full power of RentMS at no cost. Manage payments,
+              tenants, and maintenance through our secure, cloud-based platform.
+            </p>
+            <div class="hero-mini-badges">
+              <span>💬 Messaging</span>
+              <span>🛠️ Maintenance</span>
+              <span>📄 PDF Receipts</span>
+              <span>📊 Analytics</span>
+              <span>🔑 Invite Codes</span>
+            </div>
+            <div class="hero-btns">
+              <a href="auth/register.html" class="btn btn-primary btn-lg"
+                >Create Your Free Account</a
+              >
+              <a href="#how-it-works" class="btn btn-secondary btn-lg"
+                >See How It Works</a
+              >
+            </div>
+          </div>
+
+          <!-- Stats bar -->
+          <div class="hero-stats reveal">
+            <div class="hero-stat">
+              <span class="hero-stat-num">500+</span>
+              <span class="hero-stat-label">Properties Managed</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">1,200+</span>
+              <span class="hero-stat-label">Active Tenants</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">GHS 2M+</span>
+              <span class="hero-stat-label">Rent Collected</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">100%</span>
+              <span class="hero-stat-label">Free Forever</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FEATURES ── -->
+      <section id="features" class="section-padding">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="badge">Features</span>
+            <h2>Everything You Need, Built-In</h2>
+            <p>
+              Our all-in-one system handles the heavy lifting so you can focus
+              on your properties.
+            </p>
+          </div>
+          <div class="features-grid">
+            <div class="feature-card reveal">
+              <div class="feature-icon">💳</div>
+              <h3>Rent Management</h3>
+              <p>
+                Track due dates and process Mobile Money payments (MTN, Telecel)
+                instantly. Automated reminders sent to tenants before rent is
+                due.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">🛠️</div>
+              <h3>Maintenance Tracking</h3>
+              <p>
+                Tenants report issues with photos. Landlords assign, monitor,
+                and resolve maintenance requests in real-time from any device.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">📄</div>
+              <h3>Digital PDF Receipts</h3>
+              <p>
+                Professional receipts automatically generated and emailed for
+                every transaction. No more handwritten receipts or disputes.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">💬</div>
+              <h3>Direct Messaging</h3>
+              <p>
+                Built-in group chat per plaza. Landlords can broadcast
+                announcements or message tenants directly — no WhatsApp needed.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">🏢</div>
+              <h3>Plaza Control</h3>
+              <p>
+                Organize multiple units into plazas. Track occupancy, lease
+                expiry, and rental history for every unit at a glance.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">📊</div>
+              <h3>Analytics & Reports</h3>
+              <p>
+                Visual dashboards showing revenue trends, occupancy rates, and
+                payment history. Export reports as PDF or CSV anytime.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">🔑</div>
+              <h3>Invite Code System</h3>
+              <p>
+                Generate secure invite codes per unit. Tenants join your plaza
+                instantly — no manual setup, no paperwork.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">🔔</div>
+              <h3>Smart Notifications</h3>
+              <p>
+                Automated alerts for rent due dates, maintenance updates, lease
+                renewals, and payment confirmations for both parties.
+              </p>
+            </div>
+            <div class="feature-card reveal">
+              <div class="feature-icon">🔒</div>
+              <h3>Secure & Private</h3>
+              <p>
+                Bank-grade encryption, role-based access control, and secure
+                authentication protect your data and your tenants' privacy.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── HOW IT WORKS ── -->
+      <section id="how-it-works" class="section-padding alternate-bg">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="badge">Process</span>
+            <h2>Getting Started is Simple</h2>
+            <p>
+              Whether you're a landlord managing plazas or a tenant paying rent,
+              we've streamlined the journey.
+            </p>
+          </div>
+          <div class="steps-grid">
+            <div class="step-card reveal">
+              <div class="step-icon-wrapper">
+                <span class="step-number">01</span>
+                <div class="step-icon">👤</div>
+              </div>
+              <h4>Create Account</h4>
+              <p>
+                Sign up as a Landlord or Tenant in under 60 seconds. Just your
+                name, email, and phone number.
+              </p>
+              <div class="step-actions">
+                <a href="auth/register.html" class="step-link"
+                  >Register Now →</a
+                >
+              </div>
+            </div>
+            <div class="step-card reveal" style="animation-delay: 0.1s">
+              <div class="step-icon-wrapper">
+                <span class="step-number">02</span>
+                <div class="step-icon">🏠</div>
+              </div>
+              <h4>Setup Your Plaza</h4>
+              <p>
+                Landlords create plazas and generate invite codes per unit.
+                Tenants join instantly using the code their landlord sends.
+              </p>
+              <div class="step-actions">
+                <a href="#features" class="step-link">See How Setup Works →</a>
+              </div>
+            </div>
+            <div class="step-card reveal" style="animation-delay: 0.2s">
+              <div class="step-icon-wrapper">
+                <span class="step-number">03</span>
+                <div class="step-icon">🚀</div>
+              </div>
+              <h4>Start Managing</h4>
+              <p>
+                Collect MoMo payments, send automated PDF receipts, track
+                maintenance, and message tenants — all in one place.
+              </p>
+              <div class="step-actions">
+                <a href="auth/login.html" class="btn btn-primary btn-sm"
+                  >Launch Dashboard</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ROLES ── -->
+      <section class="section-padding">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="badge">Who It's For</span>
+            <h2>Built for Both Sides</h2>
+            <p>
+              RentMS serves landlords and tenants equally — everyone gets their
+              own tailored dashboard.
+            </p>
+          </div>
+          <div class="roles-grid">
+            <div class="role-card reveal">
+              <div class="role-icon">🏠</div>
+              <h3>For Landlords</h3>
+              <ul class="role-list">
+                <li>Manage multiple plazas and units</li>
+                <li>Collect MoMo & card payments</li>
+                <li>Generate and email PDF receipts</li>
+                <li>Track maintenance requests</li>
+                <li>Broadcast announcements to tenants</li>
+                <li>View revenue reports and analytics</li>
+              </ul>
+              <a
+                href="auth/register.html"
+                class="btn btn-primary"
+                style="width: 100%; text-align: center; margin-top: auto"
+                >Start as Landlord</a
+              >
+            </div>
+            <div class="role-card reveal" style="animation-delay: 0.15s">
+              <div class="role-icon">🪪</div>
+              <h3>For Tenants</h3>
+              <ul class="role-list">
+                <li>Pay rent via MoMo in seconds</li>
+                <li>Download payment receipts anytime</li>
+                <li>Submit and track maintenance issues</li>
+                <li>View lease details and history</li>
+                <li>Receive payment reminders</li>
+                <li>Message landlord directly</li>
+              </ul>
+              <a
+                href="auth/register.html"
+                class="btn btn-secondary"
+                style="width: 100%; text-align: center; margin-top: auto"
+                >Join as Tenant</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── PRICING ── -->
+      <section id="pricing" class="section-padding alternate-bg">
+        <div class="container">
+          <div class="section-header reveal">
+            <span class="badge">Pricing</span>
+            <h2>Simple, Honest Pricing</h2>
+            <p>No hidden fees. No credit card required. Full access forever.</p>
+          </div>
+          <div class="pricing-container reveal">
+            <div class="price-card popular">
+              <span class="badge">Full Access — No Catch</span>
+              <h3>Free Early Access</h3>
+              <div class="price-amount">₵0 <small>/ forever</small></div>
+              <p>
+                We are building the future of PropTech in Ghana. Join now and
+                keep your premium access free.
+              </p>
+              <ul class="price-list">
+                <li>Unlimited Units & Tenants</li>
+                <li>MoMo & Card Payment Integration</li>
+                <li>Maintenance Tracking & Messaging</li>
+                <li>Automated PDF Receipts</li>
+                <li>Analytics & Reports</li>
+                <li>Priority Support</li>
+              </ul>
+              <a
+                href="auth/register.html"
+                class="btn btn-primary"
+                style="width: 100%; text-align: center"
+                >Start Managing for Free</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CONTACT ── -->
+      <section id="contact" class="section-padding">
+        <div class="container">
+          <div class="contact-grid">
+            <div class="contact-text reveal">
+              <span class="badge">Support</span>
+              <h2>Get in Touch</h2>
+              <p>
+                Need help setting up your plaza? Have a question or suggestion?
+                Our Accra-based team is happy to help.
+              </p>
+              <div class="contact-details">
+                <div class="contact-item">
+                  <span class="contact-icon">📧</span>
+                  <div>
+                    <strong>Email</strong>
+                    <p>support@rentms.com</p>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <span class="contact-icon">📍</span>
+                  <div>
+                    <strong>Location</strong>
+                    <p>Spintex Road, Accra, Ghana</p>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <span class="contact-icon">⏰</span>
+                  <div>
+                    <strong>Support Hours</strong>
+                    <p>Mon – Fri, 8am – 6pm GMT</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <form class="contact-form reveal">
+              <input type="text" name="name" placeholder="Your Name" required />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                required
+              />
+              <select name="subject">
+                <option value="" disabled selected>Topic (optional)</option>
+                <option>Getting Started</option>
+                <option>Technical Issue</option>
+                <option>Payment Question</option>
+                <option>Feature Request</option>
+                <option>Other</option>
+              </select>
+              <textarea
+                name="message"
+                placeholder="Your Message"
+                rows="5"
+                required
+              ></textarea>
+              <button type="submit" class="btn btn-primary">
+                Send Message
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ── FOOTER ── -->
+    <footer class="section-padding alternate-bg">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a href="index.html" class="logo">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>RentMS</span>
+            </a>
+            <p>
+              Smart property management for modern Ghana. Free, secure, and
+              built for landlords and tenants alike.
+            </p>
+          </div>
+          <div class="footer-links-group">
+            <h5>Product</h5>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#pricing">Pricing</a>
+          </div>
+          <div class="footer-links-group">
+            <h5>Account</h5>
+            <a href="auth/login.html">Login</a>
+            <a href="auth/register.html">Register</a>
+          </div>
+          <div class="footer-links-group">
+            <h5>Support</h5>
+            <a href="#contact">Contact Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 RentMS Ghana. All rights reserved.</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted)"></p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

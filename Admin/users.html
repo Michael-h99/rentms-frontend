@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Users | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      /* ── Kill Bootstrap white backgrounds ── */
+      .form-control,
+      .form-select {
+        background: var(--bg-input) !important;
+        color: var(--text-main) !important;
+        border-color: var(--border) !important;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        background: var(--bg-input) !important;
+        border-color: var(--primary) !important;
+        box-shadow: none !important;
+      }
+      .form-control::placeholder {
+        color: var(--text-muted) !important;
+        opacity: 1;
+      }
+      .input-group-text {
+        background: var(--bg-input) !important;
+        border-color: var(--border) !important;
+        color: var(--text-muted) !important;
+      }
+      .table {
+        background: transparent !important;
+        color: var(--text-main) !important;
+      }
+      .table > :not(caption) > * > * {
+        background: transparent !important;
+        color: var(--text-main) !important;
+        border-color: var(--border) !important;
+      }
+      .table thead th {
+        background: var(--bg-card) !important;
+        color: var(--text-muted) !important;
+        border-color: var(--border) !important;
+      }
+      .table tbody tr:hover > * {
+        background: rgba(37, 99, 235, 0.05) !important;
+      }
+      .card,
+      .card-body {
+        background: var(--bg-card) !important;
+      }
+      .modal-content {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+      }
+      .modal-header,
+      .modal-footer {
+        background: var(--bg-card) !important;
+        border-color: var(--border) !important;
+      }
+      .modal-body {
+        background: var(--bg-card) !important;
+        color: var(--text-main) !important;
+      }
+      .btn-close {
+        filter: invert(1) brightness(0.7);
+      }
+      .btn-close:hover {
+        filter: invert(1) brightness(1);
+      }
+
+      /* ── Bootstrap colour utilities → theme vars ── */
+      .text-muted {
+        color: var(--text-muted) !important;
+      }
+      .text-primary {
+        color: var(--primary) !important;
+      }
+      .text-success {
+        color: var(--success-text) !important;
+      }
+      .text-danger {
+        color: var(--danger-text) !important;
+      }
+      h4,
+      h5 {
+        color: var(--text-main) !important;
+      }
+      .form-label {
+        color: var(--text-muted) !important;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      /* ── Page-specific ── */
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        color: #fff;
+      }
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+      }
+      .status-dot.active {
+        background: var(--success);
+      }
+      .status-dot.suspended {
+        background: var(--danger);
+      }
+      .status-dot.inactive {
+        background: var(--text-muted);
+      }
+
+      .stats-strip {
+        display: flex;
+        gap: 1px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .stats-strip-item {
+        flex: 1;
+        background: var(--bg-card);
+        padding: 14px 18px;
+        text-align: center;
+      }
+      .stats-strip-item:not(:last-child) {
+        border-right: 1px solid var(--border);
+      }
+      .ss-value {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--text-main);
+        line-height: 1;
+      }
+      .ss-label {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            style="font-size: 1.1rem; font-weight: 800; color: var(--purple)"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link active"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">User Management</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <a href="dashboard.html" class="topbar-btn" title="Dashboard"
+            ><i class="bi bi-grid"></i
+          ></a>
+          <a href="settings.html" class="topbar-btn" title="Settings"
+            ><i class="bi bi-gear"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Heading -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4
+              style="
+                font-weight: 800;
+                margin-bottom: 4px;
+                color: var(--text-main);
+              "
+            >
+              Users
+            </h4>
+            <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0">
+              Manage all platform users — landlords and tenants
+            </p>
+          </div>
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              onclick="AdminUsers.exportCsv()"
+            >
+              <i class="bi bi-download me-1"></i>Export
+            </button>
+            <button
+              class="btn btn-purple btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#inviteModal"
+            >
+              <i class="bi bi-person-plus me-1"></i>Invite User
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="stats-strip">
+          <div class="stats-strip-item">
+            <div class="ss-value" id="ssTotal">—</div>
+            <div class="ss-label">Total Users</div>
+          </div>
+          <div class="stats-strip-item">
+            <div
+              class="ss-value"
+              style="color: var(--primary)"
+              id="ssLandlords"
+            >
+              —
+            </div>
+            <div class="ss-label">Landlords</div>
+          </div>
+          <div class="stats-strip-item">
+            <div
+              class="ss-value"
+              style="color: var(--success-text)"
+              id="ssTenants"
+            >
+              —
+            </div>
+            <div class="ss-label">Tenants</div>
+          </div>
+          <div class="stats-strip-item">
+            <div
+              class="ss-value"
+              style="color: var(--danger-text)"
+              id="ssSuspended"
+            >
+              —
+            </div>
+            <div class="ss-label">Suspended</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar mb-3">
+          <div class="input-group" style="max-width: 280px">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input
+              type="text"
+              class="form-control"
+              id="userSearch"
+              placeholder="Search name or email…"
+              oninput="AdminUsers.filter()"
+            />
+          </div>
+          <select
+            class="form-select"
+            id="roleFilter"
+            onchange="AdminUsers.filter()"
+            style="max-width: 150px"
+          >
+            <option value="">All Roles</option>
+            <option value="landlord">Landlord</option>
+            <option value="tenant">Tenant</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select
+            class="form-select"
+            id="statusFilter"
+            onchange="AdminUsers.filter()"
+            style="max-width: 160px"
+          >
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            onclick="AdminUsers.clearFilters()"
+          >
+            <i class="bi bi-x-circle me-1"></i>Clear
+          </button>
+        </div>
+
+        <!-- Table -->
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 44px"></th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Phone</th>
+                  <th>Joined</th>
+                  <th>Last Login</th>
+                  <th>Status</th>
+                  <th style="width: 120px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody">
+                <tr>
+                  <td colspan="9">
+                    <div class="empty-state" style="padding: 32px">
+                      <i class="bi bi-hourglass"></i>
+                      <p>Loading users…</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="border-top: 1px solid var(--border); padding: 12px 20px">
+            <div
+              class="d-flex align-items-center justify-content-between flex-wrap gap-2"
+            >
+              <span
+                style="font-size: 0.8rem; color: var(--text-muted)"
+                id="usersPaginInfo"
+                >—</span
+              >
+              <div class="d-flex gap-1" id="usersPaginNav"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View User Modal -->
+    <div class="modal fade" id="viewUserModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="font-weight: 800">User Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" id="viewUserBody" style="padding: 24px">
+            <div class="text-center py-3">
+              <i
+                class="bi bi-hourglass"
+                style="font-size: 1.5rem; color: var(--text-muted)"
+              ></i>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline-danger btn-sm"
+              id="suspendBtn"
+              onclick="AdminUsers.toggleStatusModal()"
+            >
+              Suspend
+            </button>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite Modal -->
+    <div class="modal fade" id="inviteModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="font-weight: 800">
+              <i
+                class="bi bi-person-plus-fill me-2"
+                style="color: var(--primary)"
+              ></i
+              >Invite User
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" style="padding: 24px">
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-control"
+                id="inviteEmail"
+                placeholder="user@example.com"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Role</label>
+              <select class="form-select" id="inviteRole">
+                <option value="landlord">Landlord</option>
+                <option value="tenant">Tenant</option>
+              </select>
+            </div>
+            <div id="inviteMsg"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn btn-purple btn-sm"
+              onclick="AdminUsers.sendInvite()"
+            >
+              <i class="bi bi-send me-1"></i>Send Invite
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      document.getElementById("overlay").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      });
+      AdminUsers.init();
+    </script>
+  </body>
+</html>

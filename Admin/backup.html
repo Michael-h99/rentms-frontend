@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Backup &amp; Restore | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      /* Bootstrap utility overrides for dark theme */
+      .text-muted {
+        color: var(--text-muted) !important;
+      }
+      .text-primary {
+        color: var(--primary) !important;
+      }
+
+      .setting-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .setting-row:last-child {
+        border-bottom: none;
+      }
+
+      /* setting-title had no colour set — invisible on dark bg */
+      .setting-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+      .setting-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+      .bk-progress-wrap {
+        background: var(--border);
+        border-radius: 8px;
+        height: 8px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+      .bk-progress-bar {
+        height: 100%;
+        border-radius: 8px;
+        background: linear-gradient(90deg, var(--primary), var(--purple));
+        transition: width 0.2s;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            style="font-size: 1.1rem; font-weight: 800; color: var(--purple)"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link active"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">Backup &amp; Restore</span>
+        </div>
+        <span class="admin-badge-top"
+          ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+        >
+      </div>
+
+      <div class="content">
+        <!-- Info banner -->
+        <div
+          style="
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.25);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            font-size: 0.875rem;
+            color: #60a5fa;
+            margin-bottom: 24px;
+          "
+        >
+          <i class="bi bi-info-circle-fill me-2"></i>Backups include all users,
+          plazas, leases, payments, maintenance records and settings. Files are
+          encrypted at rest.
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="bi bi-archive-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="bkTotal">—</div>
+                <div class="stat-label">Total Backups</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="bkCompleted">—</div>
+                <div class="stat-label">Successful</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="bi bi-x-circle-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="bkFailed">—</div>
+                <div class="stat-label">Failed</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon purple"><i class="bi bi-hdd-fill"></i></div>
+              <div>
+                <div class="stat-value" id="bkSize">—</div>
+                <div class="stat-label">Latest Size</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <!-- Create Backup -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header-custom">
+                <h6>
+                  <i
+                    class="bi bi-cloud-arrow-up-fill me-2"
+                    style="color: var(--primary)"
+                  ></i
+                  >Create Backup
+                </h6>
+              </div>
+              <div style="padding: 24px">
+                <p
+                  style="
+                    font-size: 0.875rem;
+                    color: var(--text-muted);
+                    margin-bottom: 20px;
+                  "
+                >
+                  Generate a full snapshot of the platform database. Recommended
+                  before any major changes.
+                </p>
+                <div class="mb-3">
+                  <label class="form-label">Label (optional)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="backupLabel"
+                    placeholder="e.g. Pre-migration snapshot"
+                  />
+                </div>
+                <div
+                  id="backupProgress"
+                  style="display: none; margin-bottom: 16px"
+                >
+                  <div
+                    class="d-flex justify-content-between mb-1"
+                    style="font-size: 0.78rem; color: var(--text-muted)"
+                  >
+                    <span>Creating backup…</span><span id="backupPct">0%</span>
+                  </div>
+                  <div class="bk-progress-wrap">
+                    <div
+                      class="bk-progress-bar"
+                      id="backupBar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                </div>
+                <button
+                  class="btn btn-primary w-100"
+                  id="createBackupBtn"
+                  onclick="AdminBackup.createBackup()"
+                >
+                  <i class="bi bi-cloud-arrow-up-fill me-2"></i>Create Backup
+                  Now
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Auto-Backup Schedule -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header-custom">
+                <h6>
+                  <i
+                    class="bi bi-clock-history me-2"
+                    style="color: var(--purple)"
+                  ></i
+                  >Auto-Backup Schedule
+                </h6>
+              </div>
+              <div style="padding: 24px">
+                <div class="mb-3">
+                  <label class="form-label">Frequency</label>
+                  <select class="form-select" id="backupFreq">
+                    <option value="daily" selected>Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="off">Off</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Time (server timezone)</label>
+                  <input
+                    type="time"
+                    class="form-control"
+                    id="backupTime"
+                    value="03:00"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Retain Backups For</label>
+                  <select class="form-select" id="backupRetain">
+                    <option value="7">7 days</option>
+                    <option value="30" selected>30 days</option>
+                    <option value="90">90 days</option>
+                    <option value="365">1 year</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <!-- .setting-title now has color:var(--text-main) in CSS above -->
+                    <div class="setting-title">
+                      Email notification on backup
+                    </div>
+                    <div class="setting-desc">
+                      Send confirmation email after each backup
+                    </div>
+                  </div>
+                  <div class="form-check form-switch">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="backupEmailNotif"
+                      checked
+                    />
+                  </div>
+                </div>
+                <button
+                  class="btn btn-outline-primary w-100 mt-3"
+                  onclick="AdminBackup.saveSchedule()"
+                >
+                  <i class="bi bi-floppy me-1"></i>Save Schedule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup history table -->
+        <div class="card" style="overflow: hidden; padding: 0">
+          <div class="card-header-custom">
+            <h6><i class="bi bi-archive-fill me-2"></i>Backup History</h6>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Label</th>
+                  <th>Date &amp; Time</th>
+                  <th>Size</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="backupsBody">
+                <tr>
+                  <td colspan="6">
+                    <div class="empty-state" style="padding: 28px">
+                      <i class="bi bi-hourglass"></i>
+                      <p>Loading…</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restore Modal -->
+    <div class="modal fade" id="restoreModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div
+            class="modal-header"
+            style="
+              background: rgba(245, 158, 11, 0.15);
+              border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            "
+          >
+            <h5 class="modal-title" style="color: var(--warning-text)">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm
+              Restore
+            </h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="restoreBody">
+            <p
+              style="
+                font-size: 0.875rem;
+                margin-bottom: 16px;
+                color: var(--text-main);
+              "
+            >
+              This will overwrite all current live data.
+              <strong>All changes since this backup will be lost.</strong>
+            </p>
+            <div>
+              <label class="form-label">Admin password to confirm</label>
+              <input
+                type="password"
+                class="form-control"
+                id="restorePass"
+                placeholder="Your password"
+              />
+            </div>
+          </div>
+          <div id="restoreMsg"></div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              class="btn btn-warning"
+              onclick="AdminBackup.confirmRestore()"
+            >
+              <i class="bi bi-clock-history me-1"></i>Restore Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      document.getElementById("overlay").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      });
+      AdminBackup.init();
+    </script>
+  </body>
+</html>

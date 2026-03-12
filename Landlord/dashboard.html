@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Landlord Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/landlord.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+              line-height: 1;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link active"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> My Plazas</a
+        >
+        <a href="tenants.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Tenants</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance
+          <span class="nav-badge" id="maintBadge" style="display: none"></span
+        ></a>
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Landlord
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Landlord
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Dashboard</span>
+        <div class="d-flex align-items-center gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+          <a href="messages.html" class="topbar-btn"
+            ><i class="bi bi-chat-dots"></i
+          ></a>
+          <a href="profile.html" class="topbar-btn"
+            ><i class="bi bi-person"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4 class="fw-bold mb-1" style="color: var(--text-main)">
+              Welcome back 👋
+            </h4>
+            <p class="text-muted mb-0" style="font-size: 0.875rem">
+              Here's an overview of your properties.
+            </p>
+          </div>
+          <a href="plazas.html" class="btn btn-primary btn-sm px-3"
+            ><i class="bi bi-plus-lg me-1"></i> Add Plaza</a
+          >
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="bi bi-buildings"></i></div>
+              <div>
+                <div class="stat-value" id="statPlazas">0</div>
+                <div class="stat-label">Total Plazas</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statTenants">0</div>
+                <div class="stat-label">Active Tenants</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon yellow">
+                <i class="bi bi-cash-stack"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statRevenue">GHS 0.00</div>
+                <div class="stat-label">Revenue This Month</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon red"><i class="bi bi-tools"></i></div>
+              <div>
+                <div class="stat-value" id="statMaint">0</div>
+                <div class="stat-label">Pending Requests</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+          <div class="card-header-custom">
+            <span class="card-title-sm">Quick Actions</span>
+          </div>
+          <div class="card-body p-3">
+            <div class="row g-2">
+              <div class="col-6 col-md-2">
+                <a href="invite-codes.html" class="quick-action"
+                  ><i class="bi bi-key-fill"></i> Invite Tenant</a
+                >
+              </div>
+              <div class="col-6 col-md-2">
+                <a href="payments.html" class="quick-action"
+                  ><i class="bi bi-receipt"></i> View Payments</a
+                >
+              </div>
+              <div class="col-6 col-md-2">
+                <a href="maintenance.html" class="quick-action"
+                  ><i class="bi bi-tools"></i> Maintenance</a
+                >
+              </div>
+              <div class="col-6 col-md-2">
+                <a href="messages.html" class="quick-action"
+                  ><i class="bi bi-chat-dots-fill"></i> Group Chat</a
+                >
+              </div>
+              <div class="col-6 col-md-2">
+                <a href="announcement.html" class="quick-action"
+                  ><i class="bi bi-megaphone-fill"></i> Announce</a
+                >
+              </div>
+              <div class="col-6 col-md-2">
+                <a href="reports.html" class="quick-action"
+                  ><i class="bi bi-bar-chart-fill"></i> Reports</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <!-- Recent Payments -->
+          <div class="col-12 col-lg-7">
+            <div class="card">
+              <div class="card-header-custom">
+                <span class="card-title-sm">Recent Payments</span>
+                <a
+                  href="payments.html"
+                  class="btn btn-sm btn-outline-primary"
+                  style="font-size: 0.75rem"
+                  >View All</a
+                >
+              </div>
+              <div id="recentPayments">
+                <div class="empty-state">
+                  <i class="bi bi-credit-card"></i>
+                  <p>No payments yet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div class="col-12 col-lg-5">
+            <div class="card mb-3">
+              <div class="card-header-custom">
+                <span class="card-title-sm">Plaza Occupancy</span>
+                <a
+                  href="plazas.html"
+                  class="btn btn-sm btn-outline-primary"
+                  style="font-size: 0.75rem"
+                  >Details</a
+                >
+              </div>
+              <div id="occupancyList">
+                <div class="empty-state">
+                  <i class="bi bi-buildings"></i>
+                  <p>No plazas added yet</p>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header-custom">
+                <span class="card-title-sm">Maintenance Requests</span>
+                <a
+                  href="maintenance.html"
+                  class="btn btn-sm btn-outline-primary"
+                  style="font-size: 0.75rem"
+                  >View All</a
+                >
+              </div>
+              <div id="maintList">
+                <div class="empty-state">
+                  <i class="bi bi-tools"></i>
+                  <p>No maintenance requests</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script>
+      LandlordDashboard.init();
+    </script>
+  </body>
+</html>

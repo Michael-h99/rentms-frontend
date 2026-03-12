@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Maintenance | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      .form-control,
+      .form-select {
+        background: var(--bg-input) !important;
+        color: var(--text-main) !important;
+        border-color: var(--border) !important;
+      }
+      .form-control:focus,
+      .form-select:focus {
+        background: var(--bg-input) !important;
+        border-color: var(--primary) !important;
+      }
+      .input-group-text {
+        background: var(--bg-card) !important;
+        border-color: var(--border) !important;
+        color: var(--text-muted) !important;
+      }
+      .table {
+        background: transparent !important;
+      }
+      .table > :not(caption) > * > * {
+        background: transparent !important;
+        color: var(--text-main) !important;
+      }
+      .table thead th {
+        background: var(--bg-card) !important;
+        color: var(--text-muted) !important;
+      }
+      .table tbody tr:hover > * {
+        background: rgba(37, 99, 235, 0.04) !important;
+      }
+      .modal-content {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border) !important;
+      }
+      .modal-header,
+      .modal-footer {
+        background: var(--bg-card) !important;
+        border-color: var(--border) !important;
+      }
+      .modal-body {
+        background: var(--bg-card) !important;
+      }
+      .btn-close {
+        filter: invert(1) brightness(0.7);
+      }
+      .btn-close:hover {
+        filter: invert(1) brightness(1);
+      }
+      h4,
+      h5 {
+        color: var(--text-main) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            style="font-size: 1.1rem; font-weight: 800; color: var(--purple)"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link active"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+          >
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <!-- MAIN -->
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">Maintenance Oversight</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            onclick="AdminMaintenance.exportCsv()"
+          >
+            <i class="bi bi-download me-1"></i>Export
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon yellow">
+                <i class="bi bi-clock-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="maintStatOpen">—</div>
+                <div class="stat-label">Open</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="bi bi-hammer"></i></div>
+              <div>
+                <div class="stat-value" id="maintStatProgress">—</div>
+                <div class="stat-label">In Progress</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="maintStatResolved">—</div>
+                <div class="stat-label">Resolved</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="bi bi-exclamation-circle-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="maintStatHigh">—</div>
+                <div class="stat-label">High Priority</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar mb-3">
+          <div class="input-group" style="max-width: 300px; flex: 1">
+            <span
+              class="input-group-text"
+              style="
+                border-radius: 10px 0 0 10px;
+                border: 1.5px solid var(--border);
+                border-right: none;
+                padding: 0.6rem 0.9rem;
+              "
+            >
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              id="maintSearch"
+              placeholder="Title, tenant…"
+              oninput="AdminMaintenance.filter()"
+              style="border-radius: 0 10px 10px 0 !important"
+            />
+          </div>
+          <select
+            class="form-select"
+            id="maintStatus"
+            onchange="AdminMaintenance.filter()"
+            style="max-width: 155px"
+          >
+            <option value="">All Status</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+          <select
+            class="form-select"
+            id="maintPriority"
+            onchange="AdminMaintenance.filter()"
+            style="max-width: 145px"
+          >
+            <option value="">All Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            onclick="AdminMaintenance.filter()"
+          >
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+
+        <!-- Table -->
+        <div class="card" style="overflow: hidden; padding: 0">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Issue</th>
+                  <th>Tenant</th>
+                  <th>Plaza / Unit</th>
+                  <th>Category</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="maintBody">
+                <tr>
+                  <td colspan="8">
+                    <div class="empty-state" style="padding: 32px">
+                      <i class="bi bi-hourglass"></i>
+                      <p>Loading…</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-between px-4 py-3"
+            style="border-top: 1px solid var(--border)"
+          >
+            <span
+              style="font-size: 0.78rem; color: var(--text-muted)"
+              id="maintPaginInfo"
+              >—</span
+            >
+            <div id="maintPaginNav" class="d-flex gap-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance Detail Modal -->
+    <div class="modal fade" id="maintDetailModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-tools me-2"></i>Maintenance Request
+            </h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="maintDetailBody"></div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="AdminMaintenance.saveFromModal()"
+            >
+              <i class="bi bi-floppy me-1"></i>Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      document.getElementById("overlay").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("overlay").classList.remove("show");
+      });
+      AdminMaintenance.init();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Make Payment | Tenant Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/tenant.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ── Sidebar ── -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="payments.html" class="nav-link active"
+          ><i class="bi bi-credit-card-fill"></i> Make Payment</a
+        >
+        <a href="payment-history.html" class="nav-link"
+          ><i class="bi bi-clock-history"></i> Payment History</a
+        >
+        <a href="lease.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> My Lease</a
+        >
+        <div class="nav-section">Support</div>
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Tenant
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Tenant
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Make Payment</span>
+        <a href="notifications.html" class="topbar-btn"
+          ><i class="bi bi-bell"></i
+        ></a>
+      </div>
+
+      <div class="content">
+        <div class="row justify-content-center">
+          <div class="col-lg-7 col-xl-6">
+            <!-- Balance summary -->
+            <div class="card mb-4 p-4">
+              <div
+                class="d-flex align-items-center justify-content-between mb-3"
+              >
+                <h6 style="font-weight: 800; margin: 0">Current Balance</h6>
+                <span id="balStatusBadge"></span>
+              </div>
+              <div class="row g-2">
+                <div class="col-4">
+                  <div class="bal-pill">
+                    <div class="label">Amount Due</div>
+                    <div class="value danger" id="balAmountDue">GHS 0</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="bal-pill">
+                    <div class="label">Due Date</div>
+                    <div class="value" id="balDueDate">—</div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="bal-pill">
+                    <div class="label">Monthly Rent</div>
+                    <div class="value" id="balRent">GHS 0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment flow card -->
+            <div class="card p-4" style="position: relative; overflow: hidden">
+              <!-- Processing overlay -->
+              <div class="processing-overlay" id="processingOverlay">
+                <div class="spinner-ring"></div>
+                <div
+                  style="
+                    color: var(--text-muted);
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                  "
+                >
+                  Processing payment…
+                </div>
+              </div>
+
+              <!-- Step indicator -->
+              <div class="step-bar" id="stepBar">
+                <div class="step-item active" id="si1">
+                  <div class="step-dot">1</div>
+                  <div class="step-label">Amount</div>
+                </div>
+                <div class="step-item" id="si2">
+                  <div class="step-dot">2</div>
+                  <div class="step-label">Method</div>
+                </div>
+                <div class="step-item" id="si3">
+                  <div class="step-dot">3</div>
+                  <div class="step-label">Pay</div>
+                </div>
+              </div>
+
+              <!-- ── STEP 1: amount & type ── -->
+              <div id="step1">
+                <div class="mb-1 fw-bold" style="font-size: 1rem">
+                  Payment Details
+                </div>
+                <div
+                  style="
+                    font-size: 0.82rem;
+                    color: var(--text-muted);
+                    margin-bottom: 20px;
+                  "
+                >
+                  Confirm what you're paying for
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Amount (GHS) *</label>
+                  <div class="input-group">
+                    <span
+                      class="input-group-text"
+                      style="font-weight: 800; color: var(--primary)"
+                      >GHS</span
+                    >
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="payAmount"
+                      placeholder="0.00"
+                      min="1"
+                      step="0.01"
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Payment For</label>
+                  <select class="form-select" id="payType">
+                    <option value="rent">Monthly Rent</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="maintenance_fee">Maintenance Fee</option>
+                    <option value="deposit">Security Deposit</option>
+                    <option value="arrears">Rent Arrears</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label fw-semibold"
+                    >Note
+                    <span style="color: var(--text-muted); font-weight: 400"
+                      >(optional)</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="payNote"
+                    placeholder="e.g. January 2026 rent"
+                  />
+                </div>
+                <button class="btn btn-primary w-100" onclick="nextStep()">
+                  Continue <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+              </div>
+
+              <!-- ── STEP 2: choose method ── -->
+              <div id="step2" style="display: none">
+                <div class="mb-1 fw-bold" style="font-size: 1rem">
+                  Choose Payment Method
+                </div>
+                <div
+                  style="
+                    font-size: 0.82rem;
+                    color: var(--text-muted);
+                    margin-bottom: 16px;
+                  "
+                >
+                  Select how you'd like to pay
+                </div>
+                <div class="amount-banner">
+                  <span
+                    style="
+                      font-size: 0.82rem;
+                      color: var(--text-muted);
+                      font-weight: 600;
+                    "
+                    >Paying</span
+                  >
+                  <span
+                    style="
+                      font-size: 1.2rem;
+                      font-weight: 800;
+                      color: var(--primary);
+                    "
+                    id="s2Amount"
+                    >GHS 0.00</span
+                  >
+                </div>
+
+                <div class="method-grid mb-4" id="methodGrid">
+                  <!-- MTN MoMo -->
+                  <div
+                    class="method-card"
+                    id="mc-mtn"
+                    onclick="selectMethod('mtn')"
+                  >
+                    <div class="check"><i class="bi bi-check-lg"></i></div>
+                    <div class="mi">📱</div>
+                    <div class="ml">MTN MoMo</div>
+                    <div class="mc" id="mtn-preview">Mobile Money</div>
+                  </div>
+                  <!-- Telecel / Vodafone Cash -->
+                  <div
+                    class="method-card"
+                    id="mc-voda"
+                    onclick="selectMethod('voda')"
+                  >
+                    <div class="check"><i class="bi bi-check-lg"></i></div>
+                    <div class="mi">📲</div>
+                    <div class="ml">Telecel Cash</div>
+                    <div class="mc" id="voda-preview">Mobile Money</div>
+                  </div>
+                  <!-- AT Money -->
+                  <div
+                    class="method-card"
+                    id="mc-at"
+                    onclick="selectMethod('at')"
+                  >
+                    <div class="check"><i class="bi bi-check-lg"></i></div>
+                    <div class="mi">📡</div>
+                    <div class="ml">AT Money</div>
+                    <div class="mc" id="at-preview">Mobile Money</div>
+                  </div>
+                  <!-- Debit/Credit Card -->
+                  <div
+                    class="method-card"
+                    id="mc-card"
+                    onclick="selectMethod('card')"
+                  >
+                    <div class="check"><i class="bi bi-check-lg"></i></div>
+                    <div class="mi">💳</div>
+                    <div class="ml">Card Payment</div>
+                    <div class="mc">Visa / MasterCard</div>
+                  </div>
+                  <!-- Bank Transfer -->
+                  <div
+                    class="method-card"
+                    id="mc-bank"
+                    onclick="selectMethod('bank')"
+                  >
+                    <div class="check"><i class="bi bi-check-lg"></i></div>
+                    <div class="mi">🏦</div>
+                    <div class="ml">Bank Transfer</div>
+                    <div class="mc" id="bank-preview">Direct transfer</div>
+                  </div>
+                  <!-- Cash -->
+                  <div
+                    class="method-card"
+                    id="mc-cash"
+                    onclick="selectMethod('cash')"
+                  >
+                    <div class="check"><i class="bi bi-check-lg"></i></div>
+                    <div class="mi">💵</div>
+                    <div class="ml">Cash Payment</div>
+                    <div class="mc">Hand to landlord</div>
+                  </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn btn-secondary flex-fill"
+                    onclick="prevStep()"
+                  >
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                  </button>
+                  <button
+                    class="btn btn-primary flex-fill"
+                    onclick="nextStep()"
+                  >
+                    Continue <i class="bi bi-arrow-right ms-1"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── STEP 3: payment details ── -->
+              <div id="step3" style="display: none">
+                <div class="mb-1 fw-bold" style="font-size: 1rem" id="s3Title">
+                  Complete Payment
+                </div>
+                <div
+                  style="
+                    font-size: 0.82rem;
+                    color: var(--text-muted);
+                    margin-bottom: 20px;
+                  "
+                  id="s3Sub"
+                >
+                  Follow the instructions below
+                </div>
+
+                <!-- MoMo panel -->
+                <div id="panel-momo" style="display: none">
+                  <div class="momo-box">
+                    <div
+                      style="
+                        font-size: 0.75rem;
+                        color: var(--text-muted);
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 0.07em;
+                      "
+                    >
+                      Send
+                    </div>
+                    <div
+                      style="
+                        font-size: 1.3rem;
+                        font-weight: 800;
+                        color: var(--primary);
+                        margin: 4px 0;
+                      "
+                      id="momoPayAmt"
+                    >
+                      GHS 0.00
+                    </div>
+                    <div
+                      style="
+                        font-size: 0.75rem;
+                        color: var(--text-muted);
+                        font-weight: 600;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      to this number
+                    </div>
+                    <div class="momo-number" id="momoNum">—</div>
+                    <div
+                      style="
+                        font-size: 0.82rem;
+                        color: var(--text-muted);
+                        margin-bottom: 8px;
+                      "
+                      id="momoAccName"
+                    ></div>
+                    <span class="momo-badge" id="momoBadge">MoMo</span>
+                    <br />
+                    <button
+                      class="copy-btn"
+                      id="copyBtn"
+                      onclick="copyMomoNum()"
+                    >
+                      <i class="bi bi-clipboard"></i> Copy Number
+                    </button>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Your Phone Number *</label
+                    >
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="momoPhone"
+                      placeholder="055 123 4567"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >MoMo Transaction ID *</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="momoTxId"
+                      placeholder="Enter reference ID from your MoMo app"
+                    />
+                    <div
+                      style="
+                        font-size: 0.72rem;
+                        color: var(--text-muted);
+                        margin-top: 5px;
+                      "
+                    >
+                      <i class="bi bi-info-circle me-1"></i>Send the money
+                      first, then paste the transaction reference here.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Card panel -->
+                <div id="panel-card" style="display: none">
+                  <div class="card-visual">
+                    <div class="card-chip"></div>
+                    <div class="card-num-display" id="cardNumDisplay">
+                      •••• •••• •••• ••••
+                    </div>
+                    <div class="card-bottom">
+                      <div>
+                        <div class="card-field-label">Card Holder</div>
+                        <div class="card-field-val" id="cardHolderDisplay">
+                          YOUR NAME
+                        </div>
+                      </div>
+                      <div>
+                        <div class="card-field-label">Expires</div>
+                        <div class="card-field-val" id="cardExpiryDisplay">
+                          MM/YY
+                        </div>
+                      </div>
+                      <div class="card-brand" id="cardBrandDisplay">VISA</div>
+                    </div>
+                  </div>
+                  <div class="row g-3 mb-3">
+                    <div class="col-12">
+                      <label class="form-label fw-semibold"
+                        >Card Number *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="cardNumber"
+                        placeholder="1234 5678 9012 3456"
+                        maxlength="19"
+                        oninput="
+                          fmtCard(this);
+                          updateCardDisplay();
+                        "
+                      />
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label fw-semibold"
+                        >Name on Card *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="cardHolder"
+                        placeholder="Full name as on card"
+                        oninput="updateCardDisplay()"
+                      />
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label fw-semibold">Expiry *</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="cardExpiry"
+                        placeholder="MM/YY"
+                        maxlength="5"
+                        oninput="
+                          fmtExpiry(this);
+                          updateCardDisplay();
+                        "
+                      />
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label fw-semibold">CVV *</label>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="cardCvv"
+                        placeholder="•••"
+                        maxlength="4"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 8px;
+                      background: rgba(16, 185, 129, 0.08);
+                      border: 1px solid rgba(16, 185, 129, 0.2);
+                      border-radius: 10px;
+                      padding: 10px 14px;
+                      margin-bottom: 16px;
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                    "
+                  >
+                    <i
+                      class="bi bi-shield-lock-fill"
+                      style="color: var(--success); font-size: 1rem"
+                    ></i>
+                    SSL 256-bit encrypted — your card details are secure
+                  </div>
+                </div>
+
+                <!-- Bank panel -->
+                <div id="panel-bank" style="display: none">
+                  <div
+                    style="
+                      background: var(--bg-body);
+                      border: 1px solid var(--border);
+                      border-radius: 14px;
+                      padding: 20px;
+                      margin-bottom: 16px;
+                    "
+                  >
+                    <div
+                      style="
+                        font-size: 0.7rem;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 0.07em;
+                        color: var(--text-muted);
+                        margin-bottom: 14px;
+                      "
+                    >
+                      Landlord Bank Details
+                    </div>
+                    <div class="bank-detail-row">
+                      <span>Bank Name</span><span id="bkName">—</span>
+                    </div>
+                    <div class="bank-detail-row">
+                      <span>Account Name</span><span id="bkAccName">—</span>
+                    </div>
+                    <div class="bank-detail-row">
+                      <span>Account Number</span>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="bank-acc-num" id="bkAccNum">—</span>
+                        <button
+                          class="copy-btn"
+                          style="
+                            padding: 3px 10px;
+                            margin-top: 0;
+                            font-size: 0.7rem;
+                          "
+                          onclick="
+                            copyText(
+                              document.getElementById('bkAccNum').textContent,
+                              this,
+                            )
+                          "
+                        >
+                          <i class="bi bi-clipboard"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="bank-detail-row">
+                      <span>Branch</span><span id="bkBranch">—</span>
+                    </div>
+                    <div class="bank-detail-row">
+                      <span>Swift / Sort Code</span><span id="bkSwift">—</span>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Bank Reference / Transaction ID *</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="bankRef"
+                      placeholder="Paste the reference from your bank"
+                    />
+                  </div>
+                  <div style="font-size: 0.72rem; color: var(--text-muted)">
+                    <i class="bi bi-info-circle me-1"></i>Make the transfer
+                    first, then enter the reference number here to confirm your
+                    payment.
+                  </div>
+                </div>
+
+                <!-- Cash panel -->
+                <div id="panel-cash" style="display: none">
+                  <div
+                    style="
+                      background: var(--warning-light);
+                      border: 1px solid rgba(245, 158, 11, 0.3);
+                      border-radius: 12px;
+                      padding: 14px 16px;
+                      margin-bottom: 16px;
+                      font-size: 0.85rem;
+                      color: var(--text-main);
+                    "
+                  >
+                    <i
+                      class="bi bi-info-circle me-2"
+                      style="color: var(--warning)"
+                    ></i>
+                    Hand cash directly to your landlord and record the date
+                    below.
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Date of Payment *</label
+                    >
+                    <input type="date" class="form-control" id="cashDate" />
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold"
+                      >Receipt / Note
+                      <span style="color: var(--text-muted); font-weight: 400"
+                        >(optional)</span
+                      ></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cashNote"
+                      placeholder="e.g. Paid at landlord's office"
+                    />
+                  </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                  <button
+                    class="btn btn-secondary flex-fill"
+                    onclick="prevStep()"
+                  >
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                  </button>
+                  <button
+                    class="btn btn-primary flex-fill"
+                    onclick="submitPayment()"
+                    id="paySubmitBtn"
+                  >
+                    <i class="bi bi-lock-fill me-1"></i> Confirm Payment
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── SUCCESS ── -->
+              <div
+                id="stepSuccess"
+                style="display: none; text-align: center; padding: 12px 0"
+              >
+                <div class="success-circle">
+                  <i
+                    class="bi bi-check-lg"
+                    style="font-size: 1.8rem; color: var(--success)"
+                  ></i>
+                </div>
+                <h5 style="font-weight: 800; margin-bottom: 8px">
+                  Payment Recorded!
+                </h5>
+                <p
+                  style="
+                    font-size: 0.875rem;
+                    color: var(--text-muted);
+                    margin-bottom: 20px;
+                  "
+                >
+                  Your payment has been submitted to your landlord for
+                  confirmation.
+                </p>
+                <div
+                  style="
+                    background: var(--bg-body);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px;
+                    margin-bottom: 20px;
+                    font-size: 0.9rem;
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.68rem;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      letter-spacing: 0.06em;
+                      color: var(--text-muted);
+                      margin-bottom: 6px;
+                    "
+                  >
+                    Payment Reference
+                  </div>
+                  <div
+                    style="
+                      font-family: monospace;
+                      font-weight: 800;
+                      font-size: 1rem;
+                      color: var(--primary);
+                    "
+                    id="payRef"
+                  >
+                    —
+                  </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-center">
+                  <a href="payment-history.html" class="btn btn-primary px-4"
+                    ><i class="bi bi-receipt me-1"></i> View History</a
+                  >
+                  <button class="btn btn-secondary" onclick="resetPayment()">
+                    New Payment
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- /card -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script src="../js/tenant.js"></script>
+    <script>
+      /* ── State ── */
+      let payStep = 1,
+        selectedMethod = null;
+      let PINFO = {}; // landlord payment info
+
+      /* ── Boot ── */
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Sidebar
+        const u = JSON.parse(localStorage.getItem("user") || "{}");
+        const sn = document.getElementById("sidebarName"),
+          sa = document.getElementById("sidebarAvatar");
+        if (sn && u.username) sn.textContent = u.username;
+        if (sa && u.username)
+          sa.textContent = u.username.charAt(0).toUpperCase();
+
+        // Set today for cash date
+        document.getElementById("cashDate").value = new Date()
+          .toISOString()
+          .split("T")[0];
+
+        // Load lease balance
+        await loadBalance();
+
+        // Load landlord payment info
+        await loadPaymentInfo();
+      });
+
+      async function loadBalance() {
+        try {
+          const res = await fetch("/api/tenant/dashboard", {
+            headers: {
+              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+            },
+          });
+          const data = await res.json();
+          const l = data?.lease;
+          if (!l) return;
+          const ghs = (n) =>
+            "GHS " +
+            parseFloat(n || 0).toLocaleString("en-GH", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+          const fmt = (d) =>
+            d
+              ? new Date(d).toLocaleDateString("en-GH", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "—";
+          document.getElementById("balAmountDue").textContent = ghs(
+            l.amount_due,
+          );
+          document.getElementById("balDueDate").textContent = fmt(
+            l.next_due_date,
+          );
+          document.getElementById("balRent").textContent = ghs(l.rent);
+          document.getElementById("payAmount").value = l.amount_due || "";
+          if (l.status) {
+            const map = {
+              paid: "success",
+              overdue: "danger",
+              pending: "warning",
+            };
+            const cls = map[l.status] || "secondary";
+            document.getElementById("balStatusBadge").innerHTML =
+              `<span class="badge-status" style="background:var(--${cls}-light);color:var(--${cls}-text)">${l.status}</span>`;
+          }
+        } catch {}
+      }
+
+      async function loadPaymentInfo() {
+        // Try API first, fall back to localStorage (landlord saves to PAYMENT_INFO key)
+        try {
+          const res = await fetch("/api/landlord/payment-info", {
+            headers: {
+              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+            },
+          });
+          const data = await res.json();
+          PINFO = data?.paymentInfo || {};
+        } catch {}
+
+        // Fallback: check localStorage (for local dev / same-device usage)
+        if (!Object.keys(PINFO).length) {
+          try {
+            PINFO = JSON.parse(localStorage.getItem("PAYMENT_INFO") || "{}");
+          } catch {}
+        }
+
+        // Populate method card previews
+        applyMethodAvailability();
+      }
+
+      function applyMethodAvailability() {
+        const methods = {
+          mtn: {
+            enabled: PINFO.mtn?.enabled,
+            preview: PINFO.mtn?.number || "Not configured",
+          },
+          voda: {
+            enabled: PINFO.voda?.enabled,
+            preview: PINFO.voda?.number || "Not configured",
+          },
+          at: {
+            enabled: PINFO.at?.enabled,
+            preview: PINFO.at?.number || "Not configured",
+          },
+          card: { enabled: PINFO["card-info"]?.enabled },
+          bank: {
+            enabled: PINFO.bank?.enabled,
+            preview: PINFO.bank?.bankName || "Not configured",
+          },
+          cash: { enabled: true },
+        };
+        Object.entries(methods).forEach(([key, cfg]) => {
+          const card = document.getElementById("mc-" + key);
+          if (!card) return;
+          if (cfg.enabled === false) card.classList.add("disabled");
+          else card.classList.remove("disabled");
+          const prev = document.getElementById(key + "-preview");
+          if (prev && cfg.preview) prev.textContent = cfg.preview;
+        });
+      }
+
+      /* ── Navigation ── */
+      function nextStep() {
+        if (payStep === 1) {
+          const amt = parseFloat(document.getElementById("payAmount").value);
+          if (!amt || amt <= 0) {
+            showAlert("Please enter a valid amount.");
+            return;
+          }
+          document.getElementById("s2Amount").textContent =
+            "GHS " + amt.toFixed(2);
+        }
+        if (payStep === 2) {
+          if (!selectedMethod) {
+            showAlert("Please select a payment method.");
+            return;
+          }
+          buildMethodPanel(selectedMethod);
+        }
+        payStep = Math.min(3, payStep + 1);
+        renderStepUI();
+      }
+
+      function prevStep() {
+        payStep = Math.max(1, payStep - 1);
+        renderStepUI();
+      }
+
+      function renderStepUI() {
+        [1, 2, 3].forEach((n) => {
+          document.getElementById("step" + n).style.display =
+            n === payStep ? "" : "none";
+          const si = document.getElementById("si" + n);
+          si.classList.remove("active", "done");
+          if (n < payStep) si.classList.add("done");
+          else if (n === payStep) si.classList.add("active");
+        });
+      }
+
+      /* ── Method selection ── */
+      function selectMethod(m) {
+        selectedMethod = m;
+        document
+          .querySelectorAll(".method-card")
+          .forEach((c) => c.classList.remove("selected"));
+        document.getElementById("mc-" + m)?.classList.add("selected");
+      }
+
+      function buildMethodPanel(m) {
+        ["momo", "card", "bank", "cash"].forEach(
+          (p) => (document.getElementById("panel-" + p).style.display = "none"),
+        );
+        const amt =
+          "GHS " +
+          parseFloat(document.getElementById("payAmount").value || 0).toFixed(
+            2,
+          );
+
+        if (["mtn", "voda", "at"].includes(m)) {
+          document.getElementById("panel-momo").style.display = "";
+          const cfg =
+            { mtn: PINFO.mtn, voda: PINFO.voda, at: PINFO.at }[m] || {};
+          const badgeCls = { mtn: "mtn", voda: "voda", at: "at" }[m];
+          const badgeLbl = {
+            mtn: "MTN MoMo",
+            voda: "Telecel Cash",
+            at: "AT Money",
+          }[m];
+          document.getElementById("momoPayAmt").textContent = amt;
+          document.getElementById("momoNum").textContent = cfg.number || "—";
+          document.getElementById("momoAccName").textContent = cfg.name || "";
+          const badge = document.getElementById("momoBadge");
+          badge.textContent = badgeLbl;
+          badge.className = "momo-badge " + badgeCls;
+          document.getElementById("s3Title").textContent =
+            "Send via " + badgeLbl;
+          document.getElementById("s3Sub").textContent =
+            "Dial *170# (MTN) / *110# (Telecel) and send to the number below";
+        } else if (m === "card") {
+          document.getElementById("panel-card").style.display = "";
+          document.getElementById("s3Title").textContent = "Card Payment";
+          document.getElementById("s3Sub").textContent =
+            "Enter your card details below";
+        } else if (m === "bank") {
+          document.getElementById("panel-bank").style.display = "";
+          const b = PINFO.bank || {};
+          document.getElementById("bkName").textContent = b.bankName || "—";
+          document.getElementById("bkAccName").textContent = b.accName || "—";
+          document.getElementById("bkAccNum").textContent = b.accNumber || "—";
+          document.getElementById("bkBranch").textContent = b.branch || "—";
+          document.getElementById("bkSwift").textContent = b.swift || "—";
+          document.getElementById("s3Title").textContent = "Bank Transfer";
+          document.getElementById("s3Sub").textContent =
+            "Transfer to the account below and enter your reference";
+        } else if (m === "cash") {
+          document.getElementById("panel-cash").style.display = "";
+          document.getElementById("s3Title").textContent = "Cash Payment";
+          document.getElementById("s3Sub").textContent =
+            "Record the date you paid";
+        }
+      }
+
+      /* ── Copy helpers ── */
+      function copyMomoNum() {
+        const num = document.getElementById("momoNum").textContent;
+        copyText(num, document.getElementById("copyBtn"));
+      }
+      function copyText(text, btn) {
+        navigator.clipboard.writeText(text).then(() => {
+          btn.classList.add("copied");
+          btn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
+          setTimeout(() => {
+            btn.classList.remove("copied");
+            btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy Number';
+          }, 2000);
+        });
+      }
+
+      /* ── Card live update ── */
+      function fmtCard(inp) {
+        let v = inp.value.replace(/\D/g, "").slice(0, 16);
+        inp.value = v.match(/.{1,4}/g)?.join(" ") || v;
+      }
+      function fmtExpiry(inp) {
+        let v = inp.value.replace(/\D/g, "");
+        if (v.length >= 2) v = v.slice(0, 2) + "/" + v.slice(2, 4);
+        inp.value = v;
+      }
+      function updateCardDisplay() {
+        const num =
+          document.getElementById("cardNumber").value || "•••• •••• •••• ••••";
+        const raw = num.replace(/\s/g, "");
+        document.getElementById("cardNumDisplay").textContent = num;
+        document.getElementById("cardHolderDisplay").textContent = (
+          document.getElementById("cardHolder").value || "YOUR NAME"
+        ).toUpperCase();
+        document.getElementById("cardExpiryDisplay").textContent =
+          document.getElementById("cardExpiry").value || "MM/YY";
+        document.getElementById("cardBrandDisplay").textContent = /^4/.test(raw)
+          ? "VISA"
+          : /^5[1-5]/.test(raw)
+            ? "MC"
+            : /^3[47]/.test(raw)
+              ? "AMEX"
+              : /^62/.test(raw)
+                ? "UnionPay"
+                : "••••";
+      }
+
+      /* ── Submit ── */
+      async function submitPayment() {
+        const overlay = document.getElementById("processingOverlay");
+        overlay.classList.add("show");
+
+        // Basic validation
+        let valid = true;
+        if (
+          selectedMethod === "mtn" ||
+          selectedMethod === "voda" ||
+          selectedMethod === "at"
+        ) {
+          if (!document.getElementById("momoPhone").value.trim()) {
+            valid = false;
+            showAlert("Enter your phone number.");
+          }
+          if (!document.getElementById("momoTxId").value.trim()) {
+            valid = false;
+            showAlert("Enter the MoMo transaction ID.");
+          }
+        } else if (selectedMethod === "bank") {
+          if (!document.getElementById("bankRef").value.trim()) {
+            valid = false;
+            showAlert("Enter the bank reference.");
+          }
+        } else if (selectedMethod === "card") {
+          if (!document.getElementById("cardNumber").value.trim()) {
+            valid = false;
+            showAlert("Enter card number.");
+          }
+        }
+        if (!valid) {
+          overlay.classList.remove("show");
+          return;
+        }
+
+        // Simulate / API call
+        await new Promise((r) => setTimeout(r, 2000));
+
+        const ref = "RMS-" + Date.now().toString(36).toUpperCase();
+        overlay.classList.remove("show");
+        document.getElementById("payRef").textContent = ref;
+        [1, 2, 3].forEach((n) => {
+          document.getElementById("step" + n).style.display = "none";
+          document.getElementById("si" + n).classList.add("done");
+        });
+        document.getElementById("stepSuccess").style.display = "";
+      }
+
+      /* ── Reset ── */
+      function resetPayment() {
+        payStep = 1;
+        selectedMethod = null;
+        document.getElementById("payAmount").value = "";
+        document.getElementById("payNote").value = "";
+        document.getElementById("stepSuccess").style.display = "none";
+        document
+          .querySelectorAll(".method-card")
+          .forEach((c) => c.classList.remove("selected"));
+        renderStepUI();
+      }
+
+      function showAlert(msg) {
+        alert(msg);
+      }
+    </script>
+  </body>
+</html>

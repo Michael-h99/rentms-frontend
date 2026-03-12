@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Lease | Tenant Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/tenant.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Make Payment</a
+        >
+        <a href="payment-history.html" class="nav-link"
+          ><i class="bi bi-clock-history"></i> Payment History</a
+        >
+        <a href="lease.html" class="nav-link active"
+          ><i class="bi bi-file-text-fill"></i> My Lease</a
+        >
+        <div class="nav-section">Support</div>
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Tenant
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Tenant
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">My Lease</span>
+        <div class="d-flex gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+          <button
+            class="btn btn-outline-primary btn-sm"
+            onclick="window.print()"
+          >
+            <i class="bi bi-printer me-1"></i> Print
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <!-- Status banner -->
+            <div
+              class="card mb-4 p-4"
+              id="leaseBanner"
+              style="
+                background: linear-gradient(135deg, #052e16, #166534);
+                border-color: rgba(16, 185, 129, 0.3);
+              "
+            >
+              <div class="d-flex align-items-center gap-3">
+                <div
+                  style="
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 12px;
+                    background: rgba(16, 185, 129, 0.2);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <i
+                    class="bi bi-shield-check"
+                    style="font-size: 1.4rem; color: #34d399"
+                  ></i>
+                </div>
+                <div>
+                  <div
+                    style="font-size: 1rem; font-weight: 800; color: #fff"
+                    id="leaseStatusText"
+                  >
+                    Lease Active
+                  </div>
+                  <div
+                    style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.65)"
+                    id="leaseStatusSub"
+                  >
+                    Your tenancy is in good standing
+                  </div>
+                </div>
+                <span
+                  class="badge-status ms-auto"
+                  id="leaseStatusBadge"
+                  style="background: rgba(16, 185, 129, 0.2); color: #34d399"
+                  >Active</span
+                >
+              </div>
+            </div>
+
+            <!-- Unit details -->
+            <div class="lease-section">
+              <h6><i class="bi bi-building me-2"></i>Unit & Property</h6>
+              <div class="lease-row">
+                <span>Plaza Name</span><span id="lPlaza">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Unit</span><span id="lUnit">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Floor</span><span id="lFloor">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Unit Type</span><span id="lType">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Address</span><span id="lAddress">—</span>
+              </div>
+            </div>
+
+            <!-- Lease terms -->
+            <div class="lease-section">
+              <h6><i class="bi bi-calendar3 me-2"></i>Lease Terms</h6>
+              <div class="lease-row">
+                <span>Start Date</span><span id="lStart">—</span>
+              </div>
+              <div class="lease-row">
+                <span>End Date</span><span id="lEnd">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Duration</span><span id="lDuration">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Monthly Rent</span
+                ><span id="lRent" style="color: var(--primary); font-size: 1rem"
+                  >GHS 0</span
+                >
+              </div>
+              <div class="lease-row">
+                <span>Security Deposit</span><span id="lDeposit">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Payment Due Day</span
+                ><span id="lDueDay">1st of each month</span>
+              </div>
+              <div class="lease-row">
+                <span>Lease Type</span><span id="lLeaseType">—</span>
+              </div>
+            </div>
+
+            <!-- Landlord contact -->
+            <div class="lease-section">
+              <h6><i class="bi bi-person-fill me-2"></i>Landlord Contact</h6>
+              <div class="lease-row">
+                <span>Name</span><span id="lLandlordName">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Phone</span><span id="lLandlordPhone">—</span>
+              </div>
+              <div class="lease-row">
+                <span>Email</span><span id="lLandlordEmail">—</span>
+              </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="lease-section">
+              <h6><i class="bi bi-folder me-2"></i>Documents</h6>
+              <div class="d-flex gap-2 flex-wrap" id="docsList">
+                <div class="doc-pill">
+                  <i class="bi bi-file-pdf text-danger"></i> Lease Agreement.pdf
+                </div>
+                <div class="doc-pill">
+                  <i class="bi bi-file-pdf text-danger"></i> Move-in
+                  Checklist.pdf
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div class="col-lg-4">
+            <!-- Days remaining -->
+            <div class="countdown-box mb-4">
+              <div
+                style="
+                  font-size: 0.72rem;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  text-transform: uppercase;
+                  letter-spacing: 0.07em;
+                  margin-bottom: 8px;
+                "
+              >
+                Days Remaining
+              </div>
+              <div class="countdown-num" id="daysLeft">—</div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 6px;
+                "
+                id="daysLeftSub"
+              >
+                of your lease
+              </div>
+              <div class="progress mt-3">
+                <div
+                  class="progress-bar"
+                  id="leaseProgressBar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Quick pay -->
+            <div class="card p-4 mb-4 text-center">
+              <div
+                style="
+                  font-size: 0.72rem;
+                  font-weight: 700;
+                  color: var(--text-muted);
+                  text-transform: uppercase;
+                  letter-spacing: 0.07em;
+                  margin-bottom: 4px;
+                "
+              >
+                Next Payment Due
+              </div>
+              <div
+                style="
+                  font-size: 1.6rem;
+                  font-weight: 800;
+                  color: var(--danger);
+                "
+                id="sideAmtDue"
+              >
+                GHS 0
+              </div>
+              <div
+                style="
+                  font-size: 0.8rem;
+                  color: var(--text-muted);
+                  margin-bottom: 16px;
+                "
+                id="sideDueDate"
+              >
+                —
+              </div>
+              <a href="payments.html" class="btn btn-primary w-100"
+                ><i class="bi bi-credit-card me-1"></i> Pay Now</a
+              >
+            </div>
+
+            <!-- Renewal -->
+            <div class="card p-4">
+              <h6 style="font-weight: 800; margin-bottom: 8px">
+                Lease Renewal
+              </h6>
+              <p
+                style="
+                  font-size: 0.82rem;
+                  color: var(--text-muted);
+                  margin-bottom: 14px;
+                "
+              >
+                Request a lease renewal or ask your landlord about extending
+                your tenancy.
+              </p>
+              <button
+                class="btn btn-outline-primary w-100 btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#renewModal"
+              >
+                <i class="bi bi-arrow-clockwise me-1"></i> Request Renewal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Renewal modal -->
+    <div class="modal fade" id="renewModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Request Lease Renewal</h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold"
+                >Preferred New End Date</label
+              >
+              <input type="date" class="form-control" id="renewDate" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Message to Landlord</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                id="renewMsg"
+                placeholder="e.g. I'd like to renew for another year…"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" onclick="sendRenewal()">
+              <i class="bi bi-send me-1"></i> Send Request
+            </button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script src="../js/tenant.js"></script>
+    <script>
+      TenantLease.init();
+      function sendRenewal() {
+        alert("Renewal request sent to your landlord.");
+        bootstrap.Modal.getInstance(
+          document.getElementById("renewModal"),
+        ).hide();
+      }
+    </script>
+  </body>
+</html>

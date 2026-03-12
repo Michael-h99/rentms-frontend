@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tenant Details | Landlord Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/landlord.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+              line-height: 1;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> My Plazas</a
+        >
+        <a href="tenants.html" class="nav-link active"
+          ><i class="bi bi-people-fill"></i> Tenants</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Landlord
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Landlord
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <!-- end .sidebar -->
+
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-2">
+          <a href="tenants.html" class="text-muted text-decoration-none"
+            ><i class="bi bi-arrow-left"></i
+          ></a>
+          <span class="topbar-title" id="pageTitle">Tenant Details</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+          <button
+            class="btn btn-outline-warning btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#reminderModal"
+          >
+            <i class="bi bi-envelope me-1"></i> Send Reminder
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#removeModal"
+          >
+            <i class="bi bi-person-x me-1"></i> Remove
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="row g-3">
+          <!-- Profile + Lease -->
+          <div class="col-md-4">
+            <div class="card p-4 text-center mb-3">
+              <div class="avatar-lg mx-auto mb-3" id="avatarEl">?</div>
+              <h5
+                style="font-weight: 700; color: var(--text-main)"
+                id="tenantName"
+              >
+                —
+              </h5>
+              <p
+                style="font-size: 0.85rem; color: var(--text-muted)"
+                class="mb-1"
+                id="tenantEmail"
+              >
+                —
+              </p>
+              <p
+                style="font-size: 0.85rem; color: var(--text-muted)"
+                class="mb-3"
+                id="tenantPhone"
+              >
+                —
+              </p>
+              <span class="badge-status badge-active" id="tenantStatus"
+                >Active</span
+              >
+              <hr />
+              <div class="info-row">
+                <span class="info-label">Plaza</span
+                ><span class="info-value" id="infoPlaza">—</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Unit</span
+                ><span class="info-value" id="infoUnit">—</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Monthly Rent</span
+                ><span class="info-value" id="infoRent">—</span>
+              </div>
+            </div>
+
+            <!-- Lease Details -->
+            <div class="card p-4">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-file-text-fill text-primary"></i>
+                <span
+                  style="
+                    font-weight: 700;
+                    color: var(--text-main);
+                    font-size: 0.9rem;
+                  "
+                  >Lease Details</span
+                >
+              </div>
+              <div class="info-row">
+                <span class="info-label">Lease Start</span
+                ><span class="info-value" id="leaseStart">—</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Lease End</span
+                ><span class="info-value" id="leaseEnd">—</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Status</span
+                ><span class="badge-status badge-active" id="leaseStatus"
+                  >Active</span
+                >
+              </div>
+              <div class="lease-countdown mt-3">
+                <div class="days" id="leaseDays">—</div>
+                <div class="lbl">Days remaining on lease</div>
+              </div>
+              <button
+                class="btn btn-outline-primary btn-sm w-100 mt-3"
+                data-bs-toggle="modal"
+                data-bs-target="#renewModal"
+              >
+                <i class="bi bi-arrow-clockwise me-1"></i> Renew Lease
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs Panel -->
+          <div class="col-md-8">
+            <ul class="nav nav-tabs mb-3">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tabPay"
+                  >Payment History</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#tabMaint"
+                  >Maintenance</a
+                >
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="tabPay">
+                <div class="card">
+                  <div class="card-header-custom">
+                    <span class="card-title-sm">Payment History</span>
+                    <a
+                      href="payments.html"
+                      class="btn btn-sm btn-outline-primary"
+                      style="font-size: 0.75rem"
+                      >Full Report</a
+                    >
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th>Amount</th>
+                          <th>Method</th>
+                          <th>Date</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="payRows">
+                        <tr>
+                          <td colspan="5">
+                            <div class="empty-state">
+                              <i class="bi bi-credit-card"></i>
+                              <p>No payments yet</p>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="tabMaint">
+                <div class="card">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Priority</th>
+                          <th>Date</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="maintRows">
+                        <tr>
+                          <td colspan="4">
+                            <div class="empty-state">
+                              <i class="bi bi-tools"></i>
+                              <p>No requests yet</p>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reminder Modal -->
+    <div class="modal fade" id="reminderModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Send Payment Reminder</h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <p style="font-size: 0.875rem; color: var(--text-muted)">
+              A payment reminder email will be sent to this tenant.
+            </p>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Custom Message (optional)</label
+              ><textarea
+                class="form-control"
+                rows="3"
+                id="reminderMsg"
+                placeholder="Additional message..."
+              ></textarea>
+            </div>
+            <div
+              id="reminderError"
+              class="text-danger"
+              style="font-size: 0.8rem; display: none"
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-warning px-4" onclick="sendReminder()">
+              Send Reminder
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Renew Modal -->
+    <div class="modal fade" id="renewModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Renew Lease</h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >New Lease End Date</label
+              ><input type="date" class="form-control" id="newLeaseEnd" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >New Monthly Rent (GHS)</label
+              ><input type="number" class="form-control" id="newRent" />
+            </div>
+            <div
+              id="renewError"
+              class="text-danger"
+              style="font-size: 0.8rem; display: none"
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-primary px-4" onclick="renewLease()">
+              Renew
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remove Modal -->
+    <div class="modal fade" id="removeModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-body p-4 text-center">
+            <div
+              style="
+                width: 56px;
+                height: 56px;
+                border-radius: 50%;
+                background: #fee2e2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 16px;
+              "
+            >
+              <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Remove tenant?</h6>
+            <p style="font-size: 0.85rem; color: var(--text-muted)">
+              This will terminate their tenancy immediately. Cannot be undone.
+            </p>
+            <div class="d-flex gap-2 justify-content-center mt-3">
+              <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                Cancel
+              </button>
+              <button
+                class="btn btn-danger btn-sm px-3"
+                onclick="removeTenant()"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/landlord.js"></script>
+    <script>
+      LandlordTenantDetails.init();
+    </script>
+    <!-- DEV MODE BANNER — remove when going live -->
+    <div
+      id="devBanner"
+      style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: #f59e0b;
+        color: #000;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-align: center;
+        padding: 5px;
+        letter-spacing: 0.05em;
+      "
+    >
+      ⚙️ DEV MODE — Authentication disabled. Set
+      <code>DEV_MODE = false</code> in landlord.js to go live.
+    </div>
+    <script>
+      // Hide banner automatically when DEV_MODE is off
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
+          const b = document.getElementById("devBanner");
+          if (b) b.remove();
+        }
+      });
+    </script>
+  </body>
+</html>

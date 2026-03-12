@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>System Health | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/admin.css" rel="stylesheet" />
+    <style>
+      .health-banner {
+        border-radius: var(--radius-lg);
+        padding: 20px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .health-banner.ok {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.15),
+          rgba(16, 185, 129, 0.05)
+        );
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+      .health-banner.warn {
+        background: linear-gradient(
+          135deg,
+          rgba(245, 158, 11, 0.15),
+          rgba(245, 158, 11, 0.05)
+        );
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+      .health-banner.down {
+        background: linear-gradient(
+          135deg,
+          rgba(239, 68, 68, 0.15),
+          rgba(239, 68, 68, 0.05)
+        );
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+      .health-status-icon {
+        font-size: 2.5rem;
+      }
+      .health-status-label {
+        font-size: 1.3rem;
+        font-weight: 800;
+      }
+      .health-kpi {
+        text-align: center;
+      }
+      .hkpi-val {
+        font-size: 1.4rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .hkpi-lab {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 3px;
+      }
+      .resource-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        transition: all 0.2s;
+      }
+      .resource-card:hover {
+        border-color: var(--primary);
+      }
+      .res-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+      }
+      .res-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .res-label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+      .metric-bar-wrap {
+        height: 8px;
+        background: var(--border);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+      .metric-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s var(--snap);
+      }
+      .metric-bar-fill.ok {
+        background: linear-gradient(90deg, var(--success), #34d399);
+      }
+      .metric-bar-fill.warn {
+        background: linear-gradient(90deg, var(--warning), #fbbf24);
+      }
+      .metric-bar-fill.bad {
+        background: linear-gradient(90deg, var(--danger), #f87171);
+      }
+      .service-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s;
+      }
+      .service-card:hover {
+        border-color: var(--border);
+        background: rgba(15, 23, 42, 0.8);
+      }
+      .service-pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .service-pulse.ok {
+        background: var(--success);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      }
+      .service-pulse.warn {
+        background: var(--warning);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+      }
+      .service-pulse.down {
+        background: var(--danger);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+      }
+      .service-name {
+        font-size: 0.875rem;
+        font-weight: 700;
+        flex: 1;
+      }
+      .service-latency {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .uptime-bar {
+        display: flex;
+        gap: 2px;
+      }
+      .uptime-tick {
+        flex: 1;
+        height: 32px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: opacity 0.15s;
+      }
+      .uptime-tick.ok {
+        background: var(--success);
+      }
+      .uptime-tick.warn {
+        background: var(--warning);
+      }
+      .uptime-tick.down {
+        background: var(--danger);
+      }
+      .uptime-tick:hover {
+        opacity: 0.7;
+      }
+      .quick-stat {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+      }
+      .qs-val {
+        font-size: 1.1rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .qs-lab {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            class="brand-text"
+            style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link active"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted)"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sidebar-overlay"
+      id="overlay"
+      onclick="
+        document.getElementById('sidebar').classList.remove('open');
+        this.classList.remove('show');
+      "
+    ></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">System Health</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <span class="text-muted" style="font-size: 0.75rem"
+            >Last refreshed: <span id="lastRefreshed">—</span></span
+          >
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            onclick="AdminHealth.refresh()"
+          >
+            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4 class="fw-bold mb-1">System Health Monitor</h4>
+            <p class="text-muted mb-0" style="font-size: 0.875rem">
+              Real-time infrastructure status, resource usage, and service
+              availability
+            </p>
+          </div>
+        </div>
+
+        <!-- Overall Status Banner -->
+        <div class="health-banner ok" id="healthBanner">
+          <div class="d-flex align-items-center gap-16" style="gap: 16px">
+            <i
+              class="health-status-icon bi bi-check-circle-fill text-success"
+              id="healthIcon"
+            ></i>
+            <div>
+              <div class="health-status-label" id="healthLabel">
+                All Systems Operational
+              </div>
+              <div
+                class="text-muted"
+                style="font-size: 0.875rem"
+                id="healthSub"
+              >
+                All services running normally
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-4 flex-wrap">
+            <div class="health-kpi">
+              <div class="hkpi-val text-success" id="hUptime">—</div>
+              <div class="hkpi-lab">30d Uptime</div>
+            </div>
+            <div class="health-kpi">
+              <div class="hkpi-val" id="hLatency">—</div>
+              <div class="hkpi-lab">Avg Latency</div>
+            </div>
+            <div class="health-kpi">
+              <div class="hkpi-val text-success" id="hServicesOk">—</div>
+              <div class="hkpi-lab">Services OK</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource Meters -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-xl-3">
+            <div class="resource-card">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div
+                  class="res-icon"
+                  style="
+                    background: rgba(37, 99, 235, 0.15);
+                    color: var(--primary);
+                  "
+                >
+                  <i class="bi bi-cpu"></i>
+                </div>
+                <div>
+                  <div class="res-value" id="rCpu">—</div>
+                  <div class="res-label">CPU Usage</div>
+                </div>
+              </div>
+              <div class="metric-bar-wrap">
+                <div
+                  class="metric-bar-fill ok"
+                  id="rCpuBar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-xl-3">
+            <div class="resource-card">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div
+                  class="res-icon"
+                  style="
+                    background: rgba(139, 92, 246, 0.15);
+                    color: var(--purple);
+                  "
+                >
+                  <i class="bi bi-memory"></i>
+                </div>
+                <div>
+                  <div class="res-value" id="rMem">—</div>
+                  <div class="res-label">Memory Usage</div>
+                </div>
+              </div>
+              <div class="metric-bar-wrap">
+                <div
+                  class="metric-bar-fill ok"
+                  id="rMemBar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-xl-3">
+            <div class="resource-card">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div
+                  class="res-icon"
+                  style="
+                    background: rgba(245, 158, 11, 0.15);
+                    color: var(--warning);
+                  "
+                >
+                  <i class="bi bi-hdd"></i>
+                </div>
+                <div>
+                  <div class="res-value" id="rDisk">—</div>
+                  <div class="res-label">Disk Usage</div>
+                </div>
+              </div>
+              <div class="metric-bar-wrap">
+                <div
+                  class="metric-bar-fill ok"
+                  id="rDiskBar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-xl-3">
+            <div class="resource-card">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div
+                  class="res-icon"
+                  style="
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                  "
+                >
+                  <i class="bi bi-activity"></i>
+                </div>
+                <div>
+                  <div class="res-value" id="rApi">—</div>
+                  <div class="res-label">API Response</div>
+                </div>
+              </div>
+              <div class="metric-bar-wrap">
+                <div
+                  class="metric-bar-fill ok"
+                  id="rApiBar"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <!-- Service Status -->
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-header-custom">
+                <h6>
+                  <i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i
+                  >Service Status
+                </h6>
+                <span
+                  class="text-muted"
+                  style="font-size: 0.75rem"
+                  id="servicesSubtitle"
+                  >—</span
+                >
+              </div>
+              <div class="card-body p-3">
+                <div class="d-flex flex-column gap-2" id="servicesList">
+                  <div class="empty-state" style="padding: 20px">
+                    <i class="bi bi-hourglass"></i>
+                    <p>Loading…</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="col-lg-6">
+            <div class="card h-100">
+              <div class="card-header-custom">
+                <h6>
+                  <i class="bi bi-lightning-fill text-warning me-2"></i>Quick
+                  Stats
+                </h6>
+              </div>
+              <div class="card-body p-3">
+                <div class="row g-2" id="quickStats">
+                  <div class="col-6">
+                    <div class="quick-stat">
+                      <div class="qs-val" id="qsSessions">—</div>
+                      <div class="qs-lab">Active Sessions</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="quick-stat">
+                      <div class="qs-val" id="qsRequests">—</div>
+                      <div class="qs-lab">API Requests Today</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="quick-stat">
+                      <div class="qs-val text-danger" id="qsErrors">—</div>
+                      <div class="qs-lab">Errors (24h)</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="quick-stat">
+                      <div class="qs-val" id="qsDbConn">—</div>
+                      <div class="qs-lab">DB Connections</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="quick-stat">
+                      <div class="qs-val" id="qsLastBackup">—</div>
+                      <div class="qs-lab">Last Backup</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="quick-stat">
+                      <div class="qs-val text-success" id="qsServerUp">—</div>
+                      <div class="qs-lab">Server Uptime</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 30-Day Uptime -->
+        <div class="card">
+          <div class="card-header-custom">
+            <h6>
+              <i class="bi bi-calendar3 text-success me-2"></i>30-Day Uptime
+              History
+            </h6>
+            <div
+              class="d-flex align-items-center gap-3"
+              style="font-size: 0.72rem; font-weight: 700"
+            >
+              <span
+                ><span
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 2px;
+                    background: var(--success);
+                    margin-right: 4px;
+                  "
+                ></span
+                >Operational</span
+              >
+              <span
+                ><span
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 2px;
+                    background: var(--warning);
+                    margin-right: 4px;
+                  "
+                ></span
+                >Degraded</span
+              >
+              <span
+                ><span
+                  style="
+                    display: inline-block;
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 2px;
+                    background: var(--danger);
+                    margin-right: 4px;
+                  "
+                ></span
+                >Down</span
+              >
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <div class="uptime-bar" id="uptimeBar">
+              <div class="empty-state" style="padding: 12px; width: 100%">
+                <i class="bi bi-hourglass"></i>
+                <p>Loading…</p>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <span style="font-size: 0.7rem; color: var(--text-muted)"
+                >30 days ago</span
+              >
+              <span style="font-size: 0.7rem; color: var(--text-muted)"
+                >Today</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      AdminHealth.init();
+    </script>
+  </body>
+</html>

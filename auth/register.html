@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | RentMS Ghana</title>
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/auth.css" />
+    <style>
+      .auth-card {
+        max-width: 500px;
+        padding: 2.5rem;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+        margin-bottom: 1rem;
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+      .auth-form input,
+      .auth-form select {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+        border-radius: 10px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      @media (max-width: 580px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .full-width {
+          grid-column: span 1;
+        }
+      }
+
+      /* ── Role toggle cards ── */
+      .role-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .role-option {
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 14px 10px;
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        background: transparent;
+        color: #64748b;
+        font-family: inherit;
+        width: 100%;
+      }
+      .role-option:hover {
+        border-color: rgba(37, 99, 235, 0.5);
+        color: #f8fafc;
+      }
+      .role-option.selected {
+        border-color: #2563eb;
+        background: rgba(37, 99, 235, 0.12);
+        color: #60a5fa;
+      }
+      .role-option svg {
+        width: 22px;
+        height: 22px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .role-option span {
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .role-option small {
+        font-size: 0.68rem;
+        color: #64748b;
+        text-align: center;
+      }
+      .role-option.selected small {
+        color: #94a3b8;
+      }
+
+      /* ── Invite code section ── */
+      #inviteSection {
+        display: none;
+        background: rgba(37, 99, 235, 0.07);
+        border: 1.5px solid rgba(37, 99, 235, 0.22);
+        border-radius: 12px;
+        padding: 16px 18px;
+      }
+      #inviteSection.show {
+        display: block;
+      }
+      .invite-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: #60a5fa;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .invite-label svg {
+        width: 13px;
+        height: 13px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex-shrink: 0;
+      }
+      #invite_code {
+        font-family: "Courier New", monospace !important;
+        font-size: 1.05rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.2em !important;
+        text-transform: uppercase !important;
+      }
+      #codePreview {
+        margin-top: 10px;
+        border-radius: 9px;
+        padding: 11px 14px;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        display: none;
+      }
+      #codePreview.valid {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.28);
+        color: #34d399;
+      }
+      #codePreview.invalid {
+        background: rgba(239, 68, 68, 0.07);
+        border: 1px solid rgba(239, 68, 68, 0.22);
+        color: #f87171;
+      }
+      .preview-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 12px;
+        margin-top: 8px;
+        font-size: 0.77rem;
+      }
+      .preview-grid strong {
+        color: #f8fafc;
+      }
+
+      /* ── Error banner ── */
+      #formError {
+        display: none;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.22);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 0.83rem;
+        color: #f87171;
+        margin-bottom: 14px;
+      }
+
+      /* ── Success screen ── */
+      #successCard {
+        display: none;
+        text-align: center;
+      }
+      .success-icon {
+        font-size: 2.8rem;
+        margin-bottom: 14px;
+      }
+      #successCard h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin-bottom: 8px;
+      }
+      #successCard p {
+        font-size: 0.875rem;
+        color: #94a3b8;
+        line-height: 1.65;
+        margin-bottom: 6px;
+      }
+      .unit-badge {
+        display: inline-block;
+        background: rgba(37, 99, 235, 0.14);
+        border: 1px solid rgba(37, 99, 235, 0.3);
+        border-radius: 10px;
+        padding: 9px 20px;
+        font-family: "Courier New", monospace;
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #60a5fa;
+        letter-spacing: 0.1em;
+        margin: 14px 0 20px;
+      }
+    </style>
+  </head>
+
+  <body class="auth-page dark-mode">
+    <header class="auth-header">
+      <div class="auth-container">
+        <a href="../index.html" class="auth-logo">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="logo-icon"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span class="logo-text">RentMS</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="auth-content">
+      <div class="auth-card-wrapper">
+        <section class="auth-card">
+          <!-- ══ REGISTER FORM ══ -->
+          <div id="registerForm">
+            <div class="card-intro">
+              <h1>Create Account</h1>
+              <p id="cardSubtitle">
+                Join the RentMS network to manage your properties.
+              </p>
+            </div>
+
+            <form
+              id="register-form"
+              class="auth-form"
+              onsubmit="handleRegister(event)"
+            >
+              <div class="form-grid">
+                <!-- Role cards -->
+                <div class="form-group full-width">
+                  <label style="margin-bottom: 10px; display: block"
+                    >I am a…</label
+                  >
+                  <div class="role-selector">
+                    <button
+                      type="button"
+                      class="role-option selected"
+                      id="roleLandlord"
+                      onclick="selectRole('landlord')"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <path
+                          d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                        />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                      </svg>
+                      <span>Landlord</span>
+                      <small>I own properties</small>
+                    </button>
+                    <button
+                      type="button"
+                      class="role-option"
+                      id="roleTenant"
+                      onclick="selectRole('tenant')"
+                    >
+                      <svg viewBox="0 0 24 24">
+                        <path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9" />
+                        <path d="M9 22V12h6v10M2 10.6L12 2l10 8.6" />
+                      </svg>
+                      <span>Tenant</span>
+                      <small>I'm renting a unit</small>
+                    </button>
+                  </div>
+                  <input type="hidden" id="role" name="role" value="landlord" />
+                </div>
+
+                <!-- Invite code — tenants only -->
+                <div id="inviteSection" class="full-width">
+                  <div class="invite-label">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
+                      />
+                    </svg>
+                    Invite Code
+                    <span
+                      style="
+                        color: #94a3b8;
+                        font-weight: 500;
+                        text-transform: none;
+                        letter-spacing: 0;
+                        margin-left: 4px;
+                      "
+                      >(required)</span
+                    >
+                  </div>
+                  <div class="input-wrapper">
+                    <input
+                      type="text"
+                      id="invite_code"
+                      name="invite_code"
+                      placeholder="e.g. AH-K7R2"
+                      maxlength="10"
+                      autocomplete="off"
+                      oninput="onCodeInput(this)"
+                    />
+                  </div>
+                  <div id="codePreview"></div>
+                </div>
+
+                <!-- Username -->
+                <div class="form-group full-width">
+                  <label for="username">Username</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      placeholder="Enter your Username"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group full-width">
+                  <label for="email">Email Address</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="example@mail.com"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                  <label for="phone">Phone Number</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      placeholder="055..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Landlord hint shown in the right cell -->
+                <div class="form-group" id="landlordHint">
+                  <div
+                    style="
+                      font-size: 0.73rem;
+                      color: #64748b;
+                      line-height: 1.55;
+                      padding-top: 28px;
+                    "
+                  >
+                    After registering you can add plazas, units and generate
+                    invite codes for your tenants.
+                  </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group full-width">
+                  <label for="password">Create Password</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <!-- Confirm password -->
+                <div class="form-group full-width">
+                  <label for="confirm_password">Confirm Password</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="password"
+                      id="confirm_password"
+                      name="confirm_password"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <!-- /form-grid -->
+
+              <div id="formError"></div>
+
+              <div class="form-actions">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-block"
+                  id="submit-btn"
+                >
+                  <span id="btnLabel">Register Account</span>
+                  <div class="loader" id="btnLoader" hidden></div>
+                </button>
+              </div>
+            </form>
+
+            <footer class="card-footer">
+              <p>
+                Already have an account?
+                <a href="login.html" class="register-link">Login here</a>
+              </p>
+            </footer>
+          </div>
+          <!-- /#registerForm -->
+
+          <!-- ══ SUCCESS SCREEN ══ -->
+          <div id="successCard">
+            <div class="success-icon">✅</div>
+            <h2 id="successTitle">Account Created!</h2>
+            <p id="successMsg"></p>
+            <div
+              class="unit-badge"
+              id="successBadge"
+              style="display: none"
+            ></div>
+            <a
+              id="successLink"
+              href="login.html"
+              class="btn btn-primary btn-block"
+              style="margin-top: 8px"
+              >Go to Login</a
+            >
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="../js/auth.js"></script>
+    <script>
+      const API_BASE = "/api";
+      let currentRole = "landlord";
+      let codeTimer = null;
+      let validCode = null;
+
+      /* ── Role toggle ── */
+      function selectRole(role) {
+        currentRole = role;
+        document.getElementById("role").value = role;
+        document
+          .getElementById("roleLandlord")
+          .classList.toggle("selected", role === "landlord");
+        document
+          .getElementById("roleTenant")
+          .classList.toggle("selected", role === "tenant");
+
+        const invSec = document.getElementById("inviteSection");
+        const hint = document.getElementById("landlordHint");
+        const sub = document.getElementById("cardSubtitle");
+        const preview = document.getElementById("codePreview");
+
+        if (role === "tenant") {
+          invSec.classList.add("show");
+          hint.style.display = "none";
+          sub.textContent =
+            "Enter your invite code — it links you directly to your unit and landlord.";
+          setTimeout(() => document.getElementById("invite_code").focus(), 50);
+        } else {
+          invSec.classList.remove("show");
+          hint.style.display = "";
+          sub.textContent =
+            "Join the RentMS network to manage your properties.";
+          preview.style.display = "none";
+          validCode = null;
+        }
+      }
+
+      /* ── Invite code input ── */
+      function onCodeInput(input) {
+        let val = input.value.toUpperCase().replace(/[^A-Z0-9\-]/g, "");
+        if (val.length === 2 && !val.includes("-")) val = val + "-";
+        input.value = val;
+
+        clearTimeout(codeTimer);
+        validCode = null;
+        const preview = document.getElementById("codePreview");
+        preview.style.display = "none";
+        if (val.length < 5) return;
+        codeTimer = setTimeout(() => validateCode(val), 400);
+      }
+
+      /* ── Validate code against API ── */
+      async function validateCode(code) {
+        const preview = document.getElementById("codePreview");
+        preview.className = "";
+        preview.style.display = "";
+        preview.innerHTML =
+          '<span style="color:#94a3b8;font-size:.78rem">Checking code…</span>';
+
+        let result = null;
+        try {
+          const res = await fetch(
+            `${API_BASE}/auth/validate-code?code=${encodeURIComponent(code)}`,
+          );
+          const json = await res.json();
+          result = json.data || null;
+        } catch {
+          preview.className = "invalid";
+          preview.innerHTML =
+            "⚠️ Could not reach server. Check your connection.";
+          return;
+        }
+
+        if (!result) {
+          preview.className = "invalid";
+          preview.innerHTML =
+            "❌ Code not found. Double-check with your landlord.";
+          validCode = null;
+          return;
+        }
+
+        const msg = {
+          used: "⚠️ This code has already been claimed.",
+          expired: "⏰ This code has expired. Ask your landlord for a new one.",
+          revoked:
+            "🚫 This code has been revoked. Ask your landlord for a new one.",
+        };
+        if (msg[result.status]) {
+          preview.className = "invalid";
+          preview.innerHTML = msg[result.status];
+          validCode = null;
+          return;
+        }
+
+        validCode = result;
+        preview.className = "valid";
+        preview.innerHTML = `
+          <div><strong>✅ Valid code — you're all set!</strong></div>
+          <div class="preview-grid">
+            <span>🏢 Plaza: <strong>${result.plaza}</strong></span>
+            <span>🚪 Unit: <strong>${result.unit}</strong></span>
+            <span>💰 Rent: <strong>GHS ${Number(result.rent).toLocaleString()}/mo</strong></span>
+            <span>👤 Landlord: <strong>${result.landlord}</strong></span>
+          </div>`;
+      }
+
+      /* ── Form submit ── */
+      async function handleRegister(e) {
+        e.preventDefault();
+
+        const errEl = document.getElementById("formError");
+        const btn = document.getElementById("submit-btn");
+        const loader = document.getElementById("btnLoader");
+        const label = document.getElementById("btnLabel");
+        errEl.style.display = "none";
+
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const password = document.getElementById("password").value;
+        const confirm = document.getElementById("confirm_password").value;
+        const role = document.getElementById("role").value;
+        const code =
+          document.getElementById("invite_code")?.value?.trim() || "";
+
+        if (password !== confirm) {
+          showError("Passwords do not match.");
+          return;
+        }
+        if (password.length < 8) {
+          showError("Password must be at least 8 characters.");
+          return;
+        }
+        if (role === "tenant") {
+          if (!code) {
+            showError("Please enter your invite code to register as a tenant.");
+            return;
+          }
+          if (!validCode) {
+            showError(
+              "Your invite code is not valid. Please wait for it to finish verifying.",
+            );
+            return;
+          }
+        }
+
+        btn.disabled = true;
+        loader.hidden = false;
+        label.textContent = "Creating account…";
+
+        const payload = { username, email, phone, password, role };
+        if (role === "tenant" && code) payload.invite_code = code;
+
+        try {
+          const res = await fetch(`${API_BASE}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const json = await res.json();
+          if (!res.ok || json.error) {
+            showError(json.message || "Registration failed. Please try again.");
+            btn.disabled = false;
+            loader.hidden = true;
+            label.textContent = "Register Account";
+          } else {
+            showSuccess(role, validCode);
+          }
+        } catch {
+          showError(
+            "Network error. Please check your connection and try again.",
+          );
+          btn.disabled = false;
+          loader.hidden = true;
+          label.textContent = "Register Account";
+        }
+      }
+
+      function showError(msg) {
+        const el = document.getElementById("formError");
+        el.textContent = msg;
+        el.style.display = "";
+      }
+
+      function showSuccess(role, codeData) {
+        document.getElementById("registerForm").style.display = "none";
+        document.getElementById("successCard").style.display = "";
+
+        if (role === "tenant" && codeData) {
+          document.getElementById("successTitle").textContent =
+            "You're connected! 🎉";
+          document.getElementById("successMsg").innerHTML =
+            `Your account is linked to <strong>${codeData.plaza}</strong>, Unit <strong>${codeData.unit}</strong>. ` +
+            `Your landlord is <strong>${codeData.landlord}</strong> and your rent is <strong>GHS ${Number(codeData.rent).toLocaleString()}/mo</strong>. ` +
+            `Log in to access your tenant dashboard.`;
+          const badge = document.getElementById("successBadge");
+          badge.textContent = `${codeData.plaza} · Unit ${codeData.unit}`;
+          badge.style.display = "";
+        } else {
+          document.getElementById("successTitle").textContent =
+            "Account Created! 🏠";
+          document.getElementById("successMsg").innerHTML =
+            "Welcome to RentMS. Log in to add your plazas, units and generate invite codes for your tenants.";
+        }
+      }
+    </script>
+  </body>
+</html>

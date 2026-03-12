@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications | Tenant Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/tenant.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Make Payment</a
+        >
+        <a href="payment-history.html" class="nav-link"
+          ><i class="bi bi-clock-history"></i> Payment History</a
+        >
+        <a href="lease.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> My Lease</a
+        >
+        <div class="nav-section">Support</div>
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link active"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Tenant
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Tenant
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <span class="topbar-title">Notifications</span>
+        <div class="d-flex align-items-center gap-2">
+          <span
+            style="font-size: 0.8rem; color: var(--text-muted)"
+            id="unreadLabel"
+          ></span>
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            onclick="TenantNotifications.markAllRead()"
+          >
+            <i class="bi bi-check-all me-1"></i>Mark all read
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Stat cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="bi bi-bell-fill"></i></div>
+              <div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Total</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="bi bi-circle-fill" style="font-size: 0.6rem"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statUnread">0</div>
+                <div class="stat-label">Unread</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="bi bi-credit-card-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="statPayment">0</div>
+                <div class="stat-label">Payments</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon yellow"><i class="bi bi-tools"></i></div>
+              <div>
+                <div class="stat-value" id="statMaint">0</div>
+                <div class="stat-label">Maintenance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter tabs — id="notifTabs" lets JS target only these tabs -->
+        <ul class="nav nav-tabs mb-3" id="notifTabs">
+          <li class="nav-item">
+            <button class="nav-link active" data-filter="all">All</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-filter="payment">Payments</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-filter="maintenance">
+              Maintenance
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-filter="announcement">
+              Announcements
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-filter="message">Messages</button>
+          </li>
+        </ul>
+
+        <!-- Notification list -->
+        <div class="card" style="overflow: hidden; padding: 0">
+          <div id="notifList">
+            <div class="empty-state">
+              <i class="bi bi-bell"></i>
+              <h6>You're all caught up</h6>
+              <p>New notifications will appear here</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/landlord.js"></script>
+    <script src="../js/tenant.js"></script>
+    <script>
+      TenantNotifications.init();
+
+      // Tab click — event delegation so TenantNotifications.all is always in scope
+      document
+        .getElementById("notifTabs")
+        .addEventListener("click", function (e) {
+          const btn = e.target.closest("[data-filter]");
+          if (!btn) return;
+          TenantNotifications.filter(btn.dataset.filter, btn);
+        });
+    </script>
+  </body>
+</html>

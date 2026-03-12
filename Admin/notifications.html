@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Notifications | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      .notif-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+          ><i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i
+          ><span style="font-size: 1.1rem; font-weight: 800"
+            >RentMS Admin</span
+          ></a
+        >
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link active"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="overlay"></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">Notification Centre</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <button
+            class="btn btn-outline-secondary btn-sm"
+            onclick="AdminNotifications.markAllRead()"
+          >
+            <i class="bi bi-check-all me-1"></i>Mark All Read
+          </button>
+          <button
+            class="btn btn-outline-danger btn-sm"
+            onclick="AdminNotifications.clearAll()"
+          >
+            <i class="bi bi-trash me-1"></i>Clear All
+          </button>
+          <button
+            class="btn btn-purple btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#sendNotifModal"
+          >
+            <i class="bi bi-send me-1"></i>Send
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon blue"><i class="bi bi-bell-fill"></i></div>
+              <div>
+                <div class="stat-value" id="notifTotal">—</div>
+                <div class="stat-label">Total</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="bi bi-bell-slash-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="notifUnread">—</div>
+                <div class="stat-label">Unread</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon yellow">
+                <i class="bi bi-shield-exclamation"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="notifSecurity">—</div>
+                <div class="stat-label">Security Alerts</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon purple">
+                <i class="bi bi-gear-fill"></i>
+              </div>
+              <div>
+                <div class="stat-value" id="notifSystem">—</div>
+                <div class="stat-label">System</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab row -->
+        <div class="notif-tabs">
+          <button
+            class="ntab active"
+            onclick="AdminNotifications.switchTab('all', this)"
+          >
+            All
+          </button>
+          <button
+            class="ntab"
+            onclick="AdminNotifications.switchTab('unread', this)"
+          >
+            Unread
+          </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar mb-3">
+          <div class="input-group" style="max-width: 300px; flex: 1">
+            <span
+              class="input-group-text"
+              style="
+                border-radius: 10px 0 0 10px;
+                border: 1.5px solid var(--border);
+                border-right: none;
+                background: var(--bg-card);
+                color: var(--text-muted);
+                padding: 0.6rem 0.9rem;
+              "
+              ><i class="bi bi-search"></i
+            ></span>
+            <input
+              type="text"
+              class="form-control"
+              id="notifSearch"
+              placeholder="Search notifications…"
+              oninput="AdminNotifications.filter()"
+              style="border-radius: 0 10px 10px 0 !important"
+            />
+          </div>
+          <select
+            class="form-select"
+            id="notifType"
+            onchange="AdminNotifications.filter()"
+            style="max-width: 160px"
+          >
+            <option value="">All Types</option>
+            <option value="payment">Payment</option>
+            <option value="user">User</option>
+            <option value="security">Security</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+
+        <!-- List -->
+        <div class="card" style="overflow: hidden; padding: 0">
+          <div id="notifList">
+            <div class="empty-state" style="padding: 48px">
+              <i class="bi bi-hourglass"></i>
+              <p>Loading…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Send Notification Modal -->
+    <div class="modal fade" id="sendNotifModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-send me-2"></i>Send Notification
+            </h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div id="sendNotifMsg"></div>
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label">Title</label
+                ><input
+                  type="text"
+                  class="form-control"
+                  id="sendNotifTitle"
+                  placeholder="Notification title…"
+                />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Message</label
+                ><textarea
+                  class="form-control"
+                  id="sendNotifBody"
+                  rows="3"
+                  placeholder="Notification body…"
+                ></textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Type</label>
+                <select class="form-select" id="sendNotifType">
+                  <option value="system">System</option>
+                  <option value="payment">Payment</option>
+                  <option value="user">User</option>
+                  <option value="security">Security</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Send To</label>
+                <select class="form-select" id="sendNotifTarget">
+                  <option value="all">All Users</option>
+                  <option value="landlords">All Landlords</option>
+                  <option value="tenants">All Tenants</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button
+              class="btn btn-purple"
+              onclick="AdminNotifications.sendManual()"
+            >
+              <i class="bi bi-send me-1"></i>Send Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      AdminNotifications.init();
+    </script>
+  </body>
+</html>

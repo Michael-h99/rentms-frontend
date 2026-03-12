@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Settings | RentMS Admin</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="../css/Admin.css" rel="stylesheet" />
+    <style>
+      .settings-tabs {
+        display: flex;
+        gap: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+      .stab {
+        padding: 10px 20px;
+        background: var(--bg-card);
+        border: none;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        border-right: 1px solid var(--border);
+      }
+      .stab:last-child {
+        border-right: none;
+      }
+      .stab.active {
+        background: var(--primary-glow);
+        color: var(--primary);
+      }
+      .stab i {
+        margin-right: 6px;
+      }
+      .settings-panel {
+        display: none;
+      }
+      .settings-panel.active {
+        display: block;
+      }
+      .settings-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+      .settings-section-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .settings-section-header h6 {
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin: 0;
+      }
+      .settings-section-body {
+        padding: 24px;
+      }
+      .form-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .form-row .form-group {
+        flex: 1;
+        min-width: 180px;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .toggle-row:last-child {
+        border-bottom: none;
+      }
+      .toggle-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+      .toggle-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .form-switch .form-check-input {
+        width: 42px;
+        height: 22px;
+        cursor: pointer;
+      }
+      .form-switch .form-check-input:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+      .danger-zone {
+        background: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .danger-zone h6 {
+        color: var(--danger-text);
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      .danger-zone p {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <div class="admin-stripe"></div>
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-shield-fill-check"
+            style="font-size: 1.4rem; color: var(--purple); flex-shrink: 0"
+          ></i>
+          <span
+            class="brand-text"
+            style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em"
+            >RentMS Admin</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="users.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Users</a
+        >
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> Plazas</a
+        >
+        <a href="leases.html" class="nav-link"
+          ><i class="bi bi-file-text-fill"></i> Leases</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="announcements.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <a href="support-tickets.html" class="nav-link"
+          ><i class="bi bi-headset"></i> Support Tickets</a
+        >
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <div class="nav-section">Analytics</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <a href="audit-log.html" class="nav-link"
+          ><i class="bi bi-journal-text"></i> Audit Log</a
+        >
+        <div class="nav-section">System</div>
+        <a href="role-permission.html" class="nav-link"
+          ><i class="bi bi-shield-lock-fill"></i> Roles &amp; Permissions</a
+        >
+        <a href="backup.html" class="nav-link"
+          ><i class="bi bi-cloud-arrow-down-fill"></i> Backup &amp; Restore</a
+        >
+        <a href="system-health.html" class="nav-link"
+          ><i class="bi bi-heart-pulse-fill"></i> System Health</a
+        >
+        <a href="settings.html" class="nav-link active"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+        <a href="admin-profile.html" class="nav-link"
+          ><i class="bi bi-person-badge-fill"></i> My Profile</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">A</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+              "
+              id="sidebarName"
+            >
+              Admin
+            </div>
+            <div
+              style="color: var(--purple); font-size: 0.72rem; font-weight: 700"
+            >
+              Super Admin
+            </div>
+          </div>
+          <a
+            href="../auth/login.html"
+            style="color: var(--text-muted)"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <div
+      class="sidebar-overlay"
+      id="overlay"
+      onclick="
+        document.getElementById('sidebar').classList.remove('open');
+        this.classList.remove('show');
+      "
+    ></div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+          </button>
+          <span class="topbar-title">Platform Settings</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="admin-badge-top"
+            ><i class="bi bi-shield-fill-check me-1"></i>Admin</span
+          >
+          <a href="dashboard.html" class="topbar-btn"
+            ><i class="bi bi-grid"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div>
+            <h4 class="fw-bold mb-1">Platform Settings</h4>
+            <p class="text-muted mb-0" style="font-size: 0.875rem">
+              Configure global settings for the RentMS platform
+            </p>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="settings-tabs">
+          <button
+            class="stab active"
+            onclick="AdminSettings.switchTab('general', this)"
+          >
+            <i class="bi bi-gear"></i>General
+          </button>
+          <button
+            class="stab"
+            onclick="AdminSettings.switchTab('features', this)"
+          >
+            <i class="bi bi-toggles"></i>Features
+          </button>
+          <button class="stab" onclick="AdminSettings.switchTab('email', this)">
+            <i class="bi bi-envelope"></i>Email / SMS
+          </button>
+          <button
+            class="stab"
+            onclick="AdminSettings.switchTab('security', this)"
+          >
+            <i class="bi bi-shield-lock"></i>Security
+          </button>
+          <button
+            class="stab"
+            onclick="AdminSettings.switchTab('danger', this)"
+          >
+            <i class="bi bi-exclamation-triangle"></i>Danger Zone
+          </button>
+        </div>
+
+        <!-- General Tab -->
+        <div class="settings-panel active" id="panel-general">
+          <div id="generalMsg"></div>
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-info-circle text-primary"></i>
+              <h6>Platform Identity</h6>
+            </div>
+            <div class="settings-section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Platform Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="platformName"
+                    value="RentMS"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Support Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="supportEmail"
+                    value="support@rentms.gh"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Currency</label>
+                  <select class="form-select" id="currency">
+                    <option value="GHS" selected>GHS — Ghanaian Cedi</option>
+                    <option value="NGN">NGN — Nigerian Naira</option>
+                    <option value="USD">USD — US Dollar</option>
+                    <option value="GBP">GBP — British Pound</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Default Timezone</label>
+                  <select class="form-select" id="timezone">
+                    <option value="Africa/Accra" selected>
+                      Africa/Accra (GMT+0)
+                    </option>
+                    <option value="Africa/Lagos">Africa/Lagos (GMT+1)</option>
+                    <option value="Europe/London">Europe/London</option>
+                    <option value="America/New_York">America/New_York</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Date Format</label>
+                  <select class="form-select" id="dateFormat">
+                    <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD (ISO)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Default Language</label>
+                  <select class="form-select" id="language">
+                    <option value="en" selected>English</option>
+                    <option value="fr">Français</option>
+                    <option value="twi">Twi</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-sliders text-warning"></i>
+              <h6>Platform Limits</h6>
+            </div>
+            <div class="settings-section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Max Plazas per Landlord</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="maxPlazas"
+                    value="10"
+                    min="1"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Max Units per Plaza</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="maxUnits"
+                    value="100"
+                    min="1"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Max Invite Codes per Landlord</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="maxCodes"
+                    value="50"
+                    min="1"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button
+              class="btn btn-purple"
+              onclick="AdminSettings.saveGeneral()"
+            >
+              <i class="bi bi-save me-1"></i>Save General Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Features Tab -->
+        <div class="settings-panel" id="panel-features">
+          <div id="featuresMsg"></div>
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-toggles text-primary"></i>
+              <h6>Platform Feature Toggles</h6>
+            </div>
+            <div class="settings-section-body">
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Online Payments</div>
+                  <div class="toggle-desc">
+                    Allow tenants to pay rent via MoMo and bank transfer
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_payments"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Maintenance Requests</div>
+                  <div class="toggle-desc">
+                    Tenants can submit maintenance issues to landlords
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_maintenance"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Tenant Messaging</div>
+                  <div class="toggle-desc">
+                    Direct messaging between tenants and landlords
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_messaging"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Announcements</div>
+                  <div class="toggle-desc">
+                    Landlords can broadcast announcements to tenants
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_announcements"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Document Uploads</div>
+                  <div class="toggle-desc">
+                    Allow file attachments in messages and maintenance requests
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_documents"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Public Registration</div>
+                  <div class="toggle-desc">
+                    Allow users to self-register (vs invite-only)
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_self_register"
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Two-Factor Authentication</div>
+                  <div class="toggle-desc">Require 2FA for admin accounts</div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="feat_2fa"
+                    checked
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button
+              class="btn btn-purple"
+              onclick="AdminSettings.savePlatform()"
+            >
+              <i class="bi bi-save me-1"></i>Save Feature Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Email/SMS Tab -->
+        <div class="settings-panel" id="panel-email">
+          <div id="emailMsg"></div>
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-envelope text-primary"></i>
+              <h6>Email Configuration (SMTP)</h6>
+            </div>
+            <div class="settings-section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>SMTP Host</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="smtpHost"
+                    value="smtp.sendgrid.net"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>SMTP Port</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="smtpPort"
+                    value="587"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="smtpUser"
+                    value="apikey"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>API Key / Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="smtpPass"
+                    placeholder="••••••••••••••••"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>From Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="fromName"
+                    value="RentMS Platform"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>From Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="fromEmail"
+                    value="noreply@rentms.gh"
+                  />
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  onclick="AdminSettings.testEmail()"
+                >
+                  <i class="bi bi-send me-1"></i>Send Test Email
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-bell text-warning"></i>
+              <h6>Notification Triggers</h6>
+            </div>
+            <div class="settings-section-body">
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Rent Due Reminder</div>
+                  <div class="toggle-desc">
+                    Email tenant 3 days before rent is due
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="notif_due"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Payment Received</div>
+                  <div class="toggle-desc">
+                    Notify landlord and tenant when payment is confirmed
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="notif_paid"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Overdue Rent Alert</div>
+                  <div class="toggle-desc">
+                    Email tenant and landlord when rent is overdue
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="notif_overdue"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Lease Expiry Warning</div>
+                  <div class="toggle-desc">
+                    Alert 30 days before lease expires
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="notif_lease"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Maintenance Status Updates</div>
+                  <div class="toggle-desc">
+                    Notify tenant when maintenance status changes
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="notif_maint"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">New User Welcome</div>
+                  <div class="toggle-desc">
+                    Send welcome email to new accounts
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="notif_welcome"
+                    checked
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-purple" onclick="AdminSettings.saveEmail()">
+              <i class="bi bi-save me-1"></i>Save Email Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Security Tab -->
+        <div class="settings-panel" id="panel-security">
+          <div id="securityMsg"></div>
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-shield-lock text-primary"></i>
+              <h6>Authentication &amp; Session Security</h6>
+            </div>
+            <div class="settings-section-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Session Timeout (minutes)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="sessionTimeout"
+                    value="60"
+                    min="5"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Max Login Attempts</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="maxLoginAttempts"
+                    value="5"
+                    min="3"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Lockout Duration (minutes)</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="lockoutDuration"
+                    value="30"
+                    min="5"
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Require Strong Passwords</div>
+                  <div class="toggle-desc">
+                    Enforce minimum 8 chars, uppercase, number, and symbol
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="sec_strong_pw"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Log All Admin Activity</div>
+                  <div class="toggle-desc">
+                    Record every admin action in the audit log
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="sec_audit"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">Suspicious Login Alerts</div>
+                  <div class="toggle-desc">
+                    Alert on login from new device or location
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="sec_login_alert"
+                    checked
+                  />
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-label">IP Rate Limiting</div>
+                  <div class="toggle-desc">
+                    Limit API requests per IP address
+                  </div>
+                </div>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="sec_rate_limit"
+                    checked
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-header">
+              <i class="bi bi-clock-history text-warning"></i>
+              <h6>Active Admin Sessions</h6>
+            </div>
+            <div class="settings-section-body">
+              <p
+                class="text-muted"
+                style="font-size: 0.875rem; margin-bottom: 14px"
+              >
+                Force-sign-out all admin accounts (excluding your current
+                session)
+              </p>
+              <button
+                class="btn btn-outline-warning btn-sm"
+                onclick="AdminSettings.signOutAll()"
+              >
+                <i class="bi bi-door-open me-1"></i>Sign Out All Other Admins
+              </button>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button
+              class="btn btn-purple"
+              onclick="AdminSettings.saveSecurity()"
+            >
+              <i class="bi bi-save me-1"></i>Save Security Settings
+            </button>
+          </div>
+        </div>
+
+        <!-- Danger Zone Tab -->
+        <div class="settings-panel" id="panel-danger">
+          <div class="danger-zone">
+            <h6>
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Clear Cache
+            </h6>
+            <p>
+              Flush all server-side caches. The platform will rebuild caches on
+              the next request. Temporary performance impact.
+            </p>
+            <button
+              class="btn btn-outline-warning btn-sm"
+              onclick="AdminSettings.clearCache()"
+            >
+              <i class="bi bi-trash me-1"></i>Clear Cache
+            </button>
+          </div>
+
+          <div class="danger-zone">
+            <h6>
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Export All
+              Data
+            </h6>
+            <p>
+              Download a complete export of all platform data (users, leases,
+              payments) as a JSON archive.
+            </p>
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              onclick="AdminSettings.exportAll()"
+            >
+              <i class="bi bi-download me-1"></i>Export Platform Data
+            </button>
+          </div>
+
+          <div class="danger-zone" style="border-color: rgba(239, 68, 68, 0.6)">
+            <h6><i class="bi bi-nuclear me-2"></i>Wipe Platform Data</h6>
+            <p>
+              Permanently delete all users, plazas, leases, and payments. This
+              action is <strong>irreversible</strong>. Requires confirmation and
+              admin password.
+            </p>
+            <button
+              class="btn btn-outline-danger btn-sm"
+              onclick="AdminSettings.wipeConfirm()"
+            >
+              <i class="bi bi-trash3-fill me-1"></i>Wipe All Data…
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wipe Confirm Modal -->
+    <div class="modal fade" id="wipeModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content"
+          style="
+            background: var(--bg-card);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+          "
+        >
+          <div class="modal-header" style="border-color: var(--border)">
+            <h5 class="modal-title text-danger fw-bold">
+              <i class="bi bi-nuclear me-2"></i>Confirm Platform Wipe
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" style="padding: 24px">
+            <div
+              class="alert"
+              style="
+                background: var(--danger-light);
+                border: 1px solid var(--danger);
+                border-radius: 10px;
+                padding: 12px;
+                margin-bottom: 16px;
+                color: var(--danger-text);
+                font-size: 0.875rem;
+              "
+            >
+              <strong>Warning:</strong> This will permanently delete ALL
+              platform data. This cannot be undone.
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold"
+                >Type <code>WIPE PLATFORM</code> to confirm</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="wipeConfirmText"
+                placeholder="WIPE PLATFORM"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Admin Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="wipePassword"
+                placeholder="Your password"
+              />
+            </div>
+            <div id="wipeMsg"></div>
+          </div>
+          <div class="modal-footer" style="border-color: var(--border)">
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              class="btn btn-danger btn-sm"
+              onclick="AdminSettings.executeWipe()"
+            >
+              <i class="bi bi-trash3-fill me-1"></i>Permanently Wipe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("show");
+      });
+      AdminSettings.init();
+    </script>
+  </body>
+</html>

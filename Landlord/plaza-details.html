@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plaza Details | Landlord Portal</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="../css/landlord.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <a
+          href="dashboard.html"
+          class="d-flex align-items-center gap-2 text-decoration-none"
+        >
+          <i
+            class="bi bi-houses-fill"
+            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
+          ></i>
+          <span
+            style="
+              font-size: 1.1rem;
+              font-weight: 800;
+              color: #2563eb;
+              letter-spacing: -0.02em;
+              line-height: 1;
+            "
+            >RentMS</span
+          >
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="dashboard.html" class="nav-link"
+          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
+        >
+        <a href="plazas.html" class="nav-link active"
+          ><i class="bi bi-buildings"></i> My Plazas</a
+        >
+        <a href="tenants.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Tenants</a
+        >
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
+        >
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link"
+          ><i class="bi bi-tools"></i> Maintenance</a
+        >
+        <a href="messages.html" class="nav-link"
+          ><i class="bi bi-chat-dots-fill"></i> Messages</a
+        >
+        <a href="announcement.html" class="nav-link"
+          ><i class="bi bi-megaphone-fill"></i> Announcements</a
+        >
+        <a href="notifications.html" class="nav-link"
+          ><i class="bi bi-bell-fill"></i> Notifications</a
+        >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
+        <div class="nav-section">Account</div>
+        <a href="profile.html" class="nav-link"
+          ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <div class="d-flex align-items-center gap-2">
+          <div class="s-avatar" id="sidebarAvatar">?</div>
+          <div style="min-width: 0; flex: 1">
+            <div
+              style="
+                color: var(--text-main);
+                font-size: 0.85rem;
+                font-weight: 700;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              "
+              id="sidebarName"
+            >
+              Landlord
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.72rem">
+              Landlord
+            </div>
+          </div>
+          <a
+            href="../index.html"
+            style="color: var(--text-muted); flex-shrink: 0"
+            title="Logout"
+            ><i class="bi bi-box-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+    <!-- end .sidebar -->
+
+    <div class="main">
+      <div class="topbar">
+        <div class="d-flex align-items-center gap-2">
+          <a href="plazas.html" class="text-muted text-decoration-none"
+            ><i class="bi bi-arrow-left"></i
+          ></a>
+          <span class="topbar-title" id="pageTitle">Plaza Details</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+          <button
+            class="btn btn-outline-primary btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#inviteModal"
+          >
+            <i class="bi bi-person-plus me-1"></i> Invite Tenant
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#editModal"
+          >
+            <i class="bi bi-pencil me-1"></i> Edit Plaza
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Hero -->
+        <div class="hero-banner" id="heroBanner">
+          <div class="d-flex align-items-start justify-content-between mb-4">
+            <div>
+              <h4 class="fw-bold mb-1" id="heroName">—</h4>
+              <p class="mb-0 opacity-75" id="heroLocation">
+                <i class="bi bi-geo-alt me-1"></i>—
+              </p>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-6 col-md-3">
+              <div class="stat-mini">
+                <div class="val" id="heroOccupied">0</div>
+                <div class="lbl">Occupied</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="stat-mini">
+                <div class="val" id="heroVacant">0</div>
+                <div class="lbl">Vacant</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="stat-mini">
+                <div class="val" id="heroRate">0%</div>
+                <div class="lbl">Occupancy</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="stat-mini">
+                <div class="val" id="heroRevenue">GHS 0</div>
+                <div class="lbl">Monthly Revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4">
+          <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#tabTenants"
+              >Tenants</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tabPayments"
+              >Payments</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tabMaintenance"
+              >Maintenance</a
+            >
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tabTenants">
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Tenant</th>
+                      <th>Unit</th>
+                      <th>Rent</th>
+                      <th>Lease End</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tenantRows">
+                    <tr>
+                      <td colspan="6">
+                        <div class="empty-state">
+                          <i class="bi bi-people"></i>
+                          <p>No tenants yet</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tabPayments">
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Tenant</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                      <th>Method</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="paymentRows">
+                    <tr>
+                      <td colspan="5">
+                        <div class="empty-state">
+                          <i class="bi bi-credit-card"></i>
+                          <p>No payments yet</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tabMaintenance">
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Tenant</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="maintRows">
+                    <tr>
+                      <td colspan="5">
+                        <div class="empty-state">
+                          <i class="bi bi-tools"></i>
+                          <p>No maintenance requests</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invite Modal -->
+    <div class="modal fade" id="inviteModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Invite Tenant</h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Tenant Email *</label
+              ><input
+                type="email"
+                class="form-control"
+                id="inviteEmail"
+                placeholder="tenant@example.com"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Unit Number *</label
+              ><input
+                type="text"
+                class="form-control"
+                id="inviteUnit"
+                placeholder="e.g. 2A"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Monthly Rent (GHS) *</label
+              ><input
+                type="number"
+                class="form-control"
+                id="inviteRent"
+                placeholder="e.g. 1800"
+              />
+            </div>
+            <div class="row g-2">
+              <div class="col">
+                <label
+                  class="form-label fw-semibold"
+                  style="font-size: 0.875rem"
+                  >Lease Start</label
+                ><input type="date" class="form-control" id="inviteStart" />
+              </div>
+              <div class="col">
+                <label
+                  class="form-label fw-semibold"
+                  style="font-size: 0.875rem"
+                  >Lease End</label
+                ><input type="date" class="form-control" id="inviteEnd" />
+              </div>
+            </div>
+            <div
+              id="inviteError"
+              class="text-danger mt-2"
+              style="font-size: 0.8rem; display: none"
+            ></div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-primary px-4" onclick="inviteTenant()">
+              Send Invitation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold">Edit Plaza</h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Plaza Name</label
+              ><input type="text" class="form-control" id="editName" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Location</label
+              ><input type="text" class="form-control" id="editLocation" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Total Units</label
+              ><input
+                type="number"
+                class="form-control"
+                id="editUnits"
+                min="1"
+              />
+            </div>
+          </div>
+          <div class="modal-footer border-0 pt-0">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-primary px-4" onclick="updatePlaza()">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../js/landlord.js"></script>
+    <script>
+      LandlordPlazaDetails.init();
+    </script>
+
+    <script>
+      // Hide banner automatically when DEV_MODE is off
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
+          const b = document.getElementById("devBanner");
+          if (b) b.remove();
+        }
+      });
+    </script>
+  </body>
+</html>
