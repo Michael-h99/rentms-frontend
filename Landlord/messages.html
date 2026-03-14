@@ -404,35 +404,5 @@
     <script>
       LandlordMessages.init();
     </script>
-    <!-- DEV MODE BANNER — remove when going live -->
-    <div
-      id="devBanner"
-      style="
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 9999;
-        background: #f59e0b;
-        color: #000;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-align: center;
-        padding: 5px;
-        letter-spacing: 0.05em;
-      "
-    >
-      ⚙️ DEV MODE — Authentication disabled. Set
-      <code>DEV_MODE = false</code> in landlord.js to go live.
-    </div>
-    <script>
-      // Hide banner automatically when DEV_MODE is off
-      document.addEventListener("DOMContentLoaded", () => {
-        if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
-          const b = document.getElementById("devBanner");
-          if (b) b.remove();
-        }
-      });
-    </script>
   </body>
 </html>

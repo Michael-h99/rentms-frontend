@@ -11,7 +11,7 @@
    true  → no login, all API calls return mock data
    false → live mode, real API + auth enforced
    ============================================================ */
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 /* ============================================================
    MOCK DATA
