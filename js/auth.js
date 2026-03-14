@@ -210,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
         API.saveSession(res.token, res.user);
         const role = res.user?.role;
         window.location.href = role === 'tenant'
-          ? '../tenant/dashboard.html'
-          : '../landlord/dashboard.html';
+          ? '../Tenants/dashboard.html'
+          : '../Landlord/dashboard.html';
       } else {
         showError(res.message || 'Invalid email or password.');
         setLoading(false);
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Store under admin_token / admin_user to match api.js KEYS.admin
         localStorage.setItem('admin_token', res.token);
         localStorage.setItem('admin_user',  JSON.stringify(res.user));
-        window.location.href = '../admin/dashboard.html';
+        window.location.href = '../Admin/dashboard.html';
       } else {
         showError(res.message || 'Invalid credentials.');
         setLoading(false);
