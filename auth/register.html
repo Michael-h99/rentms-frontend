@@ -459,7 +459,11 @@
 
     <script src="../js/auth.js"></script>
     <script>
-      const API_BASE = "/api";
+      const API_BASE =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000/api"
+          : "https://rentms-backend-5.onrender.com/api";
       let currentRole = "landlord";
       let codeTimer = null;
       let validCode = null;
