@@ -1940,7 +1940,7 @@ const LandlordProfile = (() => {
   }
 
   async function load() {
-    const data = await RentMs.get("/landlords/profile");
+    const data = await RentMs.get("/auth/me");
     const p = data.data || data.user || {};
     const name = p.username || p.name || "";
     RentMs.setText("profileNameDisplay", name || "—");
@@ -1962,7 +1962,7 @@ const LandlordProfile = (() => {
       RentMs.showMsg("profileMsg", "Name and email are required.", "error");
       return;
     }
-    const res = await RentMs.put("/landlords/profile", {
+    const res = await RentMs.patch("/auth/me", {
       username: name,
       email,
       phone,
