@@ -2443,7 +2443,7 @@ const InviteCodes = (() => {
       all.unshift(newCode);
       MOCK.invite_codes.unshift(newCode);
     } else {
-      const res = await RentMs.post("/landlord/invite-codes", {
+      const res = await RentMs.post("/invite-codes", {
         plaza_id: plazaId,
         unit_number: unit,
         rent_amount: rent,
@@ -2624,7 +2624,7 @@ const InviteCodes = (() => {
     }
 
     // Load codes
-    const res = await RentMs.get("/landlord/invite-codes");
+    const res = await RentMs.get("/invite-codes");
     all = res.data || [];
     filtered = [...all];
 
