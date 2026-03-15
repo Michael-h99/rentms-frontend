@@ -299,7 +299,7 @@ const LandlordDashboard = (() => {
   }
 
   async function loadStats() {
-    const data = await RentMs.get("/landlords/stats");
+    const data = await RentMs.get("/landlord/stats");
     const s = data.data || {};
     RentMs.setText("statPlazas", s.total_plazas ?? 0);
     RentMs.setText("statTenants", s.active_tenants ?? 0);
@@ -309,7 +309,7 @@ const LandlordDashboard = (() => {
 
   async function loadMaintenance() {
     const data = await RentMs.get(
-      "/landlords/maintenance?status=pending&limit=5",
+      "/landlord/maintenance?status=pending&limit=5",
     );
     const list = data.data || [];
     const badge = document.getElementById("maintBadge");
@@ -370,7 +370,7 @@ const LandlordDashboard = (() => {
   }
 
   async function loadOccupancy() {
-    const data = await RentMs.get("/landlords/plazas");
+    const data = await RentMs.get("/landlord/plazas");
     const plazas = data.data || [];
     const el = document.getElementById("occupancyList");
     if (!el) return;
@@ -413,7 +413,7 @@ const LandlordPlazas = (() => {
   }
 
   async function load() {
-    const data = await RentMs.get("/landlords/plazas");
+    const data = await RentMs.get("/landlord/plazas");
     all = data.data || [];
     render(all);
   }
@@ -531,8 +531,8 @@ const LandlordPlazas = (() => {
     }
     const body = { name, location, total_units: parseInt(units) };
     const res = editingId
-      ? await RentMs.put("/landlords/plazas/" + editingId, body)
-      : await RentMs.post("/landlords/plazas", body);
+      ? await RentMs.put("/landlord/plazas/" + editingId, body)
+      : await RentMs.post("/landlord/plazas", body);
     if (res.data || (res.message && !res.error)) {
       RentMs.modal("plazaModal", "hide");
       if (errEl) errEl.style.display = "none";
@@ -564,7 +564,7 @@ const LandlordPlazaDetails = (() => {
   }
 
   async function loadPlaza() {
-    const data = await RentMs.get("/landlords/plazas");
+    const data = await RentMs.get("/landlord/plazas");
     plaza = (data.data || []).find((p) => String(p.id) === plazaId) || {};
     RentMs.setText("pageTitle", plaza.name || "Plaza Details");
     RentMs.setText("heroName", plaza.name || "—");
@@ -582,7 +582,7 @@ const LandlordPlazaDetails = (() => {
   }
 
   async function loadTenants() {
-    const data = await RentMs.get("/landlords/tenants?plaza_id=" + plazaId);
+    const data = await RentMs.get("/landlord/tenants?plaza_id=" + plazaId);
     const list = data.data || [];
     const rows = document.getElementById("tenantRows");
     const empty = document.getElementById("emptyTenants");
@@ -631,7 +631,7 @@ const LandlordPlazaDetails = (() => {
 
   async function loadMaintenance() {
     const data = await RentMs.get(
-      "/landlords/maintenance?plaza_id=" + plazaId + "&limit=10",
+      "/landlord/maintenance?plaza_id=" + plazaId + "&limit=10",
     );
     const list = data.data || [];
     const rows = document.getElementById("maintRows");
@@ -665,7 +665,7 @@ const LandlordPlazaDetails = (() => {
       }
       return;
     }
-    const res = await RentMs.post("/landlords/plazas/" + plazaId + "/invite", {
+    const res = await RentMs.post("/landlord/plazas/" + plazaId + "/invite", {
       email,
       unit_number: unit,
       rent_amount: parseFloat(rent),
@@ -688,7 +688,7 @@ const LandlordPlazaDetails = (() => {
     const location = document.getElementById("editLocation")?.value.trim();
     const units = document.getElementById("editUnits")?.value;
     const errEl = document.getElementById("editError");
-    const res = await RentMs.put("/landlords/plazas/" + plazaId, {
+    const res = await RentMs.put("/landlord/plazas/" + plazaId, {
       name,
       location,
       total_units: parseInt(units),
@@ -724,8 +724,8 @@ const LandlordTenants = (() => {
 
   async function loadAll() {
     const [pd, td] = await Promise.all([
-      RentMs.get("/landlords/plazas"),
-      RentMs.get("/landlords/tenants"),
+      RentMs.get("/landlord/plazas"),
+      RentMs.get("/landlord/tenants"),
     ]);
     const plazas = pd.data || [];
     ["filterPlaza", "invitePlaza"].forEach((id) => {
@@ -825,7 +825,7 @@ const LandlordTenants = (() => {
       }
       return;
     }
-    const res = await RentMs.post("/landlords/plazas/" + plazaId + "/invite", {
+    const res = await RentMs.post("/landlord/plazas/" + plazaId + "/invite", {
       email,
       unit_number: unit,
       rent_amount: parseFloat(rent),
@@ -849,7 +849,7 @@ const LandlordTenants = (() => {
   }
   async function doRemove() {
     if (!removeId) return;
-    await RentMs.del("/landlords/tenancies/" + removeId + "/tenant");
+    await RentMs.del("/landlord/tenancies/" + removeId + "/tenant");
     RentMs.modal("removeModal", "hide");
     removeId = null;
     loadAll();
@@ -875,7 +875,7 @@ const LandlordTenantDetails = (() => {
   }
 
   async function loadTenant() {
-    const td = await RentMs.get("/landlords/tenants");
+    const td = await RentMs.get("/landlord/tenants");
     const t = (td.data || []).find((x) => String(x.id) === tenantId);
     if (!t) return;
     tenancyId = t.tenancy_id;
@@ -929,7 +929,7 @@ const LandlordTenantDetails = (() => {
 
   async function loadMaintenance() {
     const data = await RentMs.get(
-      "/landlords/maintenance?tenant_id=" + tenantId + "&limit=10",
+      "/landlord/maintenance?tenant_id=" + tenantId + "&limit=10",
     );
     const list = data.data || [];
     const rows = document.getElementById("maintRows");
@@ -974,7 +974,7 @@ const LandlordTenantDetails = (() => {
     }
     const body = { lease_end: newEnd };
     if (newRent) body.rent_amount = parseFloat(newRent);
-    const res = await RentMs.put("/landlords/tenancies/" + tenancyId, body);
+    const res = await RentMs.put("/landlord/tenancies/" + tenancyId, body);
     if (res.data || (res.message && !res.error)) {
       RentMs.modal("renewModal", "hide");
       loadTenant();
@@ -988,7 +988,7 @@ const LandlordTenantDetails = (() => {
 
   window.removeTenant = async function () {
     if (!tenancyId) return;
-    await RentMs.del("/landlords/tenancies/" + tenancyId + "/tenant");
+    await RentMs.del("/landlord/tenancies/" + tenancyId + "/tenant");
     location.href = "tenants.html";
   };
 
@@ -1010,7 +1010,7 @@ const LandlordPayments = (() => {
 
   async function loadAll() {
     const [pd, data] = await Promise.all([
-      RentMs.get("/landlords/plazas"),
+      RentMs.get("/landlord/plazas"),
       RentMs.get("/payments/all?limit=100"),
     ]);
     ["payPlaza", "bulkPlaza"].forEach((id) => {
@@ -1176,8 +1176,8 @@ const LandlordMaintenance = (() => {
 
   async function loadAll() {
     const [pd, data] = await Promise.all([
-      RentMs.get("/landlords/plazas"),
-      RentMs.get("/landlords/maintenance"),
+      RentMs.get("/landlord/plazas"),
+      RentMs.get("/landlord/maintenance"),
     ]);
     const pSel = document.getElementById("filterPlaza");
     if (pSel) {
@@ -1274,7 +1274,7 @@ const LandlordMaintenance = (() => {
   };
 
   async function quickUpdate(id, status) {
-    await RentMs.put("/landlords/maintenance/" + id, { status });
+    await RentMs.put("/landlord/maintenance/" + id, { status });
     const r = all.find((x) => x.id === id);
     if (r) r.status = status;
     renderStats(all);
@@ -1309,7 +1309,7 @@ const LandlordMaintenance = (() => {
     const status = document.getElementById("reqStatusSel")?.value;
     const note = document.getElementById("reqNote")?.value.trim();
     const errEl = document.getElementById("reqError");
-    const res = await RentMs.put("/landlords/maintenance/" + activeId, {
+    const res = await RentMs.put("/landlord/maintenance/" + activeId, {
       status,
       note,
     });
@@ -1345,7 +1345,7 @@ const LandlordMessages = (() => {
   }
 
   async function loadPlazas() {
-    const pd = await RentMs.get("/landlords/plazas");
+    const pd = await RentMs.get("/landlord/plazas");
     const sel = document.getElementById("groupPlaza");
     if (!sel) return;
     sel.innerHTML = '<option value="">All Plazas</option>';
@@ -1355,7 +1355,7 @@ const LandlordMessages = (() => {
   }
 
   async function loadGroups() {
-    const data = await RentMs.get("/landlords/groups");
+    const data = await RentMs.get("/landlord/groups");
     groups = data.data || [];
     renderGroups(groups);
   }
@@ -1416,7 +1416,7 @@ const LandlordMessages = (() => {
   }
 
   async function loadMessages(groupId) {
-    const data = await RentMs.get("/landlords/groups/" + groupId + "/messages");
+    const data = await RentMs.get("/landlord/groups/" + groupId + "/messages");
     const list = data.data || [];
     const box = document.getElementById("chatMessages");
     if (!box) return;
@@ -1449,7 +1449,7 @@ const LandlordMessages = (() => {
     const msg = input?.value.trim();
     if (!msg) return;
     input.value = "";
-    await RentMs.post("/landlords/groups/" + activeGroup.id + "/messages", {
+    await RentMs.post("/landlord/groups/" + activeGroup.id + "/messages", {
       message: msg,
     });
     await loadMessages(activeGroup.id);
@@ -1470,7 +1470,7 @@ const LandlordMessages = (() => {
       }
       return;
     }
-    const res = await RentMs.post("/landlords/groups", {
+    const res = await RentMs.post("/landlord/groups", {
       name,
       plaza_id: plaza || null,
       invite_code: code,
@@ -1506,7 +1506,7 @@ const LandlordMessages = (() => {
   window.regenCode = async function () {
     if (!activeGroup) return;
     const newCode = RentMs.genCode();
-    const res = await RentMs.put("/landlords/groups/" + activeGroup.id, {
+    const res = await RentMs.put("/landlord/groups/" + activeGroup.id, {
       invite_code: newCode,
     });
     if (res.data || (res.message && !res.error)) {
@@ -1535,7 +1535,7 @@ const LandlordAnnouncements = (() => {
   }
 
   async function loadPlazas() {
-    const pd = await RentMs.get("/landlords/plazas");
+    const pd = await RentMs.get("/landlord/plazas");
     const sel = document.getElementById("annTarget");
     if (!sel) return;
     sel.innerHTML = '<option value="all">All Tenants</option>';
@@ -1548,7 +1548,7 @@ const LandlordAnnouncements = (() => {
   async function load() {
     const f = document.getElementById("annFilter")?.value || "";
     const data = await RentMs.get(
-      "/landlords/announcements" + (f === "pinned" ? "?pinned=true" : ""),
+      "/landlord/announcements" + (f === "pinned" ? "?pinned=true" : ""),
     );
     all = data.data || [];
     render(all);
@@ -1617,7 +1617,7 @@ const LandlordAnnouncements = (() => {
     };
     if (target.startsWith("plaza_"))
       body.plaza_id = target.replace("plaza_", "");
-    const res = await RentMs.post("/landlords/announcements", body);
+    const res = await RentMs.post("/landlord/announcements", body);
     if (res.data || (res.message && !res.error)) {
       RentMs.setValue("annTitle", "");
       RentMs.setValue("annMessage", "");
@@ -1640,7 +1640,7 @@ const LandlordAnnouncements = (() => {
   }
   async function doDelete() {
     if (!deleteId) return;
-    await RentMs.del("/landlords/announcements/" + deleteId);
+    await RentMs.del("/landlord/announcements/" + deleteId);
     RentMs.modal("deleteModal", "hide");
     deleteId = null;
     load();
@@ -1796,10 +1796,10 @@ const LandlordReports = (() => {
     const month = document.getElementById("reportMonth")?.value || "";
     const qs = month ? "?month=" + month : "";
     const [stats, revData, plazaData, tenantData] = await Promise.all([
-      RentMs.get("/landlords/stats" + qs),
-      RentMs.get("/landlords/reports/revenue?months=6"),
-      RentMs.get("/landlords/plazas"),
-      RentMs.get("/landlords/reports/tenants" + qs),
+      RentMs.get("/landlord/stats" + qs),
+      RentMs.get("/landlord/reports/revenue?months=6"),
+      RentMs.get("/landlord/plazas"),
+      RentMs.get("/landlord/reports/tenants" + qs),
     ]);
     const s = stats.data || {};
     RentMs.setText(
@@ -2045,7 +2045,7 @@ const LandlordSettings = (() => {
   }
 
   async function load() {
-    const data = await RentMs.get("/landlords/settings");
+    const data = await RentMs.get("/landlord/settings");
     const s = data.data || {};
     RentMs.setValue("bizName", s.business_name || "");
     RentMs.setValue("bizEmail", s.business_email || "");
@@ -2077,7 +2077,7 @@ const LandlordSettings = (() => {
   }
 
   window.saveGeneral = async function () {
-    const res = await RentMs.put("/landlords/settings", {
+    const res = await RentMs.put("/landlord/settings", {
       business_name: document.getElementById("bizName")?.value.trim(),
       business_email: document.getElementById("bizEmail")?.value.trim(),
       phone: document.getElementById("bizPhone")?.value.trim(),
@@ -2093,7 +2093,7 @@ const LandlordSettings = (() => {
   };
 
   window.saveNotifSettings = async function () {
-    const res = await RentMs.put("/landlords/settings", {
+    const res = await RentMs.put("/landlord/settings", {
       notifications: {
         payment_received: document.getElementById("emailPayment")?.checked,
         maintenance: document.getElementById("emailMaint")?.checked,
@@ -2140,7 +2140,7 @@ const LandlordSettings = (() => {
       return;
     }
     const res = await RentMs.del(
-      "/landlords/account?password=" + encodeURIComponent(pw),
+      "/landlord/account?password=" + encodeURIComponent(pw),
     );
     if (res.message && !res.error) {
       localStorage.clear();
@@ -2443,7 +2443,7 @@ const InviteCodes = (() => {
       all.unshift(newCode);
       MOCK.invite_codes.unshift(newCode);
     } else {
-      const res = await RentMs.post("/landlords/invite-codes", {
+      const res = await RentMs.post("/landlord/invite-codes", {
         plaza_id: plazaId,
         unit_number: unit,
         rent_amount: rent,
@@ -2624,7 +2624,7 @@ const InviteCodes = (() => {
     }
 
     // Load codes
-    const res = await RentMs.get("/landlords/invite-codes");
+    const res = await RentMs.get("/landlord/invite-codes");
     all = res.data || [];
     filtered = [...all];
 
