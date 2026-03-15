@@ -96,7 +96,7 @@ function mockResponse(url) {
    CORE — API, auth, sidebar, utils
    ============================================================ */
 const RentMs = (() => {
-  const BASE = "http://localhost:5000/api";
+  const BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:5000/api" : "https://rentms-backend-5.onrender.com/api";
   const token = () => localStorage.getItem("token");
 
   /* Always returns user — uses MOCK in dev mode */

@@ -74,7 +74,7 @@ const _T = (() => {
     };
     if (body) opts.body = JSON.stringify(body);
     try {
-      const r = await fetch("/api" + url, opts);
+      const r = await fetch((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:5000/api" : "https://rentms-backend-5.onrender.com/api") + url, opts);
       if (r.status === 401) {
         localStorage.clear();
         location.href = "../auth/login.html";
