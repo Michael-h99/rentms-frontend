@@ -2341,7 +2341,7 @@ const InviteCodes = (() => {
       unitEl.innerHTML = '<option value="">â€” Select plaza first â€”</option>';
       return;
     }
-    RentMs.get("/landlord/plazas/" + plazaId).then(unitData => { const units = (unitData.data?.units || []).map(u => u.unit_number || u.unit_name || u.id); const takenUnits = all.filter(c => String(c.plaza_id) === plazaId && c.status === "active").map(c => c.unit); unitEl.innerHTML = `<option value="">— Select unit —</option>` + units.map(u => `<option value="${u}">${u}</option>`).join(""); }); return;
+    RentMs.get("/landlord/plazas/" + plazaId).then(unitData => { const total = unitData.data?.total_units || 0; const takenUnits = all.filter(c => String(c.plaza_id) === plazaId && c.status === "active").map(c => c.unit); unitEl.innerHTML = `<option value="">— Select unit —</option>` + Array.from({length: total}, (_,i) => i+1).map(u => `<option value="${u}" ${takenUnits.includes(String(u)) ? "disabled" : ""}>Unit ${u}${takenUnits.includes(String(u)) ? " (taken)" : ""}</option>`).join(""); }); return;
     // Filter out units that already have active codes
     const takenUnits = all
       .filter((c) => String(c.plaza_id) === plazaId && c.status === "active")
