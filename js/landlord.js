@@ -2333,7 +2333,7 @@ const InviteCodes = (() => {
   }
 
   /* ── plaza change in modal → populate units ──────────────── */
-  async async function onPlazaChange() {
+  async function onPlazaChange() {
     const plazaId = document.getElementById("genPlaza")?.value;
     const unitEl = document.getElementById("genUnit");
     if (!unitEl) return;
@@ -2341,7 +2341,7 @@ const InviteCodes = (() => {
       unitEl.innerHTML = '<option value="">— Select plaza first —</option>';
       return;
     }
-    const unitData = await RentMs.get("/landlord/plazas/" + plazaId); const units = (unitData.data?.units || []).map(u => u.unit_number || u.unit_name || u.id);
+    RentMs.get("/landlord/plazas/" + plazaId).then(unitData => { const units = (unitData.data?.units || []).map(u => u.unit_number || u.unit_name || u.id); const takenUnits = all.filter(c => String(c.plaza_id) === plazaId && c.status === "active").map(c => c.unit); unitEl.innerHTML = `<option value="">� Select unit �</option>` + units.map(u => `<option value="${u}">${u}</option>`).join(""); }); return;
     // Filter out units that already have active codes
     const takenUnits = all
       .filter((c) => String(c.plaza_id) === plazaId && c.status === "active")
