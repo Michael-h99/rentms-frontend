@@ -2333,7 +2333,7 @@ const InviteCodes = (() => {
   }
 
   /* ── plaza change in modal → populate units ──────────────── */
-  function onPlazaChange() {
+  async function onPlazaChange() {
     const plazaId = document.getElementById("genPlaza")?.value;
     const unitEl = document.getElementById("genUnit");
     if (!unitEl) return;
@@ -2341,7 +2341,7 @@ const InviteCodes = (() => {
       unitEl.innerHTML = '<option value="">— Select plaza first —</option>';
       return;
     }
-    const units = MOCK.units[parseInt(plazaId)] || [];
+    const unitData = await RentMs.get("/landlord/plazas/" + plazaId); const units = (unitData.data?.units || []).map(u => u.unit_number || u.unit_name || u.id);
     // Filter out units that already have active codes
     const takenUnits = all
       .filter((c) => String(c.plaza_id) === plazaId && c.status === "active")
