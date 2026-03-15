@@ -2333,7 +2333,7 @@ const InviteCodes = (() => {
   }
 
   /* ── plaza change in modal → populate units ──────────────── */
-  async function onPlazaChange() {
+  async async function onPlazaChange() {
     const plazaId = document.getElementById("genPlaza")?.value;
     const unitEl = document.getElementById("genUnit");
     if (!unitEl) return;
