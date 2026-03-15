@@ -2232,8 +2232,8 @@ const InviteCodes = (() => {
   }
 
   /* ── populate plaza dropdowns ─────────────────────────────── */
-  function populatePlazaDropdowns() {
-    const plazas = MOCK.plazas;
+  async function populatePlazaDropdowns() {
+    const plazas = (await RentMs.get("/landlord/plazas")).data || [];
     ["plazaFilter", "genPlaza"].forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
