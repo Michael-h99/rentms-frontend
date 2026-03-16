@@ -2450,7 +2450,7 @@ const InviteCodes = (() => {
         max_uses: maxUses,
         lease_start: leaseStart,
         lease_end: leaseEnd,
-        expires_at: expires,
+        expires_at: expires ? expires + " 23:59:59" : null,
       });
       if (res.error) {
         RentMs.showMsg("genMsg", res.message || "Failed.", "error");
