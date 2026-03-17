@@ -2467,7 +2467,7 @@ const InviteCodes = (() => {
       `✅ Code <strong>${code}</strong> generated and copied to clipboard!`,
       "success",
     );
-    // Auto-close after 2s
+    // Reload codes from API and auto-close after 2s
     setTimeout(() => {
       bootstrap.Modal.getInstance(
         document.getElementById("generateModal"),
