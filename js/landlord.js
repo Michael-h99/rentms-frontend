@@ -2283,9 +2283,9 @@ const InviteCodes = (() => {
           <div class="code-meta">
             <div class="code-meta-title">${c.plaza_name} · Unit ${c.unit} &nbsp;<span class="status-pill ${pillClass(c.status)}">${pillLabel(c.status)}</span></div>
             <div class="code-meta-sub d-flex flex-wrap gap-3 mt-1">
-              <span><i class="bi bi-cash-coin me-1"></i>GHS ${c.rent.toLocaleString()}/mo</span>
-              <span><i class="bi bi-person-check me-1"></i>${usageBar(c.used, c.max_uses)} ${c.claimed_by ? "· " + c.claimed_by : ""}</span>
-              <span><i class="bi bi-calendar-x me-1"></i>Expires ${fmt(c.expires)}</span>
+              <span><i class="bi bi-cash-coin me-1"></i>GHS ${(c.rent || c.rent_amount || 0).toLocaleString()}/mo</span>
+              <span><i class="bi bi-person-check me-1"></i>${usageBar(c.used_count || c.used || 0, c.max_uses)} ${c.claimed_by ? "· " + c.claimed_by : ""}</span>
+              <span><i class="bi bi-calendar-x me-1"></i>Expires ${fmt(c.expires_at || c.expires)}</span>
             </div>
           </div>
           <div class="code-actions">
@@ -2538,11 +2538,11 @@ const InviteCodes = (() => {
       <div class="row g-3" style="font-size:.875rem">
         <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Plaza</div><strong>${c.plaza_name}</strong></div>
         <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Unit</div><strong>${c.unit}</strong></div>
-        <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Monthly Rent</div><strong style="color:var(--primary)">GHS ${c.rent.toLocaleString()}</strong></div>
-        <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Uses</div>${usageBar(c.used, c.max_uses)}</div>
+        <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Monthly Rent</div><strong style="color:var(--primary)">GHS ${(c.rent || c.rent_amount || 0).toLocaleString()}</strong></div>
+        <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Uses</div>${usageBar(c.used_count || c.used || 0, c.max_uses)}</div>
         <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Lease Start</div>${fmt(c.lease_start)}</div>
         <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Lease End</div>${fmt(c.lease_end)}</div>
-        <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Expires</div>${fmt(c.expires)}</div>
+        <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Expires</div>${fmt(c.expires_at || c.expires)}</div>
         <div class="col-6"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Claimed By</div>${c.claimed_by || "—"}</div>
         <div class="col-12"><div style="color:var(--text-muted);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Created</div>${fmt(c.created)}</div>
       </div>
