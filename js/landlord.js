@@ -2341,7 +2341,7 @@ const InviteCodes = (() => {
       unitEl.innerHTML = '<option value="">— Select plaza first —</option>';
       return;
     }
-    RentMs.get("/landlord/plazas/" + plazaId).then(unitData => { const total = unitData.data?.total_units || 0; const takenUnits = all.filter(c => String(c.plaza_id) === plazaId && c.status === "active").map(c => c.unit); unitEl.innerHTML = `<option value="">� Select unit �</option>` + Array.from({length: total}, (_,i) => i+1).map(u => `<option value="${u}" ${takenUnits.includes(String(u)) ? "disabled" : ""}>Unit ${u}${takenUnits.includes(String(u)) ? " (taken)" : ""}</option>`).join(""); }); return;
+    RentMs.get("/landlord/plazas/" + plazaId).then(unitData => { const total = unitData.data?.total_units || 0; const takenUnits = all.filter(c => String(c.plaza_id) === plazaId && c.status === "active").map(c => c.unit); unitEl.innerHTML = `<option value="">� Select unit �</option>` + Array.from({length: total}, (_,i) => i+1).map(u => `<option value="${u}" ${takenUnits.includes(String(u)) ? "disabled" : ""}>Unit ${u}${takenUnits.includes(String(u)) ? " (taken)" : ""}</option>`).join(""); }); return;
     // Filter out units that already have active codes
     const takenUnits = all
       .filter((c) => String(c.plaza_id) === plazaId && c.status === "active")
@@ -2501,24 +2501,8 @@ const InviteCodes = (() => {
   }
 
   /* ── revoke ─────────────────────────────────────────────── */
-  function revoke(id) {
-    if (
-      !confirm(
-        "Revoke this invite code? The tenant will no longer be able to use it to register.",
-      )
-    )
-      return;
-    const c = all.find((x) => x.id === id);
-    if (!c) return;
-    c.status = "revoked";
-    renderStats();
-    render();
-    if (detailId === id) {
-      bootstrap.Modal.getInstance(
-        document.getElementById("detailModal"),
-      )?.hide();
-    }
-  }
+  RentMs.del("/invite-codes/" + id).then(async () => { const res = await RentMs.get("/invite-codes"); all = res.data || []; filtered = [...all]; renderStats(); render(); if (detailId === id) { bootstrap.Modal.getInstance( document.getElementById("detailModal"), )?.hide(); } });
+  
 
   /* ── view detail ────────────────────────────────────────── */
   function viewDetail(id) {
