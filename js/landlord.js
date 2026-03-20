@@ -88,6 +88,8 @@ function mockResponse(url) {
     };
   if (u.includes("/invite-codes")) return { data: MOCK.invite_codes };
   if (u.includes("/settings")) return { data: MOCK.settings };
+  /* FIX: /auth/me was not handled — return profile mock */
+  if (u.includes("/auth/me")) return { data: MOCK.profile };
   if (u.includes("/profile")) return { data: MOCK.profile };
   return { data: [], message: "ok" };
 }
@@ -96,7 +98,11 @@ function mockResponse(url) {
    CORE — API, auth, sidebar, utils
    ============================================================ */
 const RentMs = (() => {
-  const BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:5000/api" : "https://rentms-backend-5.onrender.com/api";
+  const BASE =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+      ? "http://localhost:5000/api"
+      : "https://rentms-backend-5.onrender.com/api";
   const token = () => localStorage.getItem("token");
 
   /* Always returns user — uses MOCK in dev mode */
@@ -1420,7 +1426,6 @@ const LandlordMessages = (() => {
     const list = data.data || [];
     const box = document.getElementById("chatMessages");
     if (!box) return;
-    /* DEV_MODE fix: use MOCK.user.id instead of localStorage */
     const meId = DEV_MODE
       ? MOCK.user.id
       : JSON.parse(localStorage.getItem("user") || "{}").id;
@@ -1941,6 +1946,7 @@ const LandlordProfile = (() => {
 
   async function load() {
     const data = await RentMs.get("/auth/me");
+    /* FIX: API returns { user: {...} } or { data: {...} } — handle both */
     const p = data.data || data.user || {};
     const name = p.username || p.name || "";
     RentMs.setText("profileNameDisplay", name || "—");
@@ -2167,7 +2173,6 @@ const InviteCodes = (() => {
 
   /* ── helpers ──────────────────────────────────────────────── */
   function genCode() {
-    // Format: XX-XXXX  (plaza prefix + random alphanum)
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const rand = (n) =>
       Array.from(
@@ -2333,6 +2338,7 @@ const InviteCodes = (() => {
   }
 
   /* ── plaza change in modal → populate units ──────────────── */
+  /* FIX: removed the stray `return` that cut off the rest of the function */
   async function onPlazaChange() {
     const plazaId = document.getElementById("genPlaza")?.value;
     const unitEl = document.getElementById("genUnit");
@@ -2341,20 +2347,17 @@ const InviteCodes = (() => {
       unitEl.innerHTML = '<option value="">— Select plaza first —</option>';
       return;
     }
-    RentMs.get("/landlord/plazas/" + plazaId).then(unitData => { const total = unitData.data?.total_units || 0; const takenUnits = all.filter(c => String(c.plaza_id) === plazaId && c.status === "active").map(c => c.unit); unitEl.innerHTML = `<option value="">� Select unit �</option>` + Array.from({length: total}, (_,i) => i+1).map(u => `<option value="${u}" ${takenUnits.includes(String(u)) ? "disabled" : ""}>Unit ${u}${takenUnits.includes(String(u)) ? " (taken)" : ""}</option>`).join(""); }); return;
-    // Filter out units that already have active codes
+    const unitData = await RentMs.get("/landlord/plazas/" + plazaId);
+    const total = unitData.data?.total_units || 0;
     const takenUnits = all
       .filter((c) => String(c.plaza_id) === plazaId && c.status === "active")
-      .map((c) => c.unit);
+      .map((c) => String(c.unit));
     unitEl.innerHTML =
       '<option value="">— Select unit —</option>' +
-      units
+      Array.from({ length: total }, (_, i) => i + 1)
         .map(
-          (
-            u,
-          ) => `<option value="${u}" ${takenUnits.includes(u) ? 'disabled style="color:var(--text-muted)"' : ""}>
-        Unit ${u}${takenUnits.includes(u) ? " (code active)" : ""}
-      </option>`,
+          (u) =>
+            `<option value="${u}" ${takenUnits.includes(String(u)) ? "disabled" : ""}>Unit ${u}${takenUnits.includes(String(u)) ? " (taken)" : ""}</option>`,
         )
         .join("");
   }
@@ -2381,7 +2384,6 @@ const InviteCodes = (() => {
     if (prevSub)
       prevSub.textContent = `${plaza} · Unit ${unit} · GHS ${Number(rent).toLocaleString()}/mo`;
     if (prev) prev.style.display = "";
-    // Store generated code for use in generate()
     document.getElementById("genPlaza")._previewCode = code;
     RentMs.showMsg("genMsg", "", "");
   }
@@ -2411,35 +2413,31 @@ const InviteCodes = (() => {
       return;
     }
 
-    // Use preview code if already generated, else generate fresh
     const code = plazaEl._previewCode || genCode();
     plazaEl._previewCode = null;
 
-    // Update preview
     const prevCode = document.getElementById("genPreviewCode");
     const prev = document.getElementById("genPreview");
     if (prevCode) prevCode.textContent = code;
     if (prev) prev.style.display = "";
 
-    // Add to mock list
-    const newCode = {
-      id: all.length + 1,
-      code,
-      plaza_id: plazaId,
-      plaza_name: plazaName,
-      unit,
-      rent,
-      max_uses: maxUses,
-      used: 0,
-      claimed_by: null,
-      lease_start: leaseStart || null,
-      lease_end: leaseEnd || null,
-      expires: expires || null,
-      status: "active",
-      created: new Date().toISOString(),
-    };
-
     if (DEV_MODE) {
+      const newCode = {
+        id: all.length + 1,
+        code,
+        plaza_id: plazaId,
+        plaza_name: plazaName,
+        unit,
+        rent,
+        max_uses: maxUses,
+        used: 0,
+        claimed_by: null,
+        lease_start: leaseStart || null,
+        lease_end: leaseEnd || null,
+        expires: expires || null,
+        status: "active",
+        created: new Date().toISOString(),
+      };
       all.unshift(newCode);
       MOCK.invite_codes.unshift(newCode);
     } else {
@@ -2456,6 +2454,9 @@ const InviteCodes = (() => {
         RentMs.showMsg("genMsg", res.message || "Failed.", "error");
         return;
       }
+      /* Refresh from API after successful creation */
+      const fresh = await RentMs.get("/invite-codes");
+      all = fresh.data || all;
     }
 
     renderStats();
@@ -2467,7 +2468,6 @@ const InviteCodes = (() => {
       `✅ Code <strong>${code}</strong> generated and copied to clipboard!`,
       "success",
     );
-    // Reload codes from API and auto-close after 2s
     setTimeout(() => {
       bootstrap.Modal.getInstance(
         document.getElementById("generateModal"),
@@ -2478,7 +2478,6 @@ const InviteCodes = (() => {
   /* ── copy a code ────────────────────────────────────────── */
   function copy(code) {
     copyToClipboard(code);
-    // Flash toast using a tiny temp element since RentMs.showMsg needs an el id
     const toast = document.createElement("div");
     toast.textContent = `✅ ${code} copied!`;
     Object.assign(toast.style, {
@@ -2501,8 +2500,28 @@ const InviteCodes = (() => {
   }
 
   /* ── revoke ─────────────────────────────────────────────── */
-  RentMs.del("/invite-codes/" + id).then(async () => { const res = await RentMs.get("/invite-codes"); all = res.data || []; filtered = [...all]; renderStats(); render(); if (detailId === id) { bootstrap.Modal.getInstance( document.getElementById("detailModal"), )?.hide(); } });
-  
+  /* FIX: was a floating statement at module scope — now a proper named function */
+  async function revoke(id) {
+    if (!id) return;
+    if (!confirm("Are you sure you want to revoke this invite code?")) return;
+    if (DEV_MODE) {
+      const c = all.find((x) => x.id === id);
+      if (c) c.status = "revoked";
+    } else {
+      await RentMs.del("/invite-codes/" + id);
+      const res = await RentMs.get("/invite-codes");
+      all = res.data || all;
+    }
+    filtered = [...all];
+    renderStats();
+    render();
+    /* Close detail modal if the revoked code was open */
+    if (detailId === id) {
+      bootstrap.Modal.getInstance(
+        document.getElementById("detailModal"),
+      )?.hide();
+    }
+  }
 
   /* ── view detail ────────────────────────────────────────── */
   function viewDetail(id) {
@@ -2598,8 +2617,10 @@ const InviteCodes = (() => {
     RentMs.guardAuth();
     RentMs.initSidebar();
 
+    /* FIX: only show devBanner if the element exists on this page */
     if (DEV_MODE) {
-      document.getElementById("devBanner").style.display = "";
+      const banner = document.getElementById("devBanner");
+      if (banner) banner.style.display = "";
       const u = RentMs.user();
       const av = document.getElementById("sidebarAvatar");
       const nm = document.getElementById("sidebarName");
@@ -2607,7 +2628,6 @@ const InviteCodes = (() => {
       if (nm) nm.textContent = u.username || "Landlord";
     }
 
-    // Load codes
     const res = await RentMs.get("/invite-codes");
     all = res.data || [];
     filtered = [...all];
@@ -2616,7 +2636,6 @@ const InviteCodes = (() => {
     renderStats();
     render();
 
-    // Set default expiry in generate modal (30 days from now)
     const expEl = document.getElementById("genExpiry");
     if (expEl) {
       const d = new Date();
