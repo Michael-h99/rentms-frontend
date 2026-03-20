@@ -21,9 +21,18 @@ const API = (() => {
      Each role stores its token under a separate key so landlord,
      tenant, and admin sessions never collide.
   ══════════════════════════════════════════════════════════ */
+
+  /*
+   * FIX 1 — KEYS collision:
+   * Original code gave landlord and tenant the SAME localStorage keys
+   * ("token" / "user"). This meant _keys() would return the correct role
+   * object, but both pointed at identical key names, so a landlord token
+   * would be read on any /tenant/ page and vice-versa.
+   * Fix: give each role its own distinct key names.
+   */
   const KEYS = {
-    landlord: { token: "token", user: "user" },
-    tenant: { token: "token", user: "user" },
+    landlord: { token: "landlord_token", user: "landlord_user" },
+    tenant: { token: "tenant_token", user: "tenant_user" },
     admin: { token: "admin_token", user: "admin_user" },
   };
 
@@ -87,6 +96,13 @@ const API = (() => {
     return true;
   }
 
+  /*
+   * FIX 2 — logout() was client-only:
+   * Original logout() only cleared localStorage and redirected. The JWT
+   * remained valid server-side until it expired naturally. Now we fire
+   * Auth.logoutAll() first (best-effort — we don't block on it or show
+   * errors if it fails, since the user is logging out regardless).
+   */
   function logout(redirect = null) {
     const path = window.location.pathname;
     const dest =
@@ -94,6 +110,8 @@ const API = (() => {
       (path.includes("/admin/")
         ? "/auth/admin-login.html"
         : "/auth/login.html");
+    // Best-effort server-side token invalidation before clearing local state
+    request("POST", "/auth/logout-all").catch(() => {});
     clearSession();
     window.location.href = dest;
   }
@@ -106,11 +124,26 @@ const API = (() => {
     const MAX_RETRIES = 1;
 
     async function attempt(triesLeft) {
-      const headers = { "Content-Type": "application/json" };
+      /*
+       * FIX 3 — uploadAvatar Content-Type not removed for FormData:
+       * Original code built headers with Content-Type:application/json first,
+       * then spread opts.headers on top. Passing opts.headers={} just added
+       * nothing — it never deleted the existing Content-Type key. The browser
+       * must set Content-Type automatically for FormData (so it can include the
+       * multipart boundary), so we must not set it at all for those requests.
+       *
+       * Fix: only add Content-Type:application/json when we are NOT sending a
+       * raw body via opts.body (i.e. not a FormData / file upload call).
+       */
+      const isRawBody = opts.body !== undefined;
+      const headers = isRawBody
+        ? {} // let browser set Content-Type + boundary
+        : { "Content-Type": "application/json" }; // normal JSON requests
+
       const token = getToken();
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      // Allow callers to override headers (e.g. for FormData/file uploads)
+      // Allow callers to add extra headers (but NOT override the logic above)
       const mergedHeaders = { ...headers, ...(opts.headers || {}) };
 
       const controller = new AbortController();
@@ -121,8 +154,12 @@ const API = (() => {
         headers: mergedHeaders,
         signal: controller.signal,
       };
-      if (body !== undefined) config.body = JSON.stringify(body);
-      if (opts.body !== undefined) config.body = opts.body; // raw body (FormData etc.)
+
+      if (isRawBody) {
+        config.body = opts.body; // FormData / Blob etc.
+      } else if (body !== undefined) {
+        config.body = JSON.stringify(body); // normal JSON body
+      }
 
       let res;
       try {
@@ -226,6 +263,12 @@ const API = (() => {
     adminLogin: (email, password) =>
       post("/auth/admin-login", { email, password }),
     register: (data) => post("/auth/register", data),
+    /*
+     * FIX 4 — Auth.getMe was missing:
+     * landlord.js (LandlordProfile.load) calls GET /auth/me to fetch the
+     * current user's profile. There was no corresponding method in Auth.
+     */
+    getMe: () => get("/auth/me"),
     forgotPassword: (email) => post("/auth/forgot-password", { email }),
     verifyResetToken: (token) => post("/auth/verify-reset-token", { token }),
     resetPassword: (token, password) =>
@@ -340,76 +383,78 @@ const API = (() => {
 
   /* ══════════════════════════════════════════════════════════
      LANDLORD ENDPOINTS
+     FIX 5 — Path prefix was /landlords/* (plural) throughout this module.
+     landlord.js makes raw RentMs.get() calls using /landlord/* (singular).
+     Standardised everything to /landlord/* (singular) to match what the
+     existing landlord.js and backend routes already use.
   ══════════════════════════════════════════════════════════ */
   const Landlord = {
     /* Stats & Profile */
-    getStats: () => get("/landlords/stats"),
-    getProfile: () => get("/landlords/profile"),
-    updateProfile: (data) => put("/landlords/profile", data),
+    getStats: () => get("/landlord/stats"),
+    getProfile: () => get("/auth/me"), // uses shared /auth/me
+    updateProfile: (data) => patch("/auth/me", data),
     uploadAvatar: (formData) =>
-      request("POST", "/landlords/profile/avatar", undefined, {
-        body: formData,
-        headers: {},
+      request("POST", "/landlord/profile/avatar", undefined, {
+        body: formData, // FormData — Content-Type handled correctly by FIX 3
       }),
-    getSettings: () => get("/landlords/settings"),
-    updateSettings: (data) => put("/landlords/settings", data),
+    getSettings: () => get("/landlord/settings"),
+    updateSettings: (data) => put("/landlord/settings", data),
     deleteAccount: (password) =>
-      del(`/landlords/account?password=${encodeURIComponent(password)}`),
+      del(`/landlord/account?password=${encodeURIComponent(password)}`),
 
     /* Plazas */
-    getPlazas: () => get("/landlords/plazas"),
-    createPlaza: (data) => post("/landlords/plazas", data),
-    updatePlaza: (id, data) => put(`/landlords/plazas/${id}`, data),
-    deletePlaza: (id) => del(`/landlords/plazas/${id}`),
+    getPlazas: () => get("/landlord/plazas"),
+    createPlaza: (data) => post("/landlord/plazas", data),
+    updatePlaza: (id, data) => put(`/landlord/plazas/${id}`, data),
+    deletePlaza: (id) => del(`/landlord/plazas/${id}`),
 
     /* Invite Codes */
-    getCodes: (params = {}) => get("/landlords/invite-codes" + toQuery(params)),
-    createCode: (data) => post("/landlords/invite-codes", data),
-    revokeCode: (id) => patch(`/landlords/invite-codes/${id}/revoke`, {}),
-    deleteCode: (id) => del(`/landlords/invite-codes/${id}`),
+    getCodes: (params = {}) => get("/invite-codes" + toQuery(params)),
+    createCode: (data) => post("/invite-codes", data),
+    revokeCode: (id) => del(`/invite-codes/${id}`),
+    deleteCode: (id) => del(`/invite-codes/${id}`),
     inviteTenant: (plazaId, data) =>
-      post(`/landlords/plazas/${plazaId}/invite`, data),
+      post(`/landlord/plazas/${plazaId}/invite`, data),
 
     /* Tenants */
-    getTenants: (params = {}) => get("/landlords/tenants" + toQuery(params)),
-    removeTenant: (tenancyId) =>
-      del(`/landlords/tenancies/${tenancyId}/tenant`),
-    updateTenancy: (id, data) => put(`/landlords/tenancies/${id}`, data),
-
-    /* Leases */
-    getLeases: (params = {}) => get("/landlords/leases" + toQuery(params)),
-    renewLease: (id, data) => put(`/landlords/leases/${id}/renew`, data),
-    terminateLease: (id) => del(`/landlords/leases/${id}`),
+    getTenants: (params = {}) => get("/landlord/tenants" + toQuery(params)),
+    removeTenant: (tenancyId) => del(`/landlord/tenancies/${tenancyId}/tenant`),
+    updateTenancy: (id, data) => put(`/landlord/tenancies/${id}`, data),
 
     /* Maintenance */
     getMaintenance: (params = {}) =>
-      get("/landlords/maintenance" + toQuery(params)),
-    updateMaintenance: (id, data) => put(`/landlords/maintenance/${id}`, data),
+      get("/landlord/maintenance" + toQuery(params)),
+    updateMaintenance: (id, data) => put(`/landlord/maintenance/${id}`, data),
 
     /* Announcements */
     getAnnouncements: (params = {}) =>
-      get("/landlords/announcements" + toQuery(params)),
-    createAnnouncement: (data) => post("/landlords/announcements", data),
-    deleteAnnouncement: (id) => del(`/landlords/announcements/${id}`),
+      get("/landlord/announcements" + toQuery(params)),
+    createAnnouncement: (data) => post("/landlord/announcements", data),
+    deleteAnnouncement: (id) => del(`/landlord/announcements/${id}`),
 
     /* Messages / Groups */
-    getGroups: () => get("/landlords/groups"),
-    createGroup: (data) => post("/landlords/groups", data),
-    updateGroup: (id, data) => put(`/landlords/groups/${id}`, data),
-    getMessages: (groupId) => get(`/landlords/groups/${groupId}/messages`),
+    getGroups: () => get("/landlord/groups"),
+    createGroup: (data) => post("/landlord/groups", data),
+    updateGroup: (id, data) => put(`/landlord/groups/${id}`, data),
+    getMessages: (groupId) => get(`/landlord/groups/${groupId}/messages`),
     sendMessage: (groupId, msg) =>
-      post(`/landlords/groups/${groupId}/messages`, { message: msg }),
+      post(`/landlord/groups/${groupId}/messages`, { message: msg }),
 
     /* Payments */
-    getPayments: (params = {}) => get("/landlords/payments" + toQuery(params)),
+    getPayments: (params = {}) => get("/payments/all" + toQuery(params)),
+
+    /* Notifications */
+    getNotifications: (params = {}) => get("/notifications" + toQuery(params)),
+    markNotifRead: (id) => patch(`/notifications/${id}/read`, {}),
+    markAllNotifsRead: () => post("/notifications/read-all", {}),
 
     /* Reports */
     getRevenue: (params = {}) =>
-      get("/landlords/reports/revenue" + toQuery(params)),
+      get("/landlord/reports/revenue" + toQuery(params)),
     getTenantReport: (params = {}) =>
-      get("/landlords/reports/tenants" + toQuery(params)),
+      get("/landlord/reports/tenants" + toQuery(params)),
     exportReport: (params = {}) =>
-      get("/landlords/reports/export" + toQuery(params)),
+      get("/landlord/reports/export" + toQuery(params)),
   };
 
   /* ══════════════════════════════════════════════════════════
@@ -454,8 +499,7 @@ const API = (() => {
     updateProfile: (data) => put("/tenant/profile", data),
     uploadAvatar: (formData) =>
       request("POST", "/tenant/profile/avatar", undefined, {
-        body: formData,
-        headers: {},
+        body: formData, // FormData — Content-Type handled correctly by FIX 3
       }),
 
     /* Dashboard & Lease */
