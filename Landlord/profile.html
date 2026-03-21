@@ -14,7 +14,6 @@
       rel="stylesheet"
     />
     <style>
-      /* ── Profile picture uploader ── */
       .avatar-upload-wrap {
         position: relative;
         width: 110px;
@@ -71,8 +70,6 @@
       .avatar-upload-btn.removing {
         background: var(--danger);
       }
-
-      /* Drag-over state */
       .avatar-drop-zone {
         border: 2px dashed var(--border);
         border-radius: 14px;
@@ -104,8 +101,6 @@
         margin: 0;
         line-height: 1.5;
       }
-
-      /* Crop preview strip */
       .crop-strip {
         display: none;
         margin-top: 16px;
@@ -144,8 +139,6 @@
         color: var(--text-muted);
         margin-top: 3px;
       }
-
-      /* Upload progress bar */
       .upload-progress {
         display: none;
         margin-top: 12px;
@@ -277,9 +270,7 @@
         <!-- ══ AVATAR BANNER ══════════════════════════════════════ -->
         <div class="card mb-4 p-4">
           <div class="d-flex align-items-center gap-4 flex-wrap">
-            <!-- Avatar circle with camera button -->
             <div class="avatar-upload-wrap" id="avatarWrap">
-              <!-- Initials shown by default; replaced by <img> once photo uploaded -->
               <div class="avatar-initials" id="avatarInitials">?</div>
               <label
                 class="avatar-upload-btn"
@@ -296,7 +287,6 @@
                 onchange="onAvatarFileSelected(this)"
               />
             </div>
-
             <div style="flex: 1; min-width: 0">
               <h5
                 style="
@@ -330,8 +320,6 @@
                 >Landlord</span
               >
             </div>
-
-            <!-- Remove photo button — only shown when a photo exists -->
             <button
               id="removePhotoBtn"
               onclick="removePhoto()"
@@ -352,7 +340,6 @@
                 <h6>Profile Picture</h6>
               </div>
               <div class="p-4">
-                <!-- Drop zone -->
                 <div
                   class="avatar-drop-zone"
                   id="dropZone"
@@ -378,7 +365,6 @@
                   />
                 </div>
 
-                <!-- Preview strip (shown after file selected) -->
                 <div class="crop-strip" id="cropStrip">
                   <img
                     id="cropPreviewImg"
@@ -406,7 +392,6 @@
                   </div>
                 </div>
 
-                <!-- Upload progress -->
                 <div class="upload-progress" id="uploadProgress">
                   <div
                     style="
@@ -422,13 +407,11 @@
                   </div>
                 </div>
 
-                <!-- Status message -->
                 <div
                   id="avatarMsg"
                   style="margin-top: 12px; font-size: 0.82rem"
                 ></div>
 
-                <!-- Tips -->
                 <div
                   style="
                     margin-top: 16px;
@@ -577,25 +560,20 @@
             </div>
           </div>
         </div>
-        <!-- /row -->
       </div>
-      <!-- /content -->
     </div>
-    <!-- /main -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
     <script>
-      LandlordProfile.init();
+      /* ── Backend base URL (matches landlord.js) ── */
+      const BACKEND_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000/api"
+          : "https://rentms-backend-5.onrender.com/api";
 
-      /* ═══════════════════════════════════════════════════════════
-         PROFILE PICTURE LOGIC
-         - File picked via click or drag & drop
-         - Preview shown before confirming
-         - On confirm: simulate upload progress, then apply to avatar
-         - Photo stored in localStorage as base64 (DEV_MODE)
-         - In live mode: POST to /api/landlords/avatar
-      ═══════════════════════════════════════════════════════════ */
+      LandlordProfile.init();
 
       const MAX_SIZE_MB = 5;
       let pendingDataUrl = null;
@@ -628,13 +606,12 @@
       /* ── File selected (from either input) ── */
       function onAvatarFileSelected(input) {
         const file = input.files[0];
-        input.value = ""; // reset so same file can be re-picked
+        input.value = "";
         if (!file) return;
         processFile(file);
       }
 
       function processFile(file) {
-        // Type check
         if (!file.type.startsWith("image/")) {
           showAvatarMsg(
             "Please select an image file (JPG, PNG, or WEBP).",
@@ -642,7 +619,6 @@
           );
           return;
         }
-        // Size check
         if (file.size > MAX_SIZE_MB * 1024 * 1024) {
           showAvatarMsg(
             `File is too large. Maximum size is ${MAX_SIZE_MB} MB.`,
@@ -650,7 +626,6 @@
           );
           return;
         }
-
         pendingFile = file;
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -691,32 +666,37 @@
         const bar = document.getElementById("progressBar");
         progress.classList.add("show");
 
-        // Simulate progress
+        /* Simulate progress bar */
         let pct = 0;
         const tick = setInterval(() => {
           pct = Math.min(pct + Math.random() * 18, 90);
           bar.style.width = pct + "%";
         }, 120);
 
-        if (DEV_MODE) {
-          // In dev: save to localStorage, apply immediately
+        if (typeof DEV_MODE !== "undefined" && DEV_MODE) {
+          /* Dev mode — save to localStorage only */
           await new Promise((r) => setTimeout(r, 900));
           try {
             localStorage.setItem("LANDLORD_AVATAR", pendingDataUrl);
           } catch (e) {}
           finishUpload(pendingDataUrl, tick, bar, progress);
         } else {
+          /* Live mode — POST to backend */
           try {
             const formData = new FormData();
             formData.append("avatar", pendingFile);
-            const res = await fetch("/api/landlords/avatar", {
+
+            const res = await fetch(BACKEND_URL + "/landlord/profile/avatar", {
               method: "POST",
               headers: {
+                /* NOTE: do NOT set Content-Type — browser sets it with the boundary */
                 Authorization: "Bearer " + localStorage.getItem("token"),
               },
               body: formData,
             });
-            const json = await res.json();
+
+            const json = await res.json().catch(() => ({}));
+
             if (!res.ok || json.error) {
               clearInterval(tick);
               progress.classList.remove("show");
@@ -727,9 +707,22 @@
               );
               return;
             }
-            const url = json.data?.avatar_url || pendingDataUrl;
+
+            /* Try several common response shapes for the returned URL */
+            const url =
+              json.data?.avatar_url ||
+              json.avatar_url ||
+              json.data?.url ||
+              json.url ||
+              pendingDataUrl; /* fallback: show local preview */
+
+            /* Also persist locally so it survives refresh */
+            try {
+              localStorage.setItem("LANDLORD_AVATAR", url);
+            } catch (e) {}
+
             finishUpload(url, tick, bar, progress);
-          } catch {
+          } catch (err) {
             clearInterval(tick);
             progress.classList.remove("show");
             document.getElementById("dropZone").style.display = "";
@@ -757,7 +750,6 @@
 
       /* ── Apply avatar to all avatar elements on the page ── */
       function applyAvatar(dataUrl) {
-        // Replace initials div with an <img> in the banner
         const wrap = document.getElementById("avatarWrap");
         const initEl = document.getElementById("avatarInitials");
         if (wrap && initEl) {
@@ -771,7 +763,7 @@
           }
           img.src = dataUrl;
         }
-        // Sidebar avatar
+        /* Sidebar avatar */
         const sav = document.getElementById("sidebarAvatar");
         if (sav) {
           sav.style.backgroundImage = `url(${dataUrl})`;
@@ -779,7 +771,7 @@
           sav.style.backgroundPosition = "center";
           sav.textContent = "";
         }
-        // Show remove button
+        /* Show remove button */
         const rmBtn = document.getElementById("removePhotoBtn");
         if (rmBtn) rmBtn.style.display = "";
       }
@@ -791,18 +783,12 @@
           localStorage.removeItem("LANDLORD_AVATAR");
         } catch (e) {}
 
-        // Restore initials
         const wrap = document.getElementById("avatarWrap");
         const initEl = document.getElementById("avatarInitials");
         const img = wrap?.querySelector(".avatar-img");
-        if (img) {
-          img.remove();
-        }
-        if (initEl) {
-          initEl.style.display = "";
-        }
+        if (img) img.remove();
+        if (initEl) initEl.style.display = "";
 
-        // Reset sidebar
         const sav = document.getElementById("sidebarAvatar");
         if (sav) {
           sav.style.backgroundImage = "";
@@ -810,7 +796,6 @@
             document.getElementById("sidebarName")?.textContent || "";
           sav.textContent = name ? name[0].toUpperCase() : "?";
         }
-
         document.getElementById("removePhotoBtn").style.display = "none";
         showAvatarMsg("Profile picture removed.", "info");
       }
