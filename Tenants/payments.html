@@ -15,8 +15,12 @@
     />
   </head>
   <body>
-    <!-- ── Sidebar ── -->
-    <div class="sidebar">
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -39,33 +43,33 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="payments.html" class="nav-link active"
+        <a href="payments.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Make Payment</a
         >
-        <a href="payment-history.html" class="nav-link"
+        <a href="payment-history.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-clock-history"></i> Payment History</a
         >
-        <a href="lease.html" class="nav-link"
+        <a href="lease.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-file-text-fill"></i> My Lease</a
         >
         <div class="nav-section">Support</div>
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcements.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
       </nav>
@@ -102,6 +106,13 @@
 
     <div class="main">
       <div class="topbar">
+        <button
+          class="sidebar-toggle me-2"
+          onclick="openSidebar()"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list" style="font-size: 1.2rem"></i>
+        </button>
         <span class="topbar-title">Make Payment</span>
         <a href="notifications.html" class="topbar-btn"
           ><i class="bi bi-bell"></i
@@ -141,9 +152,8 @@
               </div>
             </div>
 
-            <!-- Payment flow card -->
+            <!-- Payment flow -->
             <div class="card p-4" style="position: relative; overflow: hidden">
-              <!-- Processing overlay -->
               <div class="processing-overlay" id="processingOverlay">
                 <div class="spinner-ring"></div>
                 <div
@@ -157,7 +167,6 @@
                 </div>
               </div>
 
-              <!-- Step indicator -->
               <div class="step-bar" id="stepBar">
                 <div class="step-item active" id="si1">
                   <div class="step-dot">1</div>
@@ -173,7 +182,7 @@
                 </div>
               </div>
 
-              <!-- ── STEP 1: amount & type ── -->
+              <!-- Step 1 -->
               <div id="step1">
                 <div class="mb-1 fw-bold" style="font-size: 1rem">
                   Payment Details
@@ -235,7 +244,7 @@
                 </button>
               </div>
 
-              <!-- ── STEP 2: choose method ── -->
+              <!-- Step 2 -->
               <div id="step2" style="display: none">
                 <div class="mb-1 fw-bold" style="font-size: 1rem">
                   Choose Payment Method
@@ -268,9 +277,7 @@
                     >GHS 0.00</span
                   >
                 </div>
-
-                <div class="method-grid mb-4" id="methodGrid">
-                  <!-- MTN MoMo -->
+                <div class="method-grid mb-4">
                   <div
                     class="method-card"
                     id="mc-mtn"
@@ -281,7 +288,6 @@
                     <div class="ml">MTN MoMo</div>
                     <div class="mc" id="mtn-preview">Mobile Money</div>
                   </div>
-                  <!-- Telecel / Vodafone Cash -->
                   <div
                     class="method-card"
                     id="mc-voda"
@@ -292,7 +298,6 @@
                     <div class="ml">Telecel Cash</div>
                     <div class="mc" id="voda-preview">Mobile Money</div>
                   </div>
-                  <!-- AT Money -->
                   <div
                     class="method-card"
                     id="mc-at"
@@ -303,7 +308,6 @@
                     <div class="ml">AT Money</div>
                     <div class="mc" id="at-preview">Mobile Money</div>
                   </div>
-                  <!-- Debit/Credit Card -->
                   <div
                     class="method-card"
                     id="mc-card"
@@ -314,7 +318,6 @@
                     <div class="ml">Card Payment</div>
                     <div class="mc">Visa / MasterCard</div>
                   </div>
-                  <!-- Bank Transfer -->
                   <div
                     class="method-card"
                     id="mc-bank"
@@ -325,7 +328,6 @@
                     <div class="ml">Bank Transfer</div>
                     <div class="mc" id="bank-preview">Direct transfer</div>
                   </div>
-                  <!-- Cash -->
                   <div
                     class="method-card"
                     id="mc-cash"
@@ -337,7 +339,6 @@
                     <div class="mc">Hand to landlord</div>
                   </div>
                 </div>
-
                 <div class="d-flex gap-2">
                   <button
                     class="btn btn-secondary flex-fill"
@@ -354,7 +355,7 @@
                 </div>
               </div>
 
-              <!-- ── STEP 3: payment details ── -->
+              <!-- Step 3 -->
               <div id="step3" style="display: none">
                 <div class="mb-1 fw-bold" style="font-size: 1rem" id="s3Title">
                   Complete Payment
@@ -414,8 +415,7 @@
                       "
                       id="momoAccName"
                     ></div>
-                    <span class="momo-badge" id="momoBadge">MoMo</span>
-                    <br />
+                    <span class="momo-badge" id="momoBadge">MoMo</span><br />
                     <button
                       class="copy-btn"
                       id="copyBtn"
@@ -427,8 +427,7 @@
                   <div class="mb-3">
                     <label class="form-label fw-semibold"
                       >Your Phone Number *</label
-                    >
-                    <input
+                    ><input
                       type="tel"
                       class="form-control"
                       id="momoPhone"
@@ -438,8 +437,7 @@
                   <div class="mb-3">
                     <label class="form-label fw-semibold"
                       >MoMo Transaction ID *</label
-                    >
-                    <input
+                    ><input
                       type="text"
                       class="form-control"
                       id="momoTxId"
@@ -483,10 +481,8 @@
                   </div>
                   <div class="row g-3 mb-3">
                     <div class="col-12">
-                      <label class="form-label fw-semibold"
-                        >Card Number *</label
-                      >
-                      <input
+                      <label class="form-label fw-semibold">Card Number *</label
+                      ><input
                         type="text"
                         class="form-control"
                         id="cardNumber"
@@ -501,8 +497,7 @@
                     <div class="col-12">
                       <label class="form-label fw-semibold"
                         >Name on Card *</label
-                      >
-                      <input
+                      ><input
                         type="text"
                         class="form-control"
                         id="cardHolder"
@@ -511,8 +506,8 @@
                       />
                     </div>
                     <div class="col-6">
-                      <label class="form-label fw-semibold">Expiry *</label>
-                      <input
+                      <label class="form-label fw-semibold">Expiry *</label
+                      ><input
                         type="text"
                         class="form-control"
                         id="cardExpiry"
@@ -525,8 +520,8 @@
                       />
                     </div>
                     <div class="col-6">
-                      <label class="form-label fw-semibold">CVV *</label>
-                      <input
+                      <label class="form-label fw-semibold">CVV *</label
+                      ><input
                         type="password"
                         class="form-control"
                         id="cardCvv"
@@ -534,26 +529,6 @@
                         maxlength="4"
                       />
                     </div>
-                  </div>
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: 8px;
-                      background: rgba(16, 185, 129, 0.08);
-                      border: 1px solid rgba(16, 185, 129, 0.2);
-                      border-radius: 10px;
-                      padding: 10px 14px;
-                      margin-bottom: 16px;
-                      font-size: 0.78rem;
-                      color: var(--text-muted);
-                    "
-                  >
-                    <i
-                      class="bi bi-shield-lock-fill"
-                      style="color: var(--success); font-size: 1rem"
-                    ></i>
-                    SSL 256-bit encrypted — your card details are secure
                   </div>
                 </div>
 
@@ -590,46 +565,21 @@
                       <span>Account Number</span>
                       <div class="d-flex align-items-center gap-2">
                         <span class="bank-acc-num" id="bkAccNum">—</span>
-                        <button
-                          class="copy-btn"
-                          style="
-                            padding: 3px 10px;
-                            margin-top: 0;
-                            font-size: 0.7rem;
-                          "
-                          onclick="
-                            copyText(
-                              document.getElementById('bkAccNum').textContent,
-                              this,
-                            )
-                          "
-                        >
-                          <i class="bi bi-clipboard"></i>
-                        </button>
                       </div>
                     </div>
                     <div class="bank-detail-row">
                       <span>Branch</span><span id="bkBranch">—</span>
                     </div>
-                    <div class="bank-detail-row">
-                      <span>Swift / Sort Code</span><span id="bkSwift">—</span>
-                    </div>
                   </div>
                   <div class="mb-3">
                     <label class="form-label fw-semibold"
                       >Bank Reference / Transaction ID *</label
-                    >
-                    <input
+                    ><input
                       type="text"
                       class="form-control"
                       id="bankRef"
                       placeholder="Paste the reference from your bank"
                     />
-                  </div>
-                  <div style="font-size: 0.72rem; color: var(--text-muted)">
-                    <i class="bi bi-info-circle me-1"></i>Make the transfer
-                    first, then enter the reference number here to confirm your
-                    payment.
                   </div>
                 </div>
 
@@ -649,15 +599,14 @@
                     <i
                       class="bi bi-info-circle me-2"
                       style="color: var(--warning)"
-                    ></i>
-                    Hand cash directly to your landlord and record the date
+                    ></i
+                    >Hand cash directly to your landlord and record the date
                     below.
                   </div>
                   <div class="mb-3">
                     <label class="form-label fw-semibold"
                       >Date of Payment *</label
-                    >
-                    <input type="date" class="form-control" id="cashDate" />
+                    ><input type="date" class="form-control" id="cashDate" />
                   </div>
                   <div class="mb-3">
                     <label class="form-label fw-semibold"
@@ -665,8 +614,7 @@
                       <span style="color: var(--text-muted); font-weight: 400"
                         >(optional)</span
                       ></label
-                    >
-                    <input
+                    ><input
                       type="text"
                       class="form-control"
                       id="cashNote"
@@ -692,7 +640,7 @@
                 </div>
               </div>
 
-              <!-- ── SUCCESS ── -->
+              <!-- Success -->
               <div
                 id="stepSuccess"
                 style="display: none; text-align: center; padding: 12px 0"
@@ -760,7 +708,6 @@
                 </div>
               </div>
             </div>
-            <!-- /card -->
           </div>
         </div>
       </div>
@@ -768,41 +715,33 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
-    <script src="../js/tenant.js"></script>
+    <script src="../js/tenants.js"></script>
     <script>
-      /* ── State ── */
       let payStep = 1,
         selectedMethod = null;
-      let PINFO = {}; // landlord payment info
+      let PINFO = {};
 
-      /* ── Boot ── */
       document.addEventListener("DOMContentLoaded", async () => {
-        // Sidebar
-        const u = JSON.parse(localStorage.getItem("user") || "{}");
-        const sn = document.getElementById("sidebarName"),
-          sa = document.getElementById("sidebarAvatar");
-        if (sn && u.username) sn.textContent = u.username;
-        if (sa && u.username)
-          sa.textContent = u.username.charAt(0).toUpperCase();
-
-        // Set today for cash date
+        if (typeof _T !== "undefined") await _T.initSidebar();
         document.getElementById("cashDate").value = new Date()
           .toISOString()
           .split("T")[0];
-
-        // Load lease balance
         await loadBalance();
-
-        // Load landlord payment info
-        await loadPaymentInfo();
       });
 
       async function loadBalance() {
         try {
-          const res = await fetch("/api/tenant/dashboard", {
-            headers: {
-              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
-            },
+          const BASE =
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1"
+              ? "http://localhost:5000/api"
+              : "https://rentms-backend-5.onrender.com/api";
+          const token =
+            localStorage.getItem("tenant_token") ||
+            localStorage.getItem("token") ||
+            "";
+          const res = await fetch(BASE + "/tenant/dashboard", {
+            headers: { Authorization: "Bearer " + token },
           });
           const data = await res.json();
           const l = data?.lease;
@@ -829,79 +768,14 @@
           );
           document.getElementById("balRent").textContent = ghs(l.rent);
           document.getElementById("payAmount").value = l.amount_due || "";
-          if (l.status) {
-            const map = {
-              paid: "success",
-              overdue: "danger",
-              pending: "warning",
-            };
-            const cls = map[l.status] || "secondary";
-            document.getElementById("balStatusBadge").innerHTML =
-              `<span class="badge-status" style="background:var(--${cls}-light);color:var(--${cls}-text)">${l.status}</span>`;
-          }
         } catch {}
       }
 
-      async function loadPaymentInfo() {
-        // Try API first, fall back to localStorage (landlord saves to PAYMENT_INFO key)
-        try {
-          const res = await fetch("/api/landlord/payment-info", {
-            headers: {
-              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
-            },
-          });
-          const data = await res.json();
-          PINFO = data?.paymentInfo || {};
-        } catch {}
-
-        // Fallback: check localStorage (for local dev / same-device usage)
-        if (!Object.keys(PINFO).length) {
-          try {
-            PINFO = JSON.parse(localStorage.getItem("PAYMENT_INFO") || "{}");
-          } catch {}
-        }
-
-        // Populate method card previews
-        applyMethodAvailability();
-      }
-
-      function applyMethodAvailability() {
-        const methods = {
-          mtn: {
-            enabled: PINFO.mtn?.enabled,
-            preview: PINFO.mtn?.number || "Not configured",
-          },
-          voda: {
-            enabled: PINFO.voda?.enabled,
-            preview: PINFO.voda?.number || "Not configured",
-          },
-          at: {
-            enabled: PINFO.at?.enabled,
-            preview: PINFO.at?.number || "Not configured",
-          },
-          card: { enabled: PINFO["card-info"]?.enabled },
-          bank: {
-            enabled: PINFO.bank?.enabled,
-            preview: PINFO.bank?.bankName || "Not configured",
-          },
-          cash: { enabled: true },
-        };
-        Object.entries(methods).forEach(([key, cfg]) => {
-          const card = document.getElementById("mc-" + key);
-          if (!card) return;
-          if (cfg.enabled === false) card.classList.add("disabled");
-          else card.classList.remove("disabled");
-          const prev = document.getElementById(key + "-preview");
-          if (prev && cfg.preview) prev.textContent = cfg.preview;
-        });
-      }
-
-      /* ── Navigation ── */
       function nextStep() {
         if (payStep === 1) {
           const amt = parseFloat(document.getElementById("payAmount").value);
           if (!amt || amt <= 0) {
-            showAlert("Please enter a valid amount.");
+            alert("Please enter a valid amount.");
             return;
           }
           document.getElementById("s2Amount").textContent =
@@ -909,7 +783,7 @@
         }
         if (payStep === 2) {
           if (!selectedMethod) {
-            showAlert("Please select a payment method.");
+            alert("Please select a payment method.");
             return;
           }
           buildMethodPanel(selectedMethod);
@@ -917,12 +791,10 @@
         payStep = Math.min(3, payStep + 1);
         renderStepUI();
       }
-
       function prevStep() {
         payStep = Math.max(1, payStep - 1);
         renderStepUI();
       }
-
       function renderStepUI() {
         [1, 2, 3].forEach((n) => {
           document.getElementById("step" + n).style.display =
@@ -933,8 +805,6 @@
           else if (n === payStep) si.classList.add("active");
         });
       }
-
-      /* ── Method selection ── */
       function selectMethod(m) {
         selectedMethod = m;
         document
@@ -942,7 +812,6 @@
           .forEach((c) => c.classList.remove("selected"));
         document.getElementById("mc-" + m)?.classList.add("selected");
       }
-
       function buildMethodPanel(m) {
         ["momo", "card", "bank", "cash"].forEach(
           (p) => (document.getElementById("panel-" + p).style.display = "none"),
@@ -952,58 +821,27 @@
           parseFloat(document.getElementById("payAmount").value || 0).toFixed(
             2,
           );
-
         if (["mtn", "voda", "at"].includes(m)) {
           document.getElementById("panel-momo").style.display = "";
-          const cfg =
-            { mtn: PINFO.mtn, voda: PINFO.voda, at: PINFO.at }[m] || {};
-          const badgeCls = { mtn: "mtn", voda: "voda", at: "at" }[m];
-          const badgeLbl = {
-            mtn: "MTN MoMo",
-            voda: "Telecel Cash",
-            at: "AT Money",
-          }[m];
           document.getElementById("momoPayAmt").textContent = amt;
-          document.getElementById("momoNum").textContent = cfg.number || "—";
-          document.getElementById("momoAccName").textContent = cfg.name || "";
-          const badge = document.getElementById("momoBadge");
-          badge.textContent = badgeLbl;
-          badge.className = "momo-badge " + badgeCls;
           document.getElementById("s3Title").textContent =
-            "Send via " + badgeLbl;
-          document.getElementById("s3Sub").textContent =
-            "Dial *170# (MTN) / *110# (Telecel) and send to the number below";
+            "Send via " +
+            { mtn: "MTN MoMo", voda: "Telecel Cash", at: "AT Money" }[m];
         } else if (m === "card") {
           document.getElementById("panel-card").style.display = "";
           document.getElementById("s3Title").textContent = "Card Payment";
-          document.getElementById("s3Sub").textContent =
-            "Enter your card details below";
         } else if (m === "bank") {
           document.getElementById("panel-bank").style.display = "";
-          const b = PINFO.bank || {};
-          document.getElementById("bkName").textContent = b.bankName || "—";
-          document.getElementById("bkAccName").textContent = b.accName || "—";
-          document.getElementById("bkAccNum").textContent = b.accNumber || "—";
-          document.getElementById("bkBranch").textContent = b.branch || "—";
-          document.getElementById("bkSwift").textContent = b.swift || "—";
           document.getElementById("s3Title").textContent = "Bank Transfer";
-          document.getElementById("s3Sub").textContent =
-            "Transfer to the account below and enter your reference";
         } else if (m === "cash") {
           document.getElementById("panel-cash").style.display = "";
           document.getElementById("s3Title").textContent = "Cash Payment";
-          document.getElementById("s3Sub").textContent =
-            "Record the date you paid";
         }
       }
-
-      /* ── Copy helpers ── */
       function copyMomoNum() {
         const num = document.getElementById("momoNum").textContent;
-        copyText(num, document.getElementById("copyBtn"));
-      }
-      function copyText(text, btn) {
-        navigator.clipboard.writeText(text).then(() => {
+        navigator.clipboard.writeText(num).then(() => {
+          const btn = document.getElementById("copyBtn");
           btn.classList.add("copied");
           btn.innerHTML = '<i class="bi bi-check-lg"></i> Copied!';
           setTimeout(() => {
@@ -1012,8 +850,6 @@
           }, 2000);
         });
       }
-
-      /* ── Card live update ── */
       function fmtCard(inp) {
         let v = inp.value.replace(/\D/g, "").slice(0, 16);
         inp.value = v.match(/.{1,4}/g)?.join(" ") || v;
@@ -1026,63 +862,17 @@
       function updateCardDisplay() {
         const num =
           document.getElementById("cardNumber").value || "•••• •••• •••• ••••";
-        const raw = num.replace(/\s/g, "");
         document.getElementById("cardNumDisplay").textContent = num;
         document.getElementById("cardHolderDisplay").textContent = (
           document.getElementById("cardHolder").value || "YOUR NAME"
         ).toUpperCase();
         document.getElementById("cardExpiryDisplay").textContent =
           document.getElementById("cardExpiry").value || "MM/YY";
-        document.getElementById("cardBrandDisplay").textContent = /^4/.test(raw)
-          ? "VISA"
-          : /^5[1-5]/.test(raw)
-            ? "MC"
-            : /^3[47]/.test(raw)
-              ? "AMEX"
-              : /^62/.test(raw)
-                ? "UnionPay"
-                : "••••";
       }
-
-      /* ── Submit ── */
       async function submitPayment() {
         const overlay = document.getElementById("processingOverlay");
         overlay.classList.add("show");
-
-        // Basic validation
-        let valid = true;
-        if (
-          selectedMethod === "mtn" ||
-          selectedMethod === "voda" ||
-          selectedMethod === "at"
-        ) {
-          if (!document.getElementById("momoPhone").value.trim()) {
-            valid = false;
-            showAlert("Enter your phone number.");
-          }
-          if (!document.getElementById("momoTxId").value.trim()) {
-            valid = false;
-            showAlert("Enter the MoMo transaction ID.");
-          }
-        } else if (selectedMethod === "bank") {
-          if (!document.getElementById("bankRef").value.trim()) {
-            valid = false;
-            showAlert("Enter the bank reference.");
-          }
-        } else if (selectedMethod === "card") {
-          if (!document.getElementById("cardNumber").value.trim()) {
-            valid = false;
-            showAlert("Enter card number.");
-          }
-        }
-        if (!valid) {
-          overlay.classList.remove("show");
-          return;
-        }
-
-        // Simulate / API call
         await new Promise((r) => setTimeout(r, 2000));
-
         const ref = "RMS-" + Date.now().toString(36).toUpperCase();
         overlay.classList.remove("show");
         document.getElementById("payRef").textContent = ref;
@@ -1092,22 +882,25 @@
         });
         document.getElementById("stepSuccess").style.display = "";
       }
-
-      /* ── Reset ── */
       function resetPayment() {
         payStep = 1;
         selectedMethod = null;
         document.getElementById("payAmount").value = "";
-        document.getElementById("payNote").value = "";
         document.getElementById("stepSuccess").style.display = "none";
         document
           .querySelectorAll(".method-card")
           .forEach((c) => c.classList.remove("selected"));
         renderStepUI();
       }
-
-      function showAlert(msg) {
-        alert(msg);
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
       }
     </script>
   </body>

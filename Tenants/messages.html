@@ -15,7 +15,13 @@
     />
   </head>
   <body>
-    <div class="sidebar">
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
+
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -38,33 +44,33 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Make Payment</a
         >
-        <a href="payment-history.html" class="nav-link"
+        <a href="payment-history.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-clock-history"></i> Payment History</a
         >
-        <a href="lease.html" class="nav-link"
+        <a href="lease.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-file-text-fill"></i> My Lease</a
         >
         <div class="nav-section">Support</div>
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link active"
+        <a href="messages.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcements.html" class="nav-link"
+        <a href="announcements.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
       </nav>
@@ -101,6 +107,13 @@
 
     <div class="main">
       <div class="topbar">
+        <button
+          class="sidebar-toggle me-2"
+          onclick="openSidebar()"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list" style="font-size: 1.2rem"></i>
+        </button>
         <span class="topbar-title">Messages</span>
         <a href="notifications.html" class="topbar-btn"
           ><i class="bi bi-bell"></i
@@ -120,10 +133,7 @@
           <!-- Left: group list -->
           <div class="chat-left">
             <div class="chat-left-hd">Conversations</div>
-            <div class="chat-list" id="chatList">
-              <!-- Populated by JS -->
-            </div>
-            <!-- Join new group -->
+            <div class="chat-list" id="chatList"></div>
             <div
               style="padding: 12px 14px; border-top: 1px solid var(--border)"
             >
@@ -139,7 +149,7 @@
 
           <!-- Right: chat area OR gate screen -->
           <div class="chat-right" id="chatRight">
-            <!-- ── GATE: shown when tenant has NO groups yet ── -->
+            <!-- Gate screen -->
             <div class="gate-screen" id="gateScreen">
               <div class="gate-icon">🔑</div>
               <h5 style="font-weight: 800; margin-bottom: 8px">
@@ -180,7 +190,7 @@
               </button>
             </div>
 
-            <!-- ── CHAT: shown after joining ── -->
+            <!-- Active chat -->
             <div
               id="chatActive"
               style="
@@ -308,13 +318,11 @@
               </div>
             </div>
           </div>
-          <!-- /chat-right -->
         </div>
-        <!-- /chat-wrap -->
       </div>
     </div>
 
-    <!-- Join group modal (can be used any time) -->
+    <!-- Join modal -->
     <div class="modal fade" id="joinModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -376,27 +384,29 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
-    <script src="../js/tenant.js"></script>
+    <script src="../js/tenants.js"></script>
     <script>
-      /* ── State ── */
+      /* FIX: use full backend URL instead of relative /api/ paths */
+      const BASE =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000/api"
+          : "https://rentms-backend-5.onrender.com/api";
+
+      const getToken = () =>
+        localStorage.getItem("tenant_token") ||
+        localStorage.getItem("token") ||
+        "";
+
       let currentGroupId = null;
       let pendingAttachments = [];
       let groups = [];
 
-      /* ── Boot ── */
       document.addEventListener("DOMContentLoaded", async () => {
-        // init sidebar
-        const u = JSON.parse(localStorage.getItem("user") || "{}");
-        const sn = document.getElementById("sidebarName");
-        const sa = document.getElementById("sidebarAvatar");
-        if (sn && u.username) sn.textContent = u.username;
-        if (sa && u.username)
-          sa.textContent = u.username.charAt(0).toUpperCase();
-
-        // Check saved group from last session
+        /* FIX: use _T.initSidebar() from tenant.js for correct name display */
+        if (typeof _T !== "undefined") await _T.initSidebar();
         const savedGroupId = localStorage.getItem("t_groupId");
         await loadGroups();
-
         if (groups.length) {
           const target = savedGroupId
             ? groups.find((g) => g.id == savedGroupId)
@@ -407,13 +417,10 @@
         }
       });
 
-      /* ── Load groups ── */
       async function loadGroups() {
         try {
-          const res = await fetch("/api/tenant/groups", {
-            headers: {
-              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
-            },
+          const res = await fetch(BASE + "/tenant/groups", {
+            headers: { Authorization: "Bearer " + getToken() },
           });
           const data = await res.json();
           groups = data?.groups || [];
@@ -427,73 +434,71 @@
         const el = document.getElementById("chatList");
         if (!el) return;
         if (!groups.length) {
-          el.innerHTML = `<div style="padding:16px;text-align:center;font-size:0.8rem;color:var(--text-muted)">No groups yet</div>`;
+          el.innerHTML = `<div style="padding:16px;text-align:center;font-size:.8rem;color:var(--text-muted)">No groups yet</div>`;
           return;
         }
         el.innerHTML = groups
           .map(
             (g) => `
-          <div class="chat-item ${g.id === currentGroupId ? "active" : ""}" onclick="openGroup(${JSON.stringify(g).replace(/"/g, "&quot;")})">
+          <div class="chat-item ${g.id === currentGroupId ? "active" : ""}" onclick='openGroup(${JSON.stringify(g)})'>
             <div class="d-flex align-items-center gap-2">
-              <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#fff;flex-shrink:0">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;color:#fff;flex-shrink:0">
                 ${g.name.charAt(0).toUpperCase()}
               </div>
               <div style="flex:1;min-width:0">
                 <div class="ci-name">${g.name}</div>
                 <div class="ci-preview">${g.last_message || "No messages yet"}</div>
               </div>
-              ${g.unread ? `<span style="background:var(--primary);color:#fff;border-radius:100px;font-size:0.6rem;font-weight:800;padding:2px 6px;flex-shrink:0">${g.unread}</span>` : ""}
+              ${g.unread ? `<span style="background:var(--primary);color:#fff;border-radius:100px;font-size:.6rem;font-weight:800;padding:2px 6px;flex-shrink:0">${g.unread}</span>` : ""}
             </div>
           </div>`,
           )
           .join("");
       }
 
-      /* ── Open a group chat ── */
       async function openGroup(g) {
         currentGroupId = g.id;
         localStorage.setItem("t_groupId", g.id);
         document.getElementById("gateScreen").style.display = "none";
         const chatActive = document.getElementById("chatActive");
         chatActive.style.display = "flex";
-
         document.getElementById("chatAvatar").textContent = g.name
           .charAt(0)
           .toUpperCase();
         document.getElementById("chatGroupName").textContent = g.name;
         document.getElementById("chatMemberCount").textContent =
           `${g.member_count || "?"} members`;
-
-        renderGroupList(); // refresh active state
+        renderGroupList();
         await loadMessages();
       }
 
-      /* ── Show gate ── */
       function showGate() {
         document.getElementById("gateScreen").style.display = "flex";
         document.getElementById("chatActive").style.display = "none";
       }
 
-      /* ── Join via gate ── */
       async function joinFromGate() {
         const code = document.getElementById("gateCode").value.trim();
-        const errEl = document.getElementById("gateError");
-        await joinWithCode(code, errEl, document.getElementById("gateBtn"));
+        await joinWithCode(
+          code,
+          document.getElementById("gateError"),
+          document.getElementById("gateBtn"),
+        );
       }
 
-      /* ── Join via modal ── */
       async function joinFromModal() {
         const code = document.getElementById("modalCode").value.trim();
-        const errEl = document.getElementById("modalError");
-        const btn = document.querySelector("#joinModal .btn-primary");
-        const joined = await joinWithCode(code, errEl, btn);
+        const joined = await joinWithCode(
+          code,
+          document.getElementById("modalError"),
+          document.querySelector("#joinModal .btn-primary"),
+        );
         if (joined)
           bootstrap.Modal.getInstance(
             document.getElementById("joinModal"),
           )?.hide();
       }
 
-      /* ── Core join logic ── */
       async function joinWithCode(code, errEl, btn) {
         errEl.textContent = "";
         if (!code || code.replace("-", "").length < 8) {
@@ -504,11 +509,11 @@
         btn.innerHTML =
           '<span class="spinner-border spinner-border-sm me-2"></span>Joining…';
         try {
-          const res = await fetch("/api/tenant/groups/join", {
+          const res = await fetch(BASE + "/tenant/groups/join", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+              Authorization: "Bearer " + getToken(),
             },
             body: JSON.stringify({ invite_code: code }),
           });
@@ -524,25 +529,17 @@
           errEl.textContent = err.message;
           btn.disabled = false;
           btn.innerHTML =
-            code === document.getElementById("gateCode")?.value
-              ? "Join Group"
-              : '<i class="bi bi-arrow-right-circle me-1"></i> Join Group';
+            '<i class="bi bi-arrow-right-circle me-1"></i> Join Group';
           return false;
         }
       }
 
-      /* ── Load messages ── */
       async function loadMessages() {
         if (!currentGroupId) return;
         try {
           const res = await fetch(
-            `/api/tenant/groups/${currentGroupId}/messages`,
-            {
-              headers: {
-                Authorization:
-                  "Bearer " + (localStorage.getItem("token") || ""),
-              },
-            },
+            BASE + `/tenant/groups/${currentGroupId}/messages`,
+            { headers: { Authorization: "Bearer " + getToken() } },
           );
           const data = await res.json();
           renderMessages(data?.messages || []);
@@ -553,10 +550,14 @@
 
       function renderMessages(msgs) {
         const box = document.getElementById("chatMessages");
-        const me = JSON.parse(localStorage.getItem("user") || "{}").id;
+        const me = JSON.parse(
+          localStorage.getItem("tenant_user") ||
+            localStorage.getItem("user") ||
+            "{}",
+        ).id;
         if (!box) return;
         if (!msgs.length) {
-          box.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:0.8rem;padding:24px 0">No messages yet — say hello 👋</div>`;
+          box.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:.8rem;padding:24px 0">No messages yet — say hello 👋</div>`;
           return;
         }
         box.innerHTML = "";
@@ -579,25 +580,6 @@
           bubble.textContent = m.message;
           wrap.appendChild(bubble);
         }
-        if (m.attachments) {
-          m.attachments.forEach((att) => {
-            const attDiv = document.createElement("div");
-            attDiv.className = "msg-attachment";
-            if (att.type === "image") {
-              const img = document.createElement("img");
-              img.src = att.url;
-              img.alt = att.name;
-              img.onclick = () => openLightbox(att.url);
-              attDiv.appendChild(img);
-            } else {
-              attDiv.innerHTML = `<a class="msg-file-card" href="${att.url}" download="${att.name}" onclick="event.stopPropagation()">
-                <i class="bi ${fileIcon(att.ext)} msg-file-icon"></i>
-                <div class="msg-file-info"><div class="msg-file-name">${att.name}</div><div class="msg-file-size">${att.size || ""}</div></div>
-                <i class="bi bi-download" style="margin-left:auto;opacity:0.7;font-size:0.9rem"></i></a>`;
-            }
-            wrap.appendChild(attDiv);
-          });
-        }
         const ts = document.createElement("div");
         ts.className = "msg-time";
         ts.textContent = m.created_at
@@ -610,48 +592,36 @@
         return wrap;
       }
 
-      /* ── Send message ── */
       async function sendMsg() {
         const input = document.getElementById("msgInput");
         const text = input?.value.trim();
         if (!text && !pendingAttachments.length) return;
-
-        // Optimistic render
-        const me = JSON.parse(localStorage.getItem("user") || "{}");
+        const me = JSON.parse(
+          localStorage.getItem("tenant_user") ||
+            localStorage.getItem("user") ||
+            "{}",
+        );
+        const box = document.getElementById("chatMessages");
         const fakeMsg = {
           message: text,
           sender_id: me.id,
-          sender_name: "You",
           created_at: new Date().toISOString(),
-          attachments: pendingAttachments.map((a) => ({
-            type: a.type,
-            url: a.dataUrl,
-            name: a.file.name,
-            ext: a.file.name.split(".").pop().toUpperCase(),
-            size: formatBytes(a.file.size),
-          })),
         };
-        const box = document.getElementById("chatMessages");
         box.appendChild(buildMsgEl(fakeMsg, true));
         box.scrollTop = box.scrollHeight;
-
-        // Clear
         if (input) {
           input.value = "";
           input.style.height = "auto";
         }
         pendingAttachments = [];
-        renderPreview();
-
-        // API (if available)
+        document.getElementById("attachPreview").innerHTML = "";
         if (currentGroupId) {
           try {
-            await fetch(`/api/tenant/groups/${currentGroupId}/messages`, {
+            await fetch(BASE + `/tenant/groups/${currentGroupId}/messages`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization:
-                  "Bearer " + (localStorage.getItem("token") || ""),
+                Authorization: "Bearer " + getToken(),
               },
               body: JSON.stringify({ message: text }),
             });
@@ -659,7 +629,6 @@
         }
       }
 
-      /* ── Attachment handling ── */
       function handleFiles(files, type) {
         Array.from(files).forEach((file) => {
           const reader = new FileReader();
@@ -679,12 +648,10 @@
         pendingAttachments.forEach((item, i) => {
           const thumb = document.createElement("div");
           thumb.className = "attach-thumb";
-          if (item.type === "image") {
-            thumb.innerHTML = `<img src="${item.dataUrl}" alt=""/>`;
-          } else {
-            const ext = item.file.name.split(".").pop().toUpperCase();
-            thumb.innerHTML = `<div class="file-icon"><i class="bi ${fileIcon(ext)}"></i><span>${item.file.name}</span></div>`;
-          }
+          thumb.innerHTML =
+            item.type === "image"
+              ? `<img src="${item.dataUrl}" alt=""/>`
+              : `<div class="file-icon"><i class="bi bi-file-earmark-fill"></i><span>${item.file.name}</span></div>`;
           const rm = document.createElement("button");
           rm.className = "attach-remove";
           rm.innerHTML = "&times;";
@@ -697,27 +664,6 @@
         });
       }
 
-      function fileIcon(ext) {
-        const map = {
-          PDF: "bi-file-pdf-fill",
-          DOC: "bi-file-word-fill",
-          DOCX: "bi-file-word-fill",
-          XLS: "bi-file-excel-fill",
-          XLSX: "bi-file-excel-fill",
-          ZIP: "bi-file-zip-fill",
-          RAR: "bi-file-zip-fill",
-          TXT: "bi-file-text-fill",
-          CSV: "bi-filetype-csv",
-        };
-        return map[ext?.toUpperCase()] || "bi-file-earmark-fill";
-      }
-      function formatBytes(b) {
-        if (b < 1024) return b + " B";
-        if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
-        return (b / 1048576).toFixed(1) + " MB";
-      }
-
-      /* ── Lightbox ── */
       function openLightbox(src) {
         document.getElementById("lightboxImg").src = src;
         document.getElementById("imgLightbox").classList.add("open");
@@ -730,28 +676,16 @@
         if (e.key === "Escape") closeLightbox();
       });
 
-      /* ── Drag & drop ── */
-      const chatActive = document.getElementById("chatActive");
-      chatActive.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        chatActive.style.outline = "2px dashed var(--primary)";
-      });
-      chatActive.addEventListener("dragleave", () => {
-        chatActive.style.outline = "";
-      });
-      chatActive.addEventListener("drop", (e) => {
-        e.preventDefault();
-        chatActive.style.outline = "";
-        const files = Array.from(e.dataTransfer.files);
-        handleFiles(
-          files.filter((f) => f.type.startsWith("image/")),
-          "image",
-        );
-        handleFiles(
-          files.filter((f) => !f.type.startsWith("image/")),
-          "file",
-        );
-      });
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
     </script>
   </body>
 </html>

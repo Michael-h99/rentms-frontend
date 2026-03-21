@@ -8,14 +8,20 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link href="../css/landlord.css" rel="stylesheet" />
+    <!-- FIX: was landlord.css -->
+    <link href="../css/tenant.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
   </head>
   <body>
-    <div class="sidebar">
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -38,33 +44,33 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Make Payment</a
         >
-        <a href="payment-history.html" class="nav-link"
+        <a href="payment-history.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-clock-history"></i> Payment History</a
         >
-        <a href="lease.html" class="nav-link"
+        <a href="lease.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-file-text-fill"></i> My Lease</a
         >
         <div class="nav-section">Support</div>
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcements.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link active"
+        <a href="profile.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
       </nav>
@@ -101,6 +107,13 @@
 
     <div class="main">
       <div class="topbar">
+        <button
+          class="sidebar-toggle me-2"
+          onclick="openSidebar()"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list" style="font-size: 1.2rem"></i>
+        </button>
         <span class="topbar-title">My Profile</span>
         <a href="notifications.html" class="topbar-btn"
           ><i class="bi bi-bell"></i
@@ -114,7 +127,6 @@
         </div>
 
         <div class="row g-4">
-          <!-- Left: avatar + summary -->
           <div class="col-lg-4">
             <div class="card p-4 text-center">
               <div
@@ -213,7 +225,6 @@
             </div>
           </div>
 
-          <!-- Right: edit forms -->
           <div class="col-lg-8">
             <div class="card">
               <ul class="nav nav-tabs px-3 pt-3">
@@ -236,14 +247,13 @@
                   >
                 </li>
               </ul>
-
               <div class="tab-content p-4">
                 <!-- Personal -->
                 <div class="tab-pane fade show active" id="tabPersonal">
                   <div class="row g-3">
                     <div class="col-md-6">
-                      <label class="form-label fw-semibold">Full Name *</label>
-                      <input
+                      <label class="form-label fw-semibold">Full Name *</label
+                      ><input
                         type="text"
                         class="form-control"
                         id="pName"
@@ -251,8 +261,8 @@
                       />
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-semibold">Username</label>
-                      <input
+                      <label class="form-label fw-semibold">Username</label
+                      ><input
                         type="text"
                         class="form-control"
                         id="pUsername"
@@ -262,8 +272,7 @@
                     <div class="col-md-6">
                       <label class="form-label fw-semibold"
                         >Email Address *</label
-                      >
-                      <input
+                      ><input
                         type="email"
                         class="form-control"
                         id="pEmail"
@@ -271,8 +280,8 @@
                       />
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-semibold">Phone Number</label>
-                      <input
+                      <label class="form-label fw-semibold">Phone Number</label
+                      ><input
                         type="tel"
                         class="form-control"
                         id="pPhone"
@@ -280,14 +289,12 @@
                       />
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-semibold"
-                        >Date of Birth</label
-                      >
-                      <input type="date" class="form-control" id="pDob" />
+                      <label class="form-label fw-semibold">Date of Birth</label
+                      ><input type="date" class="form-control" id="pDob" />
                     </div>
                     <div class="col-md-6">
-                      <label class="form-label fw-semibold">Occupation</label>
-                      <input
+                      <label class="form-label fw-semibold">Occupation</label
+                      ><input
                         type="text"
                         class="form-control"
                         id="pOccupation"
@@ -327,7 +334,6 @@
                     </div>
                   </div>
                 </div>
-
                 <!-- Security -->
                 <div class="tab-pane fade" id="tabSecurity">
                   <h6 style="font-weight: 800; margin-bottom: 20px">
@@ -340,15 +346,12 @@
                     <div>
                       <label class="form-label fw-semibold"
                         >Current Password</label
-                      >
-                      <div class="input-wrapper" style="position: relative">
-                        <input
-                          type="password"
-                          class="form-control"
-                          id="pwCurrent"
-                          placeholder="••••••••"
-                        />
-                      </div>
+                      ><input
+                        type="password"
+                        class="form-control"
+                        id="pwCurrent"
+                        placeholder="••••••••"
+                      />
                     </div>
                     <div>
                       <label class="form-label fw-semibold">New Password</label>
@@ -391,8 +394,7 @@
                     <div>
                       <label class="form-label fw-semibold"
                         >Confirm New Password</label
-                      >
-                      <input
+                      ><input
                         type="password"
                         class="form-control"
                         id="pwConfirm"
@@ -406,7 +408,6 @@
                       <i class="bi bi-shield-lock me-1"></i> Update Password
                     </button>
                   </div>
-
                   <hr style="border-color: var(--border); margin: 28px 0" />
                   <h6
                     style="
@@ -439,8 +440,7 @@
                     <i class="bi bi-trash me-1"></i> Delete Account
                   </button>
                 </div>
-
-                <!-- Notification prefs -->
+                <!-- Notifications -->
                 <div class="tab-pane fade" id="tabNotifPrefs">
                   <h6 style="font-weight: 800; margin-bottom: 20px">
                     Notification Preferences
@@ -577,7 +577,13 @@
             You'll need to log back in to access your dashboard.
           </p>
           <div class="d-flex gap-2">
-            <button class="btn btn-danger flex-fill" onclick="API.logout()">
+            <button
+              class="btn btn-danger flex-fill"
+              onclick="
+                localStorage.clear();
+                location.href = '../index.html';
+              "
+            >
               Log Out
             </button>
             <button class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
@@ -588,7 +594,7 @@
       </div>
     </div>
 
-    <!-- Delete account modal -->
+    <!-- Delete modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -639,7 +645,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
-    <script src="../js/tenant.js"></script>
+    <script src="../js/tenants.js"></script>
     <script>
       TenantProfile.init();
       function checkPwStrength(val) {
@@ -657,9 +663,19 @@
           { w: "100%", c: "#10b981", t: "Strong" },
         ];
         document.getElementById("pwBar").style.cssText =
-          `width:${levels[score].w};background:${levels[score].c};height:100%;border-radius:100px;transition:0.3s`;
+          `width:${levels[score].w};background:${levels[score].c};height:100%;border-radius:100px;transition:.3s`;
         document.getElementById("pwLabel").textContent = levels[score].t;
         document.getElementById("pwLabel").style.color = levels[score].c;
+      }
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
       }
     </script>
   </body>
