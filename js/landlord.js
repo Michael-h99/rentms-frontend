@@ -62,7 +62,11 @@ const MOCK = {
 function mockResponse(url) {
   const u = url.split("?")[0];
   if (u.includes("/stats")) return { data: MOCK.stats };
-  if (u.includes("/plazas") && !u.includes("/invite"))
+  if (
+    u.includes("/plazas") &&
+    !u.includes("/invite") &&
+    !u.includes("/tenants")
+  )
     return { data: MOCK.plazas };
   if (u.includes("/tenants")) return { data: MOCK.tenants };
   if (u.includes("/payments/all")) return { data: MOCK.payments };
@@ -88,7 +92,6 @@ function mockResponse(url) {
     };
   if (u.includes("/invite-codes")) return { data: MOCK.invite_codes };
   if (u.includes("/settings")) return { data: MOCK.settings };
-  /* FIX: /auth/me was not handled — return profile mock */
   if (u.includes("/auth/me")) return { data: MOCK.profile };
   if (u.includes("/profile")) return { data: MOCK.profile };
   return { data: [], message: "ok" };
@@ -105,7 +108,6 @@ const RentMs = (() => {
       : "https://rentms-backend-5.onrender.com/api";
   const token = () => localStorage.getItem("token");
 
-  /* Always returns user — uses MOCK in dev mode */
   const user = () => {
     if (DEV_MODE) return MOCK.user;
     try {
@@ -115,13 +117,11 @@ const RentMs = (() => {
     }
   };
 
-  /* Auth guard — skipped in DEV_MODE */
   function guardAuth() {
     if (DEV_MODE) return;
     if (!token()) location.href = "../index.html";
   }
 
-  /* HTTP helper */
   async function _req(method, url, body) {
     if (DEV_MODE) {
       if (method !== "GET") console.log(`[DEV] ${method} ${url}`, body || "");
@@ -154,7 +154,6 @@ const RentMs = (() => {
   const patch = (url, b) => _req("PATCH", url, b);
   const del = (url) => _req("DELETE", url);
 
-  /* Date helpers */
   const fmt = (d) =>
     d
       ? new Date(d).toLocaleDateString("en-GB", {
@@ -181,8 +180,6 @@ const RentMs = (() => {
     const day = Math.floor(hr / 24);
     return day < 7 ? day + "d ago" : fmt(d);
   };
-
-  /* Number helpers */
   const ghs = (n) =>
     "GHS " +
     parseFloat(n || 0).toLocaleString("en-GH", {
@@ -191,7 +188,6 @@ const RentMs = (() => {
     });
   const pct = (a, b) => (b > 0 ? Math.round((a / b) * 100) : 0);
 
-  /* Sidebar init — sets name + avatar from user() */
   function initSidebar() {
     const u = user();
     const nameEl = document.getElementById("sidebarName");
@@ -201,7 +197,6 @@ const RentMs = (() => {
       avatarEl.textContent = u.username.charAt(0).toUpperCase();
   }
 
-  /* Inline feedback */
   function showMsg(elId, text, type = "success") {
     const el = document.getElementById(elId);
     if (!el) return;
@@ -211,7 +206,6 @@ const RentMs = (() => {
     }, 4000);
   }
 
-  /* Status badge */
   function statusBadge(status) {
     const map = {
       active: "badge-active",
@@ -232,7 +226,6 @@ const RentMs = (() => {
     return `<span class="badge-status ${cls}">${(status || "unknown").replace("_", " ")}</span>`;
   }
 
-  /* Invite code generator */
   function genCode(len = 6) {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return Array.from(
@@ -241,7 +234,6 @@ const RentMs = (() => {
     ).join("");
   }
 
-  /* DOM helpers */
   function setText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val ?? "—";
@@ -349,7 +341,8 @@ const LandlordDashboard = (() => {
   }
 
   async function loadPayments() {
-    const data = await RentMs.get("/payments/all?limit=5");
+    /* FIX: use /landlord/payments instead of /payments/all (403) */
+    const data = await RentMs.get("/landlord/payments?limit=5");
     const list = data.data || [];
     const el = document.getElementById("recentPayments");
     if (!el) return;
@@ -588,7 +581,8 @@ const LandlordPlazaDetails = (() => {
   }
 
   async function loadTenants() {
-    const data = await RentMs.get("/landlord/tenants?plaza_id=" + plazaId);
+    /* FIX: correct route is /landlord/plazas/:id/tenants — confirmed 200 */
+    const data = await RentMs.get("/landlord/plazas/" + plazaId + "/tenants");
     const list = data.data || [];
     const rows = document.getElementById("tenantRows");
     const empty = document.getElementById("emptyTenants");
@@ -614,8 +608,9 @@ const LandlordPlazaDetails = (() => {
   }
 
   async function loadPayments() {
+    /* FIX: correct route is /landlord/payments — confirmed 200 (/payments/all returns 403) */
     const data = await RentMs.get(
-      "/payments/all?plaza_id=" + plazaId + "&limit=10",
+      "/landlord/payments?plaza_id=" + plazaId + "&limit=10",
     );
     const list = data.data || [];
     const rows = document.getElementById("paymentRows");
@@ -731,7 +726,16 @@ const LandlordTenants = (() => {
   async function loadAll() {
     const [pd, td] = await Promise.all([
       RentMs.get("/landlord/plazas"),
-      RentMs.get("/landlord/tenants"),
+      /* FIX: /landlord/tenants returns 404 — fetch per plaza then flatten */
+      RentMs.get("/landlord/plazas").then(async (pd2) => {
+        const plazas = pd2.data || [];
+        const results = await Promise.all(
+          plazas.map((p) =>
+            RentMs.get("/landlord/plazas/" + p.id + "/tenants"),
+          ),
+        );
+        return { data: results.flatMap((r) => r.data || []) };
+      }),
     ]);
     const plazas = pd.data || [];
     ["filterPlaza", "invitePlaza"].forEach((id) => {
@@ -881,8 +885,14 @@ const LandlordTenantDetails = (() => {
   }
 
   async function loadTenant() {
-    const td = await RentMs.get("/landlord/tenants");
-    const t = (td.data || []).find((x) => String(x.id) === tenantId);
+    /* FIX: /landlord/tenants returns 404 — fetch all plazas then search across them */
+    const pd = await RentMs.get("/landlord/plazas");
+    const plazas = pd.data || [];
+    const results = await Promise.all(
+      plazas.map((p) => RentMs.get("/landlord/plazas/" + p.id + "/tenants")),
+    );
+    const allTenants = results.flatMap((r) => r.data || []);
+    const t = allTenants.find((x) => String(x.id) === tenantId);
     if (!t) return;
     tenancyId = t.tenancy_id;
     RentMs.setText("pageTitle", t.username);
@@ -908,8 +918,9 @@ const LandlordTenantDetails = (() => {
   }
 
   async function loadPayments() {
+    /* FIX: use /landlord/payments instead of /payments */
     const data = await RentMs.get(
-      "/payments?tenant_id=" + tenantId + "&limit=20",
+      "/landlord/payments?tenant_id=" + tenantId + "&limit=20",
     );
     const list = data.data || [];
     const rows = document.getElementById("payRows");
@@ -1017,7 +1028,8 @@ const LandlordPayments = (() => {
   async function loadAll() {
     const [pd, data] = await Promise.all([
       RentMs.get("/landlord/plazas"),
-      RentMs.get("/payments/all?limit=100"),
+      /* FIX: use /landlord/payments instead of /payments/all (403) */
+      RentMs.get("/landlord/payments?limit=100"),
     ]);
     ["payPlaza", "bulkPlaza"].forEach((id) => {
       const el = document.getElementById(id);
@@ -1946,7 +1958,6 @@ const LandlordProfile = (() => {
 
   async function load() {
     const data = await RentMs.get("/auth/me");
-    /* FIX: API returns { user: {...} } or { data: {...} } — handle both */
     const p = data.data || data.user || {};
     const name = p.username || p.name || "";
     RentMs.setText("profileNameDisplay", name || "—");
@@ -2171,7 +2182,6 @@ const InviteCodes = (() => {
     activeFilter = "all",
     detailId = null;
 
-  /* ── helpers ──────────────────────────────────────────────── */
   function genCode() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const rand = (n) =>
@@ -2198,7 +2208,6 @@ const InviteCodes = (() => {
       }[status] || "pill-revoked"
     );
   }
-
   function pillLabel(status) {
     return (
       {
@@ -2209,13 +2218,11 @@ const InviteCodes = (() => {
       }[status] || status
     );
   }
-
   function usageBar(used, max) {
     const pct = max > 0 ? Math.round((used / max) * 100) : 0;
     return `<span style="font-size:.78rem;color:var(--text-muted)">${used}/${max}</span>
             <span class="usage-bar-wrap"><span class="usage-bar-fill" style="width:${pct}%"></span></span>`;
   }
-
   function fmt(dateStr) {
     if (!dateStr) return "—";
     return new Date(dateStr).toLocaleDateString("en-GB", {
@@ -2224,7 +2231,6 @@ const InviteCodes = (() => {
       year: "numeric",
     });
   }
-
   function copyToClipboard(text) {
     navigator.clipboard
       ?.writeText(text)
@@ -2236,7 +2242,6 @@ const InviteCodes = (() => {
       });
   }
 
-  /* ── populate plaza dropdowns ─────────────────────────────── */
   async function populatePlazaDropdowns() {
     const plazas = (await RentMs.get("/landlord/plazas")).data || [];
     ["plazaFilter", "genPlaza"].forEach((id) => {
@@ -2253,12 +2258,10 @@ const InviteCodes = (() => {
     });
   }
 
-  /* ── when plaza selected in generate modal ───────────────── */
   window.InviteCodes_onPlazaChange = function () {
     InviteCodes.onPlazaChange();
   };
 
-  /* ── render all codes ─────────────────────────────────────── */
   function render() {
     const plazaVal = document.getElementById("plazaFilter")?.value || "";
     filtered = all.filter((c) => {
@@ -2266,19 +2269,15 @@ const InviteCodes = (() => {
       const matchPlaza = !plazaVal || String(c.plaza_id) === plazaVal;
       return matchFilter && matchPlaza;
     });
-
     const el = document.getElementById("codeList");
     if (!el) return;
-
     if (!filtered.length) {
       el.innerHTML = `<div class="empty-state" style="padding:60px 20px">
-        <i class="bi bi-key"></i>
-        <h6>No codes found</h6>
+        <i class="bi bi-key"></i><h6>No codes found</h6>
         <p>${activeFilter === "all" ? "Generate your first invite code using the button above." : "No " + activeFilter + " codes."}</p>
       </div>`;
       return;
     }
-
     el.innerHTML = `<div class="d-flex flex-column gap-3">
       ${filtered
         .map(
@@ -2300,8 +2299,7 @@ const InviteCodes = (() => {
             ${
               c.status === "active"
                 ? `<button class="btn btn-outline-danger btn-sm" title="Revoke" onclick="event.stopPropagation();InviteCodes.revoke(${c.id})">
-              <i class="bi bi-slash-circle"></i>
-            </button>`
+              <i class="bi bi-slash-circle"></i></button>`
                 : ""
             }
           </div>
@@ -2311,7 +2309,6 @@ const InviteCodes = (() => {
     </div>`;
   }
 
-  /* ── stats strip ─────────────────────────────────────────── */
   function renderStats() {
     const set = (id, v) => {
       const el = document.getElementById(id);
@@ -2327,7 +2324,6 @@ const InviteCodes = (() => {
     );
   }
 
-  /* ── filter tabs ─────────────────────────────────────────── */
   function setFilter(val, btn) {
     activeFilter = val;
     document
@@ -2337,8 +2333,7 @@ const InviteCodes = (() => {
     render();
   }
 
-  /* ── plaza change in modal → populate units ──────────────── */
-  /* FIX: removed the stray `return` that cut off the rest of the function */
+  /* FIX: removed stray return that cut off the function */
   async function onPlazaChange() {
     const plazaId = document.getElementById("genPlaza")?.value;
     const unitEl = document.getElementById("genUnit");
@@ -2362,7 +2357,6 @@ const InviteCodes = (() => {
         .join("");
   }
 
-  /* ── preview code ─────────────────────────────────────────── */
   function previewCode() {
     const plaza =
       document.getElementById("genPlaza")?.selectedOptions[0]?.text || "";
@@ -2388,7 +2382,6 @@ const InviteCodes = (() => {
     RentMs.showMsg("genMsg", "", "");
   }
 
-  /* ── generate code ───────────────────────────────────────── */
   async function generate() {
     const plazaEl = document.getElementById("genPlaza");
     const plazaId = parseInt(plazaEl?.value);
@@ -2415,7 +2408,6 @@ const InviteCodes = (() => {
 
     const code = plazaEl._previewCode || genCode();
     plazaEl._previewCode = null;
-
     const prevCode = document.getElementById("genPreviewCode");
     const prev = document.getElementById("genPreview");
     if (prevCode) prevCode.textContent = code;
@@ -2454,7 +2446,6 @@ const InviteCodes = (() => {
         RentMs.showMsg("genMsg", res.message || "Failed.", "error");
         return;
       }
-      /* Refresh from API after successful creation */
       const fresh = await RentMs.get("/invite-codes");
       all = fresh.data || all;
     }
@@ -2462,7 +2453,6 @@ const InviteCodes = (() => {
     renderStats();
     render();
     copyToClipboard(code);
-
     RentMs.showMsg(
       "genMsg",
       `✅ Code <strong>${code}</strong> generated and copied to clipboard!`,
@@ -2475,7 +2465,6 @@ const InviteCodes = (() => {
     }, 1800);
   }
 
-  /* ── copy a code ────────────────────────────────────────── */
   function copy(code) {
     copyToClipboard(code);
     const toast = document.createElement("div");
@@ -2499,8 +2488,7 @@ const InviteCodes = (() => {
     setTimeout(() => toast.remove(), 2000);
   }
 
-  /* ── revoke ─────────────────────────────────────────────── */
-  /* FIX: was a floating statement at module scope — now a proper named function */
+  /* FIX: was a floating statement — now a proper named function */
   async function revoke(id) {
     if (!id) return;
     if (!confirm("Are you sure you want to revoke this invite code?")) return;
@@ -2515,7 +2503,6 @@ const InviteCodes = (() => {
     filtered = [...all];
     renderStats();
     render();
-    /* Close detail modal if the revoked code was open */
     if (detailId === id) {
       bootstrap.Modal.getInstance(
         document.getElementById("detailModal"),
@@ -2523,14 +2510,11 @@ const InviteCodes = (() => {
     }
   }
 
-  /* ── view detail ────────────────────────────────────────── */
   function viewDetail(id) {
     const c = all.find((x) => x.id === id);
     if (!c) return;
     detailId = id;
-
     document.getElementById("detailTitle").textContent = `Code: ${c.code}`;
-
     const body = document.getElementById("detailBody");
     if (body)
       body.innerHTML = `
@@ -2559,13 +2543,11 @@ const InviteCodes = (() => {
           : ""
       }
     `;
-
     const revokeBtn = document.getElementById("detailRevokeBtn");
     const copyBtn = document.getElementById("detailCopyBtn");
     if (revokeBtn)
       revokeBtn.style.display = c.status === "active" ? "" : "none";
     if (copyBtn) copyBtn.onclick = () => copy(c.code);
-
     bootstrap.Modal.getOrCreateInstance(
       document.getElementById("detailModal"),
     ).show();
@@ -2575,7 +2557,6 @@ const InviteCodes = (() => {
     if (detailId) revoke(detailId);
   }
 
-  /* ── export CSV ──────────────────────────────────────────── */
   function exportCsv() {
     const rows = [
       [
@@ -2612,16 +2593,15 @@ const InviteCodes = (() => {
     a.click();
   }
 
-  /* ── init ────────────────────────────────────────────────── */
   async function init() {
     RentMs.guardAuth();
     RentMs.initSidebar();
 
-    /* FIX: only show devBanner if the element exists on this page */
+    /* FIX: guard against missing devBanner element on other pages */
     if (DEV_MODE) {
       const banner = document.getElementById("devBanner");
       if (banner) banner.style.display = "";
-      const u = RentMs.user();
+      const u = RentMs.user ? RentMs.user() : {};
       const av = document.getElementById("sidebarAvatar");
       const nm = document.getElementById("sidebarName");
       if (av) av.textContent = (u.username || "?")[0].toUpperCase();
