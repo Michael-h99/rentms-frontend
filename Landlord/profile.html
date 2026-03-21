@@ -686,7 +686,7 @@
             const formData = new FormData();
             formData.append("avatar", pendingFile);
 
-            const res = await fetch(BACKEND_URL + "/landlord/profile/avatar", {
+            const res = await fetch(BACKEND_URL + "/auth/avatar", {
               method: "POST",
               headers: {
                 /* NOTE: do NOT set Content-Type — browser sets it with the boundary */
