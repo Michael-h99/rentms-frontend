@@ -15,7 +15,13 @@
     />
   </head>
   <body>
-    <div class="sidebar">
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
+
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -38,33 +44,33 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Make Payment</a
         >
-        <a href="payment-history.html" class="nav-link"
+        <a href="payment-history.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-clock-history"></i> Payment History</a
         >
-        <a href="lease.html" class="nav-link active"
+        <a href="lease.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-file-text-fill"></i> My Lease</a
         >
         <div class="nav-section">Support</div>
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
       </nav>
@@ -101,6 +107,13 @@
 
     <div class="main">
       <div class="topbar">
+        <button
+          class="sidebar-toggle me-2"
+          onclick="openSidebar()"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list" style="font-size: 1.2rem"></i>
+        </button>
         <span class="topbar-title">My Lease</span>
         <div class="d-flex gap-2">
           <a href="notifications.html" class="topbar-btn"
@@ -118,7 +131,6 @@
       <div class="content">
         <div class="row g-4">
           <div class="col-lg-8">
-            <!-- Status banner -->
             <div
               class="card mb-4 p-4"
               id="leaseBanner"
@@ -167,7 +179,6 @@
               </div>
             </div>
 
-            <!-- Unit details -->
             <div class="lease-section">
               <h6><i class="bi bi-building me-2"></i>Unit & Property</h6>
               <div class="lease-row">
@@ -187,7 +198,6 @@
               </div>
             </div>
 
-            <!-- Lease terms -->
             <div class="lease-section">
               <h6><i class="bi bi-calendar3 me-2"></i>Lease Terms</h6>
               <div class="lease-row">
@@ -217,7 +227,6 @@
               </div>
             </div>
 
-            <!-- Landlord contact -->
             <div class="lease-section">
               <h6><i class="bi bi-person-fill me-2"></i>Landlord Contact</h6>
               <div class="lease-row">
@@ -231,7 +240,6 @@
               </div>
             </div>
 
-            <!-- Documents -->
             <div class="lease-section">
               <h6><i class="bi bi-folder me-2"></i>Documents</h6>
               <div class="d-flex gap-2 flex-wrap" id="docsList">
@@ -246,9 +254,7 @@
             </div>
           </div>
 
-          <!-- Right column -->
           <div class="col-lg-4">
-            <!-- Days remaining -->
             <div class="countdown-box mb-4">
               <div
                 style="
@@ -282,7 +288,6 @@
               </div>
             </div>
 
-            <!-- Quick pay -->
             <div class="card p-4 mb-4 text-center">
               <div
                 style="
@@ -321,7 +326,6 @@
               >
             </div>
 
-            <!-- Renewal -->
             <div class="card p-4">
               <h6 style="font-weight: 800; margin-bottom: 8px">
                 Lease Renewal
@@ -399,6 +403,16 @@
         bootstrap.Modal.getInstance(
           document.getElementById("renewModal"),
         ).hide();
+      }
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
       }
     </script>
   </body>

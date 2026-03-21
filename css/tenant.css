@@ -12,30 +12,21 @@
    0. DESIGN TOKENS
    ============================================================ */
 :root {
-  /* Brand */
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-glow: rgba(37, 99, 235, 0.15);
-
-  /* Backgrounds */
   --bg-body: #020617;
   --bg-header: rgba(2, 6, 23, 0.85);
   --bg-card: #0f172a;
   --bg-input: #0f172a;
   --sidebar-bg: #0a0f1e;
-
-  /* Text */
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --text-subtle: #64748b;
-
-  /* Borders & shadows */
   --border: #1e293b;
   --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --shadow-elite: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
   --shadow-primary: 0 20px 30px -10px rgba(37, 99, 235, 0.4);
-
-  /* Semantic */
   --success: #10b981;
   --success-light: rgba(16, 185, 129, 0.15);
   --success-text: #34d399;
@@ -45,8 +36,6 @@
   --danger: #ef4444;
   --danger-light: rgba(239, 68, 68, 0.15);
   --danger-text: #f87171;
-
-  /* Layout */
   --sidebar-width: 260px;
   --radius: 12px;
   --radius-lg: 24px;
@@ -68,12 +57,20 @@
   padding: 0;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
   line-height: 1.6;
   overflow-x: hidden;
+  /* FIX: allow vertical scroll on mobile */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   min-height: 100vh;
 }
 
@@ -92,6 +89,9 @@ body {
   flex-direction: column;
   z-index: 1000;
   transition: transform 0.4s var(--snap);
+  /* FIX: sidebar itself scrollable on mobile if content overflows */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-brand {
@@ -108,6 +108,8 @@ body {
   padding: 10px 0;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  /* FIX: smooth scroll on iOS */
+  -webkit-overflow-scrolling: touch;
 }
 .sidebar-nav::-webkit-scrollbar {
   width: 4px;
@@ -117,7 +119,6 @@ body {
   border-radius: 4px;
 }
 
-/* Section label  ("Main", "Support", "Account") */
 .nav-section {
   padding: 18px 20px 5px;
   color: var(--text-subtle);
@@ -127,7 +128,6 @@ body {
   font-weight: 700;
 }
 
-/* Nav links */
 .nav-link {
   display: flex;
   align-items: center;
@@ -156,7 +156,6 @@ body {
   border-right-color: var(--primary);
 }
 
-/* Nav badge (unread count) */
 .nav-badge {
   margin-left: auto;
   background: var(--primary);
@@ -167,14 +166,12 @@ body {
   border-radius: 20px;
 }
 
-/* Footer user row */
 .sidebar-footer {
   padding: 14px 20px;
   border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 
-/* Small circular avatar used in sidebar footer */
 .s-avatar {
   width: 34px;
   height: 34px;
@@ -189,7 +186,7 @@ body {
   flex-shrink: 0;
 }
 
-/* Mobile sidebar toggle button */
+/* Mobile hamburger button */
 .sidebar-toggle {
   display: none;
   background: none;
@@ -223,6 +220,9 @@ body {
   margin-left: var(--sidebar-width);
   min-height: 100vh;
   background: var(--bg-body);
+  /* FIX: main area scrollable */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ============================================================
@@ -248,6 +248,8 @@ body {
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.02em;
+  /* FIX: allow title to flex-grow and push bell to right */
+  flex: 1;
 }
 
 .topbar-btn {
@@ -265,6 +267,7 @@ body {
   cursor: pointer;
   font-family: inherit;
   position: relative;
+  flex-shrink: 0;
 }
 .topbar-btn:hover {
   border-color: var(--primary);
@@ -272,7 +275,6 @@ body {
   background: var(--primary-glow);
 }
 
-/* Unread dot on bell icon */
 .notif-dot {
   position: absolute;
   top: 5px;
@@ -289,6 +291,8 @@ body {
    ============================================================ */
 .content {
   padding: 28px;
+  /* FIX: bottom padding so last card isn't hidden by mobile browser bar */
+  padding-bottom: 40px;
 }
 
 /* ============================================================
@@ -306,7 +310,6 @@ body {
 .card:hover {
   box-shadow: var(--shadow-elite);
 }
-
 .card-body {
   background: var(--bg-card);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
@@ -344,8 +347,6 @@ body {
   box-shadow: var(--shadow-elite);
   border-color: var(--primary);
 }
-
-/* Ensure value and label stack vertically */
 .stat-card > div:last-child {
   display: flex;
   flex-direction: column;
@@ -413,7 +414,6 @@ body {
   font-family: inherit;
   text-align: center;
 }
-
 .btn-primary {
   background: var(--primary);
   color: #fff;
@@ -425,7 +425,6 @@ body {
   filter: brightness(1.1);
   color: #fff;
 }
-
 .btn-secondary {
   background: var(--bg-card);
   color: var(--text-main);
@@ -435,7 +434,6 @@ body {
   border-color: var(--primary);
   color: var(--primary);
 }
-
 .btn-outline-primary {
   background: transparent;
   color: var(--primary);
@@ -446,7 +444,6 @@ body {
   color: #fff;
   transform: translateY(-1px);
 }
-
 .btn-outline-secondary {
   background: transparent;
   color: var(--text-muted);
@@ -456,7 +453,6 @@ body {
   border-color: var(--text-muted);
   color: var(--text-main);
 }
-
 .btn-outline-danger {
   background: transparent;
   color: var(--danger);
@@ -466,7 +462,6 @@ body {
   background: var(--danger);
   color: #fff;
 }
-
 .btn-danger {
   background: var(--danger);
   color: #fff;
@@ -475,13 +470,11 @@ body {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
-
 .btn-sm {
   padding: 0.4rem 0.9rem;
   font-size: 0.8rem;
   border-radius: 9px;
 }
-
 .btn-close {
   filter: invert(1);
   opacity: 0.7;
@@ -531,7 +524,6 @@ select {
   -webkit-appearance: none;
   -webkit-text-fill-color: var(--text-main) !important;
 }
-
 .form-control:focus,
 .form-select:focus,
 input:focus,
@@ -542,8 +534,6 @@ select:focus {
   background-color: var(--bg-card) !important;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
-
-/* Placeholders */
 ::placeholder {
   color: var(--text-subtle) !important;
   opacity: 1;
@@ -552,8 +542,6 @@ select:focus {
 textarea::placeholder {
   -webkit-text-fill-color: var(--text-subtle) !important;
 }
-
-/* Webkit autofill — prevents browser turning input white */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
@@ -561,15 +549,11 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--text-main) !important;
   caret-color: var(--text-main);
 }
-
-/* Select option colours */
 select option,
 .form-select option {
   background-color: var(--bg-card) !important;
   color: var(--text-main) !important;
 }
-
-/* Small variant */
 .form-control-sm,
 .form-select-sm {
   padding: 0.35rem 0.75rem !important;
@@ -577,7 +561,6 @@ select option,
   border-radius: 8px !important;
 }
 
-/* Input group */
 .input-group {
   display: flex;
   align-items: stretch;
@@ -600,7 +583,6 @@ select option,
   border-color: var(--primary) !important;
 }
 
-/* Password toggle */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -622,7 +604,6 @@ select option,
   color: var(--primary);
 }
 
-/* Form switch / checkbox */
 .form-check-input {
   accent-color: var(--primary);
   background-color: var(--bg-input);
@@ -635,7 +616,6 @@ select option,
   background-color: var(--primary);
   border-color: var(--primary);
 }
-
 .form-text {
   color: var(--text-muted) !important;
   font-size: 0.78rem;
@@ -669,7 +649,6 @@ select option,
   color: var(--warning-text);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
-
 .alert-success-sm {
   background: var(--success-light);
   color: var(--success-text);
@@ -700,7 +679,6 @@ select option,
   font-size: 0.8rem;
   font-weight: 800;
 }
-
 .badge-status {
   padding: 3px 10px;
   border-radius: 100px;
@@ -709,11 +687,7 @@ select option,
   display: inline-block;
   white-space: nowrap;
 }
-
-.badge-active {
-  background: var(--success-light);
-  color: var(--success-text);
-}
+.badge-active,
 .badge-paid {
   background: var(--success-light);
   color: var(--success-text);
@@ -722,26 +696,14 @@ select option,
   background: var(--primary-glow);
   color: var(--primary);
 }
-.badge-pending {
-  background: var(--warning-light);
-  color: var(--warning-text);
-}
-.badge-open {
-  background: var(--warning-light);
-  color: var(--warning-text);
-}
+.badge-pending,
+.badge-open,
 .badge-ending-soon {
   background: var(--warning-light);
   color: var(--warning-text);
 }
-.badge-overdue {
-  background: var(--danger-light);
-  color: var(--danger-text);
-}
-.badge-failed {
-  background: var(--danger-light);
-  color: var(--danger-text);
-}
+.badge-overdue,
+.badge-failed,
 .badge-expired {
   background: var(--danger-light);
   color: var(--danger-text);
@@ -762,8 +724,6 @@ select option,
   background: var(--success-light);
   color: var(--success-text);
 }
-
-/* Tiny unread dot (messages / announcements) */
 .unread-dot {
   width: 8px;
   height: 8px;
@@ -781,7 +741,6 @@ select option,
   border-collapse: collapse;
   margin: 0;
 }
-
 .table th {
   font-size: 0.72rem;
   font-weight: 700;
@@ -796,7 +755,6 @@ select option,
   top: 0;
   z-index: 1;
 }
-
 .table td {
   padding: 12px 16px;
   font-size: 0.875rem;
@@ -804,8 +762,6 @@ select option,
   border-bottom: 1px solid var(--border);
   color: var(--text-main) !important;
 }
-
-/* Bootstrap internal table reset override */
 .table > :not(caption) > * > * {
   background-color: transparent !important;
   color: var(--text-main);
@@ -830,7 +786,6 @@ select option,
   z-index: 1050;
   background-color: rgba(0, 0, 0, 0.75);
 }
-
 .modal-content {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
@@ -838,7 +793,6 @@ select option,
   background: var(--bg-card);
   color: var(--text-main);
 }
-
 .modal-header {
   background: var(--bg-body);
   color: var(--text-main);
@@ -846,7 +800,6 @@ select option,
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
 }
-
 .modal-title {
   font-weight: 800;
   font-size: 1rem;
@@ -856,7 +809,6 @@ select option,
   padding: 20px;
   background: var(--bg-card);
 }
-
 .modal-footer {
   border-top: 1px solid var(--border);
   padding: 14px 20px;
@@ -885,7 +837,6 @@ select option,
   border-bottom-color: var(--primary) !important;
   font-weight: 700;
 }
-
 .tab-pane {
   display: none;
 }
@@ -938,7 +889,6 @@ select option,
   font-size: 2rem;
   position: relative;
 }
-
 .avatar-overlay {
   position: absolute;
   bottom: 0;
@@ -985,7 +935,7 @@ select option,
 }
 
 /* ============================================================
-   18. INFO ROWS  (used on lease, profile)
+   18. INFO ROWS
    ============================================================ */
 .info-row {
   display: flex;
@@ -1008,7 +958,7 @@ select option,
 }
 
 /* ============================================================
-   19. TOGGLE ROWS  (profile notification prefs)
+   19. TOGGLE ROWS
    ============================================================ */
 .toggle-row {
   display: flex;
@@ -1044,7 +994,7 @@ select option,
 }
 
 /* ============================================================
-   21. FILTER BUTTONS  (announcements, notifications, maintenance)
+   21. FILTER BUTTONS
    ============================================================ */
 .filter-btn {
   padding: 5px 15px;
@@ -1076,7 +1026,6 @@ select option,
     transform: rotate(360deg);
   }
 }
-
 .spinner-border {
   display: inline-block;
   width: 1.5rem;
@@ -1112,8 +1061,6 @@ select option,
 
 /* ============================================================
    24. GLOBAL TEXT / COLOUR FIXES
-        Bootstrap resets headings, paragraphs and utility
-        classes to near-black — these bring them back to dark theme.
    ============================================================ */
 h1,
 h2,
@@ -1125,11 +1072,9 @@ h6,
 .card-header-custom h6 {
   color: var(--text-main) !important;
 }
-
 p {
   color: var(--text-main);
 }
-
 .text-muted {
   color: var(--text-muted) !important;
 }
@@ -1145,7 +1090,6 @@ p {
 .text-warning {
   color: var(--warning) !important;
 }
-
 .card,
 .card p,
 .card span:not(.badge):not(.badge-status):not(.momo-badge):not(.ann-tag) {
@@ -1160,15 +1104,7 @@ p {
    ║  PAGE-SPECIFIC STYLES
    ╚══════════════════════════════════════════════════════════ */
 
-/* ============================================================
-   P1. DASHBOARD  —  no extra classes needed beyond globals
-   ============================================================ */
-
-/* ============================================================
-   P2. MAKE PAYMENT  (payments.html)
-   ============================================================ */
-
-/* Balance pills row */
+/* P2. MAKE PAYMENT */
 .bal-pill {
   background: var(--bg-body);
   border: 1px solid var(--border);
@@ -1193,13 +1129,11 @@ p {
   color: var(--danger);
 }
 
-/* ── Step bar ── */
 .step-bar {
   display: flex;
   gap: 0;
   margin-bottom: 28px;
 }
-
 .step-item {
   flex: 1;
   display: flex;
@@ -1207,8 +1141,6 @@ p {
   align-items: center;
   position: relative;
 }
-
-/* Horizontal connector line */
 .step-item:not(:last-child)::after {
   content: "";
   position: absolute;
@@ -1223,7 +1155,6 @@ p {
 .step-item.done:not(:last-child)::after {
   background: var(--primary);
 }
-
 .step-dot {
   width: 28px;
   height: 28px;
@@ -1252,7 +1183,6 @@ p {
   color: #fff;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
 }
-
 .step-label {
   font-size: 0.65rem;
   font-weight: 700;
@@ -1267,7 +1197,6 @@ p {
   color: var(--primary);
 }
 
-/* ── Amount banner (step 2) ── */
 .amount-banner {
   background: var(--primary-glow);
   border: 1px solid rgba(37, 99, 235, 0.25);
@@ -1278,14 +1207,11 @@ p {
   align-items: center;
   justify-content: space-between;
 }
-
-/* ── Payment method grid ── */
 .method-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
-
 .method-card {
   border: 1.5px solid var(--border);
   border-radius: 14px;
@@ -1310,8 +1236,6 @@ p {
   pointer-events: none;
   filter: grayscale(0.5);
 }
-
-/* Icon, name, sub-label inside each method card */
 .method-card .mi {
   font-size: 1.6rem;
   margin-bottom: 6px;
@@ -1327,8 +1251,6 @@ p {
   color: var(--text-muted);
   margin-top: 2px;
 }
-
-/* Selected checkmark dot top-right */
 .method-card .check {
   position: absolute;
   top: 7px;
@@ -1347,7 +1269,6 @@ p {
   display: flex;
 }
 
-/* ── MoMo display box ── */
 .momo-box {
   background: var(--bg-body);
   border: 2px dashed rgba(37, 99, 235, 0.35);
@@ -1356,7 +1277,6 @@ p {
   text-align: center;
   margin-bottom: 16px;
 }
-
 .momo-number {
   font-size: 1.9rem;
   font-weight: 800;
@@ -1365,8 +1285,6 @@ p {
   margin: 8px 0;
   font-family: monospace;
 }
-
-/* Network badge colours */
 .momo-badge {
   display: inline-block;
   padding: 4px 12px;
@@ -1395,7 +1313,6 @@ p {
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-/* Copy-to-clipboard button */
 .copy-btn {
   display: inline-flex;
   align-items: center;
@@ -1422,7 +1339,6 @@ p {
   background: var(--success-light);
 }
 
-/* ── Bank detail rows ── */
 .bank-detail-row {
   display: flex;
   justify-content: space-between;
@@ -1441,7 +1357,6 @@ p {
   font-weight: 700;
   color: var(--text-main);
 }
-
 .bank-acc-num {
   font-size: 1.1rem;
   font-weight: 800;
@@ -1450,7 +1365,6 @@ p {
   color: var(--primary);
 }
 
-/* ── Live card visual preview ── */
 .card-visual {
   background: linear-gradient(135deg, #0f2460, #2563eb);
   border-radius: 16px;
@@ -1481,7 +1395,6 @@ p {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.05);
 }
-
 .card-chip {
   width: 36px;
   height: 28px;
@@ -1491,7 +1404,6 @@ p {
   position: relative;
   z-index: 1;
 }
-
 .card-num-display {
   font-size: 1.1rem;
   font-weight: 700;
@@ -1501,7 +1413,6 @@ p {
   z-index: 1;
   font-family: monospace;
 }
-
 .card-bottom {
   display: flex;
   justify-content: space-between;
@@ -1526,7 +1437,6 @@ p {
   opacity: 0.9;
 }
 
-/* ── Processing overlay ── */
 .processing-overlay {
   position: absolute;
   inset: 0;
@@ -1542,7 +1452,6 @@ p {
 .processing-overlay.show {
   display: flex;
 }
-
 .spinner-ring {
   width: 44px;
   height: 44px;
@@ -1551,8 +1460,6 @@ p {
   border-radius: 50%;
   animation: spin 0.75s linear infinite;
 }
-
-/* ── Payment success ── */
 .success-circle {
   width: 72px;
   height: 72px;
@@ -1564,15 +1471,7 @@ p {
   margin: 0 auto 16px;
 }
 
-/* ============================================================
-   P3. PAYMENT HISTORY  —  uses stat-card, table, modal (globals)
-   ============================================================ */
-
-/* ============================================================
-   P4. LEASE  (lease.html)
-   ============================================================ */
-
-/* Section wrapper card */
+/* P4. LEASE */
 .lease-section {
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -1588,8 +1487,6 @@ p {
   color: var(--text-muted);
   margin-bottom: 16px;
 }
-
-/* Key–value row inside each section */
 .lease-row {
   display: flex;
   justify-content: space-between;
@@ -1608,8 +1505,6 @@ p {
   font-weight: 700;
   color: var(--text-main);
 }
-
-/* Days remaining countdown box */
 .countdown-box {
   background: var(--primary-glow);
   border: 1px solid rgba(37, 99, 235, 0.25);
@@ -1623,8 +1518,6 @@ p {
   color: var(--primary);
   line-height: 1;
 }
-
-/* Document download pills */
 .doc-pill {
   display: inline-flex;
   align-items: center;
@@ -1645,11 +1538,7 @@ p {
   color: var(--primary);
 }
 
-/* ============================================================
-   P5. MAINTENANCE  (maintenance.html)
-   ============================================================ */
-
-/* Request card */
+/* P5. MAINTENANCE */
 .maint-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1671,8 +1560,6 @@ p {
   font-size: 0.75rem;
   color: var(--text-muted);
 }
-
-/* Priority dot — coloured circle */
 .priority-dot {
   width: 8px;
   height: 8px;
@@ -1688,8 +1575,6 @@ p {
 .priority-dot.low {
   background: var(--success);
 }
-
-/* Attached photo thumbnail inside a request card */
 .img-thumb {
   width: 56px;
   height: 56px;
@@ -1698,22 +1583,17 @@ p {
   border: 1px solid var(--border);
   cursor: pointer;
 }
-
-/* Status timeline (Submitted → In Progress → Resolved) */
 .status-timeline {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
-
 .tl-item {
   display: flex;
   gap: 12px;
   padding-bottom: 16px;
   position: relative;
 }
-
-/* Vertical connector between timeline dots */
 .tl-item:not(:last-child)::before {
   content: "";
   position: absolute;
@@ -1723,7 +1603,6 @@ p {
   height: calc(100% - 8px);
   background: var(--border);
 }
-
 .tl-dot {
   width: 24px;
   height: 24px;
@@ -1746,8 +1625,6 @@ p {
   background: var(--border);
   color: var(--text-muted);
 }
-
-/* Photo upload drop zone */
 .photo-drop-zone {
   border: 2px dashed var(--border);
   border-radius: 10px;
@@ -1760,11 +1637,7 @@ p {
   border-color: var(--primary);
 }
 
-/* ============================================================
-   P6. MESSAGES  (messages.html)
-   ============================================================ */
-
-/* ── Shell ── */
+/* P6. MESSAGES */
 .chat-wrap {
   display: flex;
   border: 1px solid var(--border);
@@ -1772,8 +1645,6 @@ p {
   overflow: hidden;
   height: calc(100vh - 130px);
 }
-
-/* ── Left pane: conversation list ── */
 .chat-left {
   width: 260px;
   flex-shrink: 0;
@@ -1782,7 +1653,6 @@ p {
   flex-direction: column;
   background: var(--bg-card);
 }
-
 .chat-left-hd {
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
@@ -1793,12 +1663,10 @@ p {
   color: var(--text-muted);
   flex-shrink: 0;
 }
-
 .chat-list {
   flex: 1;
   overflow-y: auto;
 }
-
 .chat-item {
   padding: 12px 16px;
   cursor: pointer;
@@ -1809,7 +1677,6 @@ p {
 .chat-item.active {
   background: var(--primary-glow);
 }
-
 .ci-name {
   font-weight: 700;
   font-size: 0.85rem;
@@ -1828,8 +1695,6 @@ p {
   color: var(--text-muted);
   white-space: nowrap;
 }
-
-/* ── Right pane: active chat ── */
 .chat-right {
   flex: 1;
   display: flex;
@@ -1837,7 +1702,6 @@ p {
   min-width: 0;
   background: var(--bg-body);
 }
-
 .chat-hd {
   padding: 14px 20px;
   border-bottom: 1px solid var(--border);
@@ -1847,8 +1711,6 @@ p {
   background: var(--bg-card);
   flex-shrink: 0;
 }
-
-/* Scrollable message bubble area */
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -1858,9 +1720,8 @@ p {
   gap: 10px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  -webkit-overflow-scrolling: touch;
 }
-
-/* ── Message bubbles ── */
 .msg {
   display: flex;
   flex-direction: column;
@@ -1874,7 +1735,6 @@ p {
   align-self: flex-start;
   align-items: flex-start;
 }
-
 .msg-sender {
   font-size: 0.72rem;
   font-weight: 700;
@@ -1882,7 +1742,6 @@ p {
   margin-bottom: 4px;
   padding: 0 4px;
 }
-
 .msg-bubble {
   padding: 10px 16px;
   border-radius: 16px;
@@ -1902,15 +1761,12 @@ p {
   border: 1px solid var(--border);
   border-radius: 4px 16px 16px 16px;
 }
-
 .msg-time {
   font-size: 0.68rem;
   color: var(--text-subtle);
   margin-top: 4px;
   padding: 0 4px;
 }
-
-/* ── File/image attachments inside a bubble ── */
 .msg-attachment {
   margin-top: 6px;
   border-radius: 10px;
@@ -1927,7 +1783,6 @@ p {
 .msg-attachment img:hover {
   opacity: 0.9;
 }
-
 .msg-file-card {
   display: flex;
   align-items: center;
@@ -1951,7 +1806,6 @@ p {
 .msg.theirs .msg-file-card:hover {
   background: var(--primary-glow);
 }
-
 .msg-file-icon {
   font-size: 1.4rem;
   flex-shrink: 0;
@@ -1972,16 +1826,12 @@ p {
   opacity: 0.7;
   margin-top: 1px;
 }
-
-/* ── Input bar ── */
 .chat-input-bar {
   padding: 10px 16px 14px;
   border-top: 1px solid var(--border);
   background: var(--bg-card);
   flex-shrink: 0;
 }
-
-/* Attachment thumbnail strip (above the input row) */
 .attach-preview {
   display: flex;
   flex-wrap: wrap;
@@ -1991,7 +1841,6 @@ p {
 .attach-preview:empty {
   display: none;
 }
-
 .attach-thumb {
   position: relative;
   width: 68px;
@@ -2010,7 +1859,6 @@ p {
   height: 100%;
   object-fit: cover;
 }
-
 .attach-thumb .file-icon {
   display: flex;
   flex-direction: column;
@@ -2034,8 +1882,6 @@ p {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* Remove (×) button on each thumb */
 .attach-remove {
   position: absolute;
   top: 3px;
@@ -2056,8 +1902,6 @@ p {
 .attach-remove:hover {
   background: var(--danger);
 }
-
-/* Attach + textarea + send row */
 .input-row {
   display: flex;
   align-items: flex-end;
@@ -2069,7 +1913,6 @@ p {
   flex-shrink: 0;
   align-items: center;
 }
-
 .attach-btn {
   width: 36px;
   height: 36px;
@@ -2090,8 +1933,6 @@ p {
   color: var(--primary);
   background: var(--primary-glow);
 }
-
-/* Textarea */
 .chat-input-field {
   flex: 1;
   padding: 9px 16px;
@@ -2116,8 +1957,6 @@ p {
   color: var(--text-subtle);
   -webkit-text-fill-color: var(--text-subtle) !important;
 }
-
-/* Send button */
 .chat-send {
   width: 38px;
   height: 38px;
@@ -2144,8 +1983,6 @@ p {
   cursor: not-allowed;
   transform: none;
 }
-
-/* ── Invite code gate screen (shown before joining any group) ── */
 .gate-screen {
   display: flex;
   flex-direction: column;
@@ -2155,7 +1992,6 @@ p {
   padding: 32px;
   text-align: center;
 }
-
 .gate-icon {
   width: 72px;
   height: 72px;
@@ -2168,7 +2004,6 @@ p {
   font-size: 1.8rem;
   margin: 0 auto 20px;
 }
-
 .gate-input {
   width: 260px;
   text-align: center;
@@ -2189,7 +2024,6 @@ p {
   border-color: var(--primary) !important;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
 }
-
 .gate-error {
   color: var(--danger);
   font-size: 0.8rem;
@@ -2197,8 +2031,6 @@ p {
   min-height: 1.2em;
   font-weight: 600;
 }
-
-/* ── Full-screen image lightbox ── */
 .img-lightbox {
   display: none;
   position: fixed;
@@ -2219,7 +2051,6 @@ p {
   object-fit: contain;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
 }
-
 .img-lightbox-close {
   position: absolute;
   top: 20px;
@@ -2236,9 +2067,7 @@ p {
   opacity: 1;
 }
 
-/* ============================================================
-   P7. ANNOUNCEMENTS  (announcement.html)
-   ============================================================ */
+/* P7. ANNOUNCEMENTS */
 .ann-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -2254,8 +2083,6 @@ p {
 .ann-card.unread {
   border-left: 3px solid var(--primary);
 }
-
-/* Tag / category badges */
 .ann-tag {
   display: inline-block;
   padding: 3px 10px;
@@ -2280,9 +2107,7 @@ p {
   color: var(--success-text);
 }
 
-/* ============================================================
-   P8. NOTIFICATIONS  (notifications.html)
-   ============================================================ */
+/* P8. NOTIFICATIONS */
 .notif-item {
   display: flex;
   gap: 14px;
@@ -2298,7 +2123,6 @@ p {
   background: rgba(37, 99, 235, 0.05);
   border-left: 3px solid var(--primary);
 }
-
 .notif-icon {
   width: 40px;
   height: 40px;
@@ -2309,8 +2133,6 @@ p {
   flex-shrink: 0;
   font-size: 1rem;
 }
-
-/* Semantic icon colours by type */
 .notif-icon.payment,
 .notif-icon.green {
   background: var(--success-light);
@@ -2332,7 +2154,6 @@ p {
   background: var(--danger-light);
   color: var(--danger);
 }
-
 .notif-title {
   font-weight: 700;
   font-size: 0.875rem;
@@ -2351,10 +2172,7 @@ p {
   margin-top: 4px;
 }
 
-/* ============================================================
-   P9. PROFILE  (profile.html)
-   Uses: avatar-lg, toggle-row, danger-zone, tab-pane (globals)
-   ============================================================ */
+/* P9. PROFILE */
 .danger-zone {
   border: 1.5px solid rgba(239, 68, 68, 0.3);
   border-radius: var(--radius-lg);
@@ -2363,11 +2181,15 @@ p {
 }
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIVE — MOBILE FIXES
    ============================================================ */
 @media (max-width: 992px) {
+  /* Hide sidebar off-screen, show hamburger */
   .sidebar {
     transform: translateX(-100%);
+    /* FIX: sidebar scrollable when open on mobile */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .sidebar.open {
     transform: translateX(0);
@@ -2375,26 +2197,48 @@ p {
   .sidebar-toggle {
     display: flex;
   }
+
+  /* Main takes full width */
   .main {
     margin-left: 0;
-  }
-  .content {
-    padding: 18px;
+    /* FIX: allow full page scroll on mobile */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: 100vh;
   }
 
-  /* Chat stacks vertically on tablets */
+  .content {
+    padding: 18px;
+    /* FIX: extra bottom padding for browser navigation bar */
+    padding-bottom: 80px;
+  }
+
+  /* Chat layout stacks vertically */
   .chat-wrap {
     flex-direction: column;
     height: auto;
+    /* FIX: allow chat to scroll on mobile */
+    min-height: calc(100vh - 60px);
   }
   .chat-left {
     width: 100%;
     height: 200px;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chat-right {
+    flex: 1;
+    min-height: 400px;
+  }
+  .chat-messages {
+    min-height: 300px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Payment method 2 columns */
+  /* Payment method 2 columns on tablet */
   .method-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2402,27 +2246,57 @@ p {
 
 @media (max-width: 576px) {
   .topbar {
-    padding: 10px 16px;
+    padding: 10px 14px;
   }
   .content {
-    padding: 14px;
+    padding: 12px;
+    padding-bottom: 80px;
   }
+
+  /* Smaller stat values on phones */
   .stat-value {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
   }
+  .stat-label {
+    font-size: 0.72rem;
+  }
+  .stat-card {
+    padding: 14px;
+    gap: 12px;
+  }
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+
   .modal-body {
     padding: 16px;
   }
   .btn {
     padding: 0.6rem 1.1rem;
   }
+
   .momo-number {
     font-size: 1.5rem;
   }
   .method-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .chat-messages {
-    min-height: 300px;
+
+  /* Wider message bubbles on small screens */
+  .msg {
+    max-width: 88%;
+  }
+
+  /* Full-width gate input */
+  .gate-input {
+    width: 100%;
+  }
+
+  /* Table horizontal scroll on mobile */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }

@@ -15,7 +15,13 @@
     />
   </head>
   <body>
-    <div class="sidebar">
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
+
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -38,33 +44,36 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Make Payment</a
         >
-        <a href="payment-history.html" class="nav-link"
+        <a href="payment-history.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-clock-history"></i> Payment History</a
         >
-        <a href="lease.html" class="nav-link"
+        <a href="lease.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-file-text-fill"></i> My Lease</a
         >
         <div class="nav-section">Support</div>
-        <a href="maintenance.html" class="nav-link active"
+        <a
+          href="maintenance.html"
+          class="nav-link active"
+          onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
       </nav>
@@ -101,6 +110,13 @@
 
     <div class="main">
       <div class="topbar">
+        <button
+          class="sidebar-toggle me-2"
+          onclick="openSidebar()"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list" style="font-size: 1.2rem"></i>
+        </button>
         <span class="topbar-title">Maintenance</span>
         <div class="d-flex gap-2">
           <a href="notifications.html" class="topbar-btn"
@@ -117,7 +133,6 @@
       </div>
 
       <div class="content">
-        <!-- Stats -->
         <div class="row g-3 mb-4">
           <div class="col-6 col-lg-3">
             <div class="stat-card">
@@ -166,7 +181,6 @@
         </div>
 
         <div class="row g-4">
-          <!-- Requests list -->
           <div class="col-lg-7">
             <div class="card">
               <div class="card-header-custom">
@@ -193,7 +207,6 @@
             </div>
           </div>
 
-          <!-- Tips & emergency contacts -->
           <div class="col-lg-5">
             <div class="card p-4">
               <h6 style="font-weight: 800; margin-bottom: 16px">
@@ -201,29 +214,29 @@
               </h6>
               <div class="d-flex flex-column gap-3" style="font-size: 0.82rem">
                 <div class="d-flex gap-2">
-                  <i class="bi bi-camera text-primary mt-1"></i>
-                  <span style="color: var(--text-muted)"
+                  <i class="bi bi-camera text-primary mt-1"></i
+                  ><span style="color: var(--text-muted)"
                     >Include clear photos — it speeds up repairs
                     significantly.</span
                   >
                 </div>
                 <div class="d-flex gap-2">
-                  <i class="bi bi-geo-alt text-primary mt-1"></i>
-                  <span style="color: var(--text-muted)"
+                  <i class="bi bi-geo-alt text-primary mt-1"></i
+                  ><span style="color: var(--text-muted)"
                     >Describe the exact location (e.g. "kitchen sink", "bedroom
                     ceiling").</span
                   >
                 </div>
                 <div class="d-flex gap-2">
-                  <i class="bi bi-exclamation-triangle text-warning mt-1"></i>
-                  <span style="color: var(--text-muted)"
+                  <i class="bi bi-exclamation-triangle text-warning mt-1"></i
+                  ><span style="color: var(--text-muted)"
                     >Mark urgent issues (leaks, electrical) as
                     <strong>High</strong> priority.</span
                   >
                 </div>
                 <div class="d-flex gap-2">
-                  <i class="bi bi-clock text-primary mt-1"></i>
-                  <span style="color: var(--text-muted)"
+                  <i class="bi bi-clock text-primary mt-1"></i
+                  ><span style="color: var(--text-muted)"
                     >You'll get updates when your landlord changes the
                     status.</span
                   >
@@ -405,9 +418,18 @@
         const preview = document.getElementById("photoPreview");
         preview.innerHTML = "";
         [...input.files].slice(0, 5).forEach((f) => {
-          const url = URL.createObjectURL(f);
-          preview.innerHTML += `<img src="${url}" class="img-thumb" />`;
+          preview.innerHTML += `<img src="${URL.createObjectURL(f)}" class="img-thumb" />`;
         });
+      }
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
       }
     </script>
   </body>

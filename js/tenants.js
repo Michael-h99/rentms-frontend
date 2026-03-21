@@ -7,20 +7,33 @@
 
 /* ── Shared helpers ── */
 const _T = (() => {
+  /*
+   * FIX: api.js now stores tenant session under 'tenant_token' / 'tenant_user'
+   * but tenant.js was reading from 'token' / 'user'.
+   * We try both keys so it works whether api.js is loaded or not.
+   */
   const user = () => {
     try {
-      return JSON.parse(localStorage.getItem("user") || "{}");
+      return (
+        JSON.parse(localStorage.getItem("tenant_user") || "null") ||
+        JSON.parse(localStorage.getItem("user") || "null") ||
+        {}
+      );
     } catch {
       return {};
     }
   };
-  const token = () => localStorage.getItem("token") || "";
+
+  const token = () =>
+    localStorage.getItem("tenant_token") || localStorage.getItem("token") || "";
+
   const ghs = (n) =>
     "GHS " +
     parseFloat(n || 0).toLocaleString("en-GH", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
+
   const fmt = (d) =>
     d
       ? new Date(d).toLocaleDateString("en-GH", {
@@ -29,7 +42,9 @@ const _T = (() => {
           year: "numeric",
         })
       : "—";
+
   const ago = (d) => {
+    if (!d) return "—";
     const ms = Date.now() - new Date(d).getTime();
     const m = Math.floor(ms / 60000),
       h = Math.floor(m / 60),
@@ -44,6 +59,7 @@ const _T = (() => {
             ? dy + "d ago"
             : fmt(d);
   };
+
   const badge = (status) => {
     const map = {
       paid: "success",
@@ -62,8 +78,16 @@ const _T = (() => {
       low: "success",
     };
     const cls = map[status] || "secondary";
-    return `<span class="badge-status" style="background:var(--${cls}-light,rgba(100,116,139,0.15));color:var(--${cls}-text,#94a3b8)">${status?.replace("_", " ")}</span>`;
+    const label = (status || "unknown").replace(/_/g, " ");
+    return `<span class="badge-status" style="background:var(--${cls}-light,rgba(100,116,139,0.15));color:var(--${cls}-text,#94a3b8)">${label}</span>`;
   };
+
+  const BASE =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+      ? "http://localhost:5000/api"
+      : "https://rentms-backend-5.onrender.com/api";
+
   async function api(method, url, body) {
     const opts = {
       method,
@@ -74,7 +98,7 @@ const _T = (() => {
     };
     if (body) opts.body = JSON.stringify(body);
     try {
-      const r = await fetch((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:5000/api" : "https://rentms-backend-5.onrender.com/api") + url, opts);
+      const r = await fetch(BASE + url, opts);
       if (r.status === 401) {
         localStorage.clear();
         location.href = "../auth/login.html";
@@ -85,13 +109,41 @@ const _T = (() => {
       return null;
     }
   }
-  function initSidebar() {
-    const u = user();
-    const n = document.getElementById("sidebarName");
-    const a = document.getElementById("sidebarAvatar");
-    if (n && u.username) n.textContent = u.username;
-    if (a && u.username) a.textContent = u.username.charAt(0).toUpperCase();
+
+  /*
+   * FIX: initSidebar now also fetches /auth/me if localStorage has no name,
+   * so the sidebar always shows the real username even after a hard refresh.
+   */
+  async function initSidebar() {
+    let u = user();
+
+    /* If username is missing, fetch it fresh from the backend */
+    if (!u.username && token()) {
+      try {
+        const res = await fetch(BASE + "/auth/me", {
+          headers: { Authorization: "Bearer " + token() },
+        });
+        const json = await res.json();
+        if (json.data?.username) {
+          u = json.data;
+          /* Save back so future page loads are instant */
+          try {
+            localStorage.setItem("tenant_user", JSON.stringify(u));
+            localStorage.setItem("user", JSON.stringify(u));
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
+
+    const nameEl = document.getElementById("sidebarName");
+    const avatarEl = document.getElementById("sidebarAvatar");
+    const name = u.username || u.full_name || u.name || "";
+
+    if (nameEl) nameEl.textContent = name || "Tenant";
+    if (avatarEl)
+      avatarEl.textContent = name ? name.charAt(0).toUpperCase() : "T";
   }
+
   return { user, token, ghs, fmt, ago, badge, api, initSidebar };
 })();
 
@@ -100,15 +152,15 @@ const _T = (() => {
 ══════════════════════════════════════════ */
 const TenantDashboard = {
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const u = _T.user();
     const el = (id) => document.getElementById(id);
-    if (el("welcomeName"))
-      el("welcomeName").textContent = u.username || "Tenant";
+
+    /* FIX: use full_name || username || name with fallback chain */
+    const displayName = u.full_name || u.username || u.name || "Tenant";
+    if (el("welcomeName")) el("welcomeName").textContent = displayName;
     if (el("welcomeAvatar"))
-      el("welcomeAvatar").textContent = (u.username || "T")
-        .charAt(0)
-        .toUpperCase();
+      el("welcomeAvatar").textContent = displayName.charAt(0).toUpperCase();
 
     const data = await _T.api("GET", "/tenant/dashboard");
     if (!data) return;
@@ -210,7 +262,7 @@ const TenantDashboard = {
 ══════════════════════════════════════════ */
 const TenantPayments = {
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/dashboard");
     const lease = data?.lease;
     const el = (id) => document.getElementById(id);
@@ -231,7 +283,7 @@ const TenantPayments = {
 const TenantPaymentHistory = {
   all: [],
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/payments");
     this.all = data?.payments || [];
     this.render(this.all);
@@ -304,7 +356,7 @@ window.printReceipt = () => window.print();
 ══════════════════════════════════════════ */
 const TenantLease = {
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/lease");
     const l = data?.lease;
     if (!l) return;
@@ -371,7 +423,7 @@ const TenantLease = {
 const TenantMaintenance = {
   all: [],
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const el = (id) => document.getElementById(id);
     const data = await _T.api("GET", "/tenant/dashboard");
     const phone = data?.lease?.landlord_phone || "—";
@@ -452,9 +504,11 @@ const TenantMaintenance = {
       priority: document.getElementById("mPriority")?.value,
     });
     if (result) {
-      bootstrap.Modal.getInstance(
-        document.getElementById("newRequestModal"),
-      )?.hide();
+      try {
+        bootstrap.Modal.getInstance(
+          document.getElementById("newRequestModal"),
+        )?.hide();
+      } catch (e) {}
       document.getElementById("mTitle").value = "";
       document.getElementById("mDesc").value = "";
       await this.load();
@@ -469,7 +523,7 @@ const TenantMessages = {
   groupId: null,
   pendingFiles: [],
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/groups");
     const groups = data?.groups || [];
     if (groups.length) {
@@ -503,7 +557,7 @@ const TenantMessages = {
   async send() {
     const input = document.getElementById("msgInput");
     const msg = input?.value.trim();
-    if (!msg && !this.pendingFiles.length) return;
+    if (!msg || !this.groupId) return;
     if (msg && this.groupId) {
       await _T.api("POST", `/tenant/groups/${this.groupId}/messages`, {
         message: msg,
@@ -536,7 +590,7 @@ const TenantMessages = {
 const TenantAnnouncements = {
   all: [],
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/announcements");
     this.all = data?.announcements || [];
     this.render(this.all);
@@ -612,13 +666,12 @@ const TenantNotifications = {
     message: "bi-chat-dots-fill",
   },
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/notifications");
     this.all = data?.notifications || [];
     this.render(this.all);
     this._updateStats(this.all);
   },
-  /* Populates the 4 stat cards + the topbar unread label */
   _updateStats(list) {
     const el = (id) => document.getElementById(id);
     const unread = list.filter((n) => !n.read && !n.read_at);
@@ -690,7 +743,7 @@ const TenantNotifications = {
 ══════════════════════════════════════════ */
 const TenantProfile = {
   async init() {
-    _T.initSidebar();
+    await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/profile");
     const p = data?.profile || {};
     const u = _T.user();
@@ -699,15 +752,15 @@ const TenantProfile = {
       const e = el(id);
       if (e) e.textContent = val || "—";
     };
-    set("profileName", p.name || u.username);
+    const name = p.name || u.full_name || u.username || "";
+    set("profileName", name);
     set("profileEmail", p.email || u.email);
     set("profileUnit", p.unit || "—");
     set("profilePlaza", p.plaza || "—");
     set("profileJoined", _T.fmt(u.created_at || p.joined_at));
     const av = el("profileAvatar");
-    if (av)
-      av.textContent = (p.name || u.username || "T").charAt(0).toUpperCase();
-    if (el("pName")) el("pName").value = p.name || "";
+    if (av) av.textContent = (name || "T").charAt(0).toUpperCase();
+    if (el("pName")) el("pName").value = name;
     if (el("pUsername")) el("pUsername").value = u.username || "";
     if (el("pEmail")) el("pEmail").value = p.email || "";
     if (el("pPhone")) el("pPhone").value = p.phone || "";
