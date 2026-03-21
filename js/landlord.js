@@ -594,16 +594,18 @@ const LandlordPlazaDetails = (() => {
     }
     if (empty) empty.style.display = "none";
     rows.innerHTML = list
-      .map(
-        (t) => `<tr>
-      <td><div style="font-weight:700;color:var(--text-main)">${t.username}</div><div style="font-size:.75rem;color:var(--text-muted)">${t.email}</div></td>
-      <td>${t.unit_number || "—"}</td>
-      <td style="font-weight:700">${RentMs.ghs(t.rent_amount)}</td>
-      <td>${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
-      <td>${RentMs.statusBadge(t.status || "active")}</td>
-      <td><a href="tenant-details.html?id=${t.id}" class="btn btn-sm btn-outline-primary">View</a></td>
-    </tr>`,
-      )
+      .map((t) => {
+        /* API returns full_name (may be null), email, tenant_id, id (tenancy row id) */
+        const name = t.full_name || t.username || t.email || "—";
+        return `<tr>
+        <td><div style="font-weight:700;color:var(--text-main)">${name}</div><div style="font-size:.75rem;color:var(--text-muted)">${t.email || "—"}</div></td>
+        <td>${t.unit_number || "—"}</td>
+        <td style="font-weight:700">${RentMs.ghs(t.rent_amount)}</td>
+        <td>${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
+        <td>${RentMs.statusBadge(t.status || "active")}</td>
+        <td><a href="tenant-details.html?id=${t.id}" class="btn btn-sm btn-outline-primary">View</a></td>
+      </tr>`;
+      })
       .join("");
   }
 
@@ -779,28 +781,31 @@ const LandlordTenants = (() => {
     }
     if (empty) empty.style.display = "none";
     tbody.innerHTML = list
-      .map(
-        (t) => `<tr>
-      <td>
-        <div class="d-flex align-items-center gap-2">
-          <div class="avatar avatar-sm" style="background:var(--primary)">${t.username.charAt(0).toUpperCase()}</div>
-          <div>
-            <div style="font-weight:700;color:var(--text-main)">${t.username}</div>
-            <div style="font-size:.75rem;color:var(--text-muted)">${t.email}</div>
+      .map((t) => {
+        /* API returns full_name (may be null), tenant_id, id (tenancy row id) */
+        const name = t.full_name || t.username || t.email || "—";
+        const initial = name.charAt(0).toUpperCase();
+        return `<tr>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <div class="avatar avatar-sm" style="background:var(--primary)">${initial}</div>
+            <div>
+              <div style="font-weight:700;color:var(--text-main)">${name}</div>
+              <div style="font-size:.75rem;color:var(--text-muted)">${t.email || "—"}</div>
+            </div>
           </div>
-        </div>
-      </td>
-      <td>${t.plaza_name || "—"}</td>
-      <td>${t.unit_number || "—"}</td>
-      <td style="font-weight:700">${RentMs.ghs(t.rent_amount)}</td>
-      <td style="color:var(--text-muted)">${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
-      <td>${RentMs.statusBadge(t.payment_status === "overdue" ? "overdue" : t.status || "active")}</td>
-      <td>
-        <a href="tenant-details.html?id=${t.id}" class="btn btn-sm btn-outline-primary me-1">View</a>
-        <button class="btn btn-sm btn-outline-danger" onclick="LandlordTenants.askRemove(${t.tenancy_id})"><i class="bi bi-trash"></i></button>
-      </td>
-    </tr>`,
-      )
+        </td>
+        <td>${t.plaza_name || "—"}</td>
+        <td>${t.unit_number || "—"}</td>
+        <td style="font-weight:700">${RentMs.ghs(t.rent_amount)}</td>
+        <td style="color:var(--text-muted)">${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
+        <td>${RentMs.statusBadge(t.payment_status === "overdue" ? "overdue" : t.status || "active")}</td>
+        <td>
+          <a href="tenant-details.html?id=${t.id}" class="btn btn-sm btn-outline-primary me-1">View</a>
+          <button class="btn btn-sm btn-outline-danger" onclick="LandlordTenants.askRemove(${t.id})"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>`;
+      })
       .join("");
   }
 
@@ -811,12 +816,14 @@ const LandlordTenants = (() => {
     const pl = document.getElementById("filterPlaza")?.value || "";
     const st = document.getElementById("filterStatus")?.value || "";
     render(
-      all.filter(
-        (t) =>
-          (!q || (t.username + t.email).toLowerCase().includes(q)) &&
+      all.filter((t) => {
+        const name = (t.full_name || t.username || t.email || "").toLowerCase();
+        return (
+          (!q || (name + t.email).toLowerCase().includes(q)) &&
           (!pl || String(t.plaza_id) === pl) &&
-          (!st || (t.status || "active").toLowerCase() === st),
-      ),
+          (!st || (t.status || "active").toLowerCase() === st)
+        );
+      }),
     );
   };
 
@@ -894,13 +901,15 @@ const LandlordTenantDetails = (() => {
     const allTenants = results.flatMap((r) => r.data || []);
     const t = allTenants.find((x) => String(x.id) === tenantId);
     if (!t) return;
-    tenancyId = t.tenancy_id;
-    RentMs.setText("pageTitle", t.username);
-    RentMs.setText("tenantName", t.username);
-    RentMs.setText("tenantEmail", t.email);
+    /* API returns full_name (may be null), id = tenancy row id, tenant_id = user id */
+    const name = t.full_name || t.username || t.email || "—";
+    tenancyId = t.id; /* id is the tenancy row id */
+    RentMs.setText("pageTitle", name);
+    RentMs.setText("tenantName", name);
+    RentMs.setText("tenantEmail", t.email || "—");
     RentMs.setText("tenantPhone", t.phone || "—");
     const avEl = document.getElementById("avatarEl");
-    if (avEl) avEl.textContent = t.username.charAt(0).toUpperCase();
+    if (avEl) avEl.textContent = name.charAt(0).toUpperCase();
     RentMs.setText("infoPlaza", t.plaza_name || "—");
     RentMs.setText("infoUnit", t.unit_number || "—");
     RentMs.setText("infoRent", RentMs.ghs(t.rent_amount));
