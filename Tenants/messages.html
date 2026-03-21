@@ -170,14 +170,9 @@
               <input
                 class="gate-input"
                 id="gateCode"
-                placeholder="XXXX-XXXX"
-                maxlength="9"
-                oninput="
-                  this.value = this.value
-                    .toUpperCase()
-                    .replace(/[^A-Z0-9]/g, '')
-                    .replace(/(.{4})(?=.)/, '$1-')
-                "
+                placeholder="e.g. 5VN1-TZ"
+                maxlength="12"
+                oninput="this.value = this.value.toUpperCase()"
                 onkeydown="if (event.key === 'Enter') joinFromGate();"
               />
               <div class="gate-error" id="gateError"></div>
@@ -349,19 +344,14 @@
             <input
               class="form-control text-center fw-bold"
               id="modalCode"
-              placeholder="XXXX-XXXX"
-              maxlength="9"
+              placeholder="e.g. 5VN1-TZ"
+              maxlength="12"
               style="
                 letter-spacing: 0.15em;
                 text-transform: uppercase;
                 font-size: 1.05rem;
               "
-              oninput="
-                this.value = this.value
-                  .toUpperCase()
-                  .replace(/[^A-Z0-9]/g, '')
-                  .replace(/(.{4})(?=.)/, '$1-')
-              "
+              oninput="this.value = this.value.toUpperCase()"
             />
             <div class="gate-error" id="modalError"></div>
           </div>
@@ -501,7 +491,7 @@
 
       async function joinWithCode(code, errEl, btn) {
         errEl.textContent = "";
-        if (!code || code.replace("-", "").length < 8) {
+        if (!code || code.replace(/[-\s]/g, "").length < 4) {
           errEl.textContent = "Please enter a valid invite code.";
           return false;
         }
