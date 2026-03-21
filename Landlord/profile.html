@@ -708,13 +708,21 @@
               return;
             }
 
-            /* Try several common response shapes for the returned URL */
-            const url =
+            /* Backend returns a relative path e.g. "uploads/profile/xxx.jpg"
+               Build a full URL by prepending the backend origin. */
+            function toFullUrl(path) {
+              if (!path) return null;
+              if (path.startsWith("http")) return path; // already absolute
+              const origin = "https://rentms-backend-5.onrender.com";
+              return origin + "/" + path.replace(/^\//, ""); // ensure single slash
+            }
+            const rawUrl =
               json.data?.avatar_url ||
               json.avatar_url ||
               json.data?.url ||
               json.url ||
-              pendingDataUrl; /* fallback: show local preview */
+              null;
+            const url = toFullUrl(rawUrl) || pendingDataUrl;
 
             /* Also persist locally so it survives refresh */
             try {
@@ -856,6 +864,28 @@
         try {
           const saved = localStorage.getItem("LANDLORD_AVATAR");
           if (saved) applyAvatar(saved);
+          else {
+            /* Also check if backend profile already has an avatar_url */
+            const token = localStorage.getItem("token");
+            if (!token) return;
+            fetch("https://rentms-backend-5.onrender.com/api/auth/me", {
+              headers: { Authorization: "Bearer " + token },
+            })
+              .then((r) => r.json())
+              .then((d) => {
+                const raw = d.data?.avatar_url;
+                if (!raw) return;
+                const full = raw.startsWith("http")
+                  ? raw
+                  : "https://rentms-backend-5.onrender.com/" +
+                    raw.replace(/^\//, "");
+                try {
+                  localStorage.setItem("LANDLORD_AVATAR", full);
+                } catch (e) {}
+                applyAvatar(full);
+              })
+              .catch(() => {});
+          }
         } catch (e) {}
       })();
     </script>
