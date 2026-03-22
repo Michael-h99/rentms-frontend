@@ -106,7 +106,11 @@ const RentMs = (() => {
     window.location.hostname === "127.0.0.1"
       ? "http://localhost:5000/api"
       : "https://rentms-backend-5.onrender.com/api";
-  const token = () => localStorage.getItem("token");
+  /* FIX: api.js saves token under 'landlord_token' — read both keys */
+  const token = () =>
+    localStorage.getItem("landlord_token") ||
+    localStorage.getItem("token") ||
+    "";
 
   const user = () => {
     if (DEV_MODE) return MOCK.user;
@@ -1449,7 +1453,11 @@ const LandlordMessages = (() => {
     if (!box) return;
     const meId = DEV_MODE
       ? MOCK.user.id
-      : JSON.parse(localStorage.getItem("user") || "{}").id;
+      : JSON.parse(
+          localStorage.getItem("landlord_user") ||
+            localStorage.getItem("user") ||
+            "{}",
+        ).id;
     if (!list.length) {
       box.innerHTML = `<div class="empty-state" style="padding:40px 0;flex:1"><i class="bi bi-chat-dots"></i><p>No messages yet. Say hello!</p></div>`;
       return;
