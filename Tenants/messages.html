@@ -413,7 +413,7 @@
             headers: { Authorization: "Bearer " + getToken() },
           });
           const data = await res.json();
-          groups = data?.groups || [];
+          groups = data?.groups || data?.data || [];
           renderGroupList();
         } catch {
           groups = [];
@@ -511,8 +511,8 @@
           if (!res.ok)
             throw new Error(data.message || "Invalid or expired invite code.");
           await loadGroups();
-          const joined =
-            groups.find((g) => g.id === data.group?.id) || groups[0];
+          const joinedId = data.group?.id || data.group_id;
+          const joined = groups.find((g) => g.id === joinedId) || groups[0];
           if (joined) openGroup(joined);
           return true;
         } catch (err) {
