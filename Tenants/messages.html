@@ -133,7 +133,19 @@
           <!-- Left: group list -->
           <div class="chat-left">
             <div class="chat-left-hd">Conversations</div>
-            <div class="chat-list" id="chatList"></div>
+            <div class="chat-list" id="chatList">
+              <div
+                style="
+                  padding: 16px;
+                  text-align: center;
+                  font-size: 0.8rem;
+                  color: var(--text-muted);
+                "
+              >
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                Loading…
+              </div>
+            </div>
             <div
               style="padding: 12px 14px; border-top: 1px solid var(--border)"
             >
@@ -170,7 +182,7 @@
               <input
                 class="gate-input"
                 id="gateCode"
-                placeholder="e.g. 5VN1-TZ"
+                placeholder="e.g. NB8MNH"
                 maxlength="12"
                 oninput="this.value = this.value.toUpperCase()"
                 onkeydown="if (event.key === 'Enter') joinFromGate();"
@@ -344,7 +356,7 @@
             <input
               class="form-control text-center fw-bold"
               id="modalCode"
-              placeholder="e.g. 5VN1-TZ"
+              placeholder="e.g. NB8MNH"
               maxlength="12"
               style="
                 letter-spacing: 0.15em;
@@ -376,7 +388,6 @@
     <script src="../js/landlord.js"></script>
     <script src="../js/tenants.js"></script>
     <script>
-      /* FIX: use full backend URL instead of relative /api/ paths */
       const BASE =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
@@ -392,8 +403,8 @@
       let pendingAttachments = [];
       let groups = [];
 
+      /* ── Boot ── */
       document.addEventListener("DOMContentLoaded", async () => {
-        /* FIX: use _T.initSidebar() from tenant.js for correct name display */
         if (typeof _T !== "undefined") await _T.initSidebar();
         const savedGroupId = localStorage.getItem("t_groupId");
         await loadGroups();
@@ -407,16 +418,19 @@
         }
       });
 
+      /* ── Load groups ── */
       async function loadGroups() {
         try {
           const res = await fetch(BASE + "/tenant/groups", {
             headers: { Authorization: "Bearer " + getToken() },
           });
           const data = await res.json();
+          /* FIX: backend returns { groups: [] } key */
           groups = data?.groups || data?.data || [];
           renderGroupList();
         } catch {
           groups = [];
+          renderGroupList();
         }
       }
 
@@ -439,13 +453,13 @@
                 <div class="ci-name">${g.name}</div>
                 <div class="ci-preview">${g.last_message || "No messages yet"}</div>
               </div>
-              ${g.unread ? `<span style="background:var(--primary);color:#fff;border-radius:100px;font-size:.6rem;font-weight:800;padding:2px 6px;flex-shrink:0">${g.unread}</span>` : ""}
             </div>
           </div>`,
           )
           .join("");
       }
 
+      /* ── Open group ── */
       async function openGroup(g) {
         currentGroupId = g.id;
         localStorage.setItem("t_groupId", g.id);
@@ -467,6 +481,7 @@
         document.getElementById("chatActive").style.display = "none";
       }
 
+      /* ── Join from gate screen ── */
       async function joinFromGate() {
         const code = document.getElementById("gateCode").value.trim();
         await joinWithCode(
@@ -476,6 +491,7 @@
         );
       }
 
+      /* ── Join from modal ── */
       async function joinFromModal() {
         const code = document.getElementById("modalCode").value.trim();
         const joined = await joinWithCode(
@@ -489,15 +505,22 @@
           )?.hide();
       }
 
+      /* ── Core join logic ── */
       async function joinWithCode(code, errEl, btn) {
         errEl.textContent = "";
         if (!code || code.replace(/[-\s]/g, "").length < 4) {
           errEl.textContent = "Please enter a valid invite code.";
           return false;
         }
+
         btn.disabled = true;
         btn.innerHTML =
           '<span class="spinner-border spinner-border-sm me-2"></span>Joining…';
+
+        /* FIX: 30s timeout so the button never hangs forever on Render cold start */
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 30000);
+
         try {
           const res = await fetch(BASE + "/tenant/groups/join", {
             method: "POST",
@@ -506,17 +529,27 @@
               Authorization: "Bearer " + getToken(),
             },
             body: JSON.stringify({ invite_code: code }),
+            signal: controller.signal,
           });
+          clearTimeout(timer);
+
           const data = await res.json();
+
           if (!res.ok)
             throw new Error(data.message || "Invalid or expired invite code.");
+
+          /* FIX: reload groups then open the joined group */
           await loadGroups();
           const joinedId = data.group?.id || data.group_id;
           const joined = groups.find((g) => g.id === joinedId) || groups[0];
           if (joined) openGroup(joined);
           return true;
         } catch (err) {
-          errEl.textContent = err.message;
+          clearTimeout(timer);
+          errEl.textContent =
+            err.name === "AbortError"
+              ? "Request timed out — the server is waking up, please try again in 30 seconds."
+              : err.message;
           btn.disabled = false;
           btn.innerHTML =
             '<i class="bi bi-arrow-right-circle me-1"></i> Join Group';
@@ -524,15 +557,22 @@
         }
       }
 
+      /* ── Load messages ── */
       async function loadMessages() {
         if (!currentGroupId) return;
+        const box = document.getElementById("chatMessages");
+        if (box)
+          box.innerHTML = `<div style="text-align:center;color:var(--text-muted);font-size:.8rem;padding:24px 0"><span class="spinner-border spinner-border-sm me-1"></span> Loading messages…</div>`;
         try {
           const res = await fetch(
             BASE + `/tenant/groups/${currentGroupId}/messages`,
-            { headers: { Authorization: "Bearer " + getToken() } },
+            {
+              headers: { Authorization: "Bearer " + getToken() },
+            },
           );
           const data = await res.json();
-          renderMessages(data?.messages || []);
+          /* FIX: backend wraps messages in data array via buildPaginationResponse */
+          renderMessages(data?.data || data?.messages || []);
         } catch {
           renderMessages([]);
         }
@@ -564,10 +604,12 @@
           sender.textContent = m.sender_name || "Landlord";
           wrap.appendChild(sender);
         }
-        if (m.message) {
+        /* FIX: read both content and message fields */
+        const text = m.content || m.message;
+        if (text) {
           const bubble = document.createElement("div");
           bubble.className = "msg-bubble";
-          bubble.textContent = m.message;
+          bubble.textContent = text;
           wrap.appendChild(bubble);
         }
         const ts = document.createElement("div");
@@ -582,29 +624,38 @@
         return wrap;
       }
 
+      /* ── Send message ── */
       async function sendMsg() {
         const input = document.getElementById("msgInput");
         const text = input?.value.trim();
         if (!text && !pendingAttachments.length) return;
+
+        /* Optimistic render */
         const me = JSON.parse(
           localStorage.getItem("tenant_user") ||
             localStorage.getItem("user") ||
             "{}",
         );
         const box = document.getElementById("chatMessages");
-        const fakeMsg = {
-          message: text,
-          sender_id: me.id,
-          created_at: new Date().toISOString(),
-        };
-        box.appendChild(buildMsgEl(fakeMsg, true));
+        box.appendChild(
+          buildMsgEl(
+            {
+              content: text,
+              sender_id: me.id,
+              created_at: new Date().toISOString(),
+            },
+            true,
+          ),
+        );
         box.scrollTop = box.scrollHeight;
+
         if (input) {
           input.value = "";
           input.style.height = "auto";
         }
         pendingAttachments = [];
         document.getElementById("attachPreview").innerHTML = "";
+
         if (currentGroupId) {
           try {
             await fetch(BASE + `/tenant/groups/${currentGroupId}/messages`, {
@@ -613,12 +664,14 @@
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + getToken(),
               },
-              body: JSON.stringify({ message: text }),
+              /* FIX: send as 'content' — that's what backend expects */
+              body: JSON.stringify({ content: text }),
             });
           } catch {}
         }
       }
 
+      /* ── Attachments ── */
       function handleFiles(files, type) {
         Array.from(files).forEach((file) => {
           const reader = new FileReader();
@@ -654,6 +707,7 @@
         });
       }
 
+      /* ── Lightbox ── */
       function openLightbox(src) {
         document.getElementById("lightboxImg").src = src;
         document.getElementById("imgLightbox").classList.add("open");
@@ -666,6 +720,7 @@
         if (e.key === "Escape") closeLightbox();
       });
 
+      /* ── Sidebar ── */
       function openSidebar() {
         document.getElementById("sidebar").classList.add("open");
         document.getElementById("sidebarOverlay").classList.add("show");
