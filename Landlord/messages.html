@@ -826,8 +826,9 @@
                 <textarea
                   class="msg-textarea"
                   id="msgInput"
-                  placeholder="Type a message…"
+                  placeholder="Type a message to all tenants…"
                   rows="1"
+                  style="flex: 1; min-width: 0"
                   oninput="
                     this.style.height = 'auto';
                     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
@@ -985,11 +986,171 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
     <script>
-      /* ── Attachment state ── */
+      const BASE =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000/api"
+          : "https://rentms-backend-5.onrender.com/api";
+      const getToken = () =>
+        localStorage.getItem("landlord_token") ||
+        localStorage.getItem("token") ||
+        "";
+
       let pendingFiles = [];
+      let _activeGroupId = null;
+      let _pollTimer = null;
 
       /* ── Init ── */
       LandlordMessages.init();
+
+      /* FIX 2: Patch openGroup so messages render with new bubble styles */
+      const _origOpenGroup = LandlordMessages.openGroup.bind(LandlordMessages);
+      LandlordMessages.openGroup = async function (id) {
+        clearInterval(_pollTimer);
+        _activeGroupId = id;
+        await _origOpenGroup(id);
+        /* Re-render messages using our styled builder */
+        await reloadMessages(id);
+        _pollTimer = setInterval(() => reloadMessages(id), 30000);
+      };
+
+      async function reloadMessages(groupId) {
+        try {
+          const res = await fetch(
+            BASE + `/landlords/groups/${groupId}/messages`,
+            {
+              headers: { Authorization: "Bearer " + getToken() },
+            },
+          );
+          const data = await res.json();
+          const msgs = data?.data || [];
+          const box = document.getElementById("chatMessages");
+          if (!box) return;
+          const meId = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          ).id;
+          if (!msgs.length) {
+            box.innerHTML = `<div class="empty-chat" style="padding:40px 0"><i class="bi bi-chat-dots"></i><p>No messages yet. Say hello!</p></div>`;
+            return;
+          }
+          box.innerHTML = "";
+          msgs.forEach((m) =>
+            box.appendChild(
+              buildBubble(m, String(m.sender_id) === String(meId)),
+            ),
+          );
+          box.scrollTop = box.scrollHeight;
+        } catch {}
+      }
+
+      function buildBubble(m, mine) {
+        const wrap = document.createElement("div");
+        wrap.className = "msg " + (mine ? "mine" : "theirs");
+        if (!mine) {
+          const snd = document.createElement("div");
+          snd.className = "msg-sender";
+          snd.textContent = m.sender_name || "Tenant";
+          wrap.appendChild(snd);
+        }
+        const text = m.content || m.message;
+        if (text) {
+          const bbl = document.createElement("div");
+          bbl.className = "msg-bubble";
+          bbl.textContent = text;
+          wrap.appendChild(bbl);
+        }
+        if (m.file_url && m.file_type === "image") {
+          const imgDiv = document.createElement("div");
+          imgDiv.className = "msg-img";
+          const url = m.file_url.startsWith("http")
+            ? m.file_url
+            : BASE.replace("/api", "") + "/" + m.file_url;
+          imgDiv.innerHTML = `<img src="${url}" alt="" onclick="openLightbox('${url}')" />`;
+          wrap.appendChild(imgDiv);
+        } else if (m.file_url) {
+          const url = m.file_url.startsWith("http")
+            ? m.file_url
+            : BASE.replace("/api", "") + "/" + m.file_url;
+          const ext = m.file_url.split(".").pop().toUpperCase();
+          const fDiv = document.createElement("a");
+          fDiv.className = "msg-file";
+          fDiv.href = url;
+          fDiv.download = "";
+          fDiv.innerHTML = `<i class="bi ${fileIcon(ext)}"></i><div><div class="msg-file-name">${m.file_url.split("/").pop()}</div></div>`;
+          wrap.appendChild(fDiv);
+        }
+        const ts = document.createElement("div");
+        ts.className = "msg-time";
+        ts.textContent = m.created_at
+          ? new Date(m.created_at).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "now";
+        wrap.appendChild(ts);
+        return wrap;
+      }
+
+      /* FIX 3: Load members when Members modal opens */
+      document
+        .getElementById("membersModal")
+        .addEventListener("show.bs.modal", async () => {
+          const el = document.getElementById("membersList");
+          if (!_activeGroupId) {
+            el.innerHTML =
+              '<p style="color:var(--text-muted);font-size:.875rem">No group selected.</p>';
+            return;
+          }
+          el.innerHTML =
+            '<div class="d-flex align-items-center gap-2" style="color:var(--text-muted);font-size:.85rem"><span class="spinner-border spinner-border-sm"></span> Loading…</div>';
+          try {
+            /* Get group members via tenant list for this plaza */
+            const grpRes = await fetch(BASE + "/landlords/groups", {
+              headers: { Authorization: "Bearer " + getToken() },
+            });
+            const grpData = await grpRes.json();
+            const grp = (grpData.data || []).find(
+              (g) => g.id === _activeGroupId,
+            );
+            if (!grp) {
+              el.innerHTML =
+                '<p style="color:var(--text-muted);font-size:.875rem">Could not load group info.</p>';
+              return;
+            }
+
+            const tenRes = await fetch(
+              BASE + `/landlord/plazas/${grp.plaza_id}/tenants`,
+              { headers: { Authorization: "Bearer " + getToken() } },
+            );
+            const tenData = await tenRes.json();
+            const tenants = tenData?.data || [];
+
+            if (!tenants.length) {
+              el.innerHTML =
+                '<p style="color:var(--text-muted);font-size:.875rem">No active tenants in this plaza yet.</p>';
+              return;
+            }
+            el.innerHTML = tenants
+              .map(
+                (t) => `
+            <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid var(--border)">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;flex-shrink:0">
+                ${(t.full_name || t.email || "?").charAt(0).toUpperCase()}
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:700;font-size:.875rem;color:var(--text-main)">${t.full_name || t.email || "—"}</div>
+                <div style="font-size:.72rem;color:var(--text-muted)">Unit ${t.unit_number || "—"} · ${t.email || ""}</div>
+              </div>
+              <span class="badge-status badge-active">Active</span>
+            </div>`,
+              )
+              .join("");
+          } catch (err) {
+            el.innerHTML = `<p style="color:var(--danger-text);font-size:.875rem">Failed to load members.</p>`;
+          }
+        });
 
       /* ── File handling ── */
       function handleFiles(files, type) {
@@ -1030,7 +1191,7 @@
       }
 
       function fileIcon(ext) {
-        const map = {
+        const m = {
           PDF: "bi-file-pdf-fill",
           DOC: "bi-file-word-fill",
           DOCX: "bi-file-word-fill",
@@ -1041,15 +1202,37 @@
           TXT: "bi-file-text-fill",
           CSV: "bi-filetype-csv",
         };
-        return map[ext] || "bi-file-earmark-fill";
+        return m[ext] || "bi-file-earmark-fill";
       }
 
-      /* ── Override sendMsg to support attachments ── */
-      const _origSendMsg = window.sendMsg;
+      /* ── Override sendMsg to support attachments + optimistic render ── */
       window.sendMsg = async function () {
-        /* If there are pending files, send them first as optimistic renders */
-        if (pendingFiles.length) {
-          const box = document.getElementById("chatMessages");
+        const input = document.getElementById("msgInput");
+        const text = input?.value.trim();
+        if (!text && !pendingFiles.length) return;
+
+        const box = document.getElementById("chatMessages");
+        /* Remove empty state if present */
+        const emptyEl = box?.querySelector(".empty-chat");
+        if (emptyEl) emptyEl.remove();
+
+        /* Optimistic: show text bubble immediately */
+        if (text && box) {
+          box.appendChild(
+            buildBubble(
+              {
+                content: text,
+                sender_id: "me",
+                created_at: new Date().toISOString(),
+              },
+              true,
+            ),
+          );
+          box.scrollTop = box.scrollHeight;
+        }
+
+        /* Optimistic: show file previews immediately */
+        if (pendingFiles.length && box) {
           pendingFiles.forEach((item) => {
             const wrap = document.createElement("div");
             wrap.className = "msg mine";
@@ -1078,8 +1261,26 @@
           pendingFiles = [];
           renderAttachStrip();
         }
-        /* Then send the text via original handler */
-        if (_origSendMsg) _origSendMsg();
+
+        /* Clear input */
+        if (input) {
+          input.value = "";
+          input.style.height = "auto";
+        }
+
+        /* Send to API */
+        if (_activeGroupId && text) {
+          try {
+            await fetch(BASE + `/landlords/groups/${_activeGroupId}/messages`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + getToken(),
+              },
+              body: JSON.stringify({ content: text }),
+            });
+          } catch {}
+        }
       };
 
       function formatBytes(b) {
