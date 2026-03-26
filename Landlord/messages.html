@@ -1023,7 +1023,7 @@
       async function reloadMessages(groupId) {
         try {
           const res = await fetch(
-            BASE + `/landlords/groups/${groupId}/messages`,
+            BASE + `/landlord/groups/${groupId}/messages`,
             {
               headers: { Authorization: "Bearer " + getToken() },
             },
@@ -1113,7 +1113,7 @@
             '<div class="d-flex align-items-center gap-2" style="color:var(--text-muted);font-size:.85rem"><span class="spinner-border spinner-border-sm"></span> Loading…</div>';
           try {
             /* Step 1: get all groups to find plaza_id for this group */
-            const grpRes = await fetch(BASE + "/landlords/groups", {
+            const grpRes = await fetch(BASE + "/landlord/groups", {
               headers: { Authorization: "Bearer " + getToken() },
             });
             const grpData = await grpRes.json();
@@ -1290,7 +1290,7 @@
         /* Send to API */
         if (_activeGroupId && text) {
           try {
-            await fetch(BASE + `/landlords/groups/${_activeGroupId}/messages`, {
+            await fetch(BASE + `/landlord/groups/${_activeGroupId}/messages`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
