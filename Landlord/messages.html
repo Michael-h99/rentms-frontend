@@ -297,6 +297,10 @@
         border-top: 1px solid var(--border);
         background: var(--bg-card);
         flex-shrink: 0;
+        width: 100%;
+      }
+      .chat-input-bar .input-row {
+        width: 100%;
       }
 
       /* Attachment preview strip */
@@ -407,7 +411,9 @@
       }
 
       .msg-textarea {
-        flex: 1;
+        flex: 1 1 auto;
+        min-width: 0;
+        width: 100%;
         padding: 10px 16px;
         border-radius: 24px;
         border: 1.5px solid var(--border) !important;
@@ -1100,29 +1106,32 @@
           const el = document.getElementById("membersList");
           if (!_activeGroupId) {
             el.innerHTML =
-              '<p style="color:var(--text-muted);font-size:.875rem">No group selected.</p>';
+              '<p style="color:var(--text-muted);font-size:.875rem">Please select a group first.</p>';
             return;
           }
           el.innerHTML =
             '<div class="d-flex align-items-center gap-2" style="color:var(--text-muted);font-size:.85rem"><span class="spinner-border spinner-border-sm"></span> Loading…</div>';
           try {
-            /* Get group members via tenant list for this plaza */
+            /* Step 1: get all groups to find plaza_id for this group */
             const grpRes = await fetch(BASE + "/landlords/groups", {
               headers: { Authorization: "Bearer " + getToken() },
             });
             const grpData = await grpRes.json();
-            const grp = (grpData.data || []).find(
-              (g) => g.id === _activeGroupId,
-            );
+            const allGrps = grpData?.data || [];
+            /* FIX: use == not === so number/string mismatch doesn't fail */
+            const grp = allGrps.find((g) => g.id == _activeGroupId);
+
             if (!grp) {
-              el.innerHTML =
-                '<p style="color:var(--text-muted);font-size:.875rem">Could not load group info.</p>';
+              el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">Could not find group (ID: ${_activeGroupId}). Try reloading the page.</p>`;
               return;
             }
 
+            /* Step 2: get tenants for that plaza */
             const tenRes = await fetch(
               BASE + `/landlord/plazas/${grp.plaza_id}/tenants`,
-              { headers: { Authorization: "Bearer " + getToken() } },
+              {
+                headers: { Authorization: "Bearer " + getToken() },
+              },
             );
             const tenData = await tenRes.json();
             const tenants = tenData?.data || [];
@@ -1132,23 +1141,33 @@
                 '<p style="color:var(--text-muted);font-size:.875rem">No active tenants in this plaza yet.</p>';
               return;
             }
-            el.innerHTML = tenants
+
+            el.innerHTML = `
+            <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">
+              ${tenants.length} tenant${tenants.length !== 1 ? "s" : ""} in ${grp.plaza_name || "this plaza"}
+            </div>
+            ${tenants
               .map(
                 (t) => `
             <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid var(--border)">
-              <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;flex-shrink:0">
+              <div style="width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem;flex-shrink:0">
                 ${(t.full_name || t.email || "?").charAt(0).toUpperCase()}
               </div>
               <div style="flex:1;min-width:0">
-                <div style="font-weight:700;font-size:.875rem;color:var(--text-main)">${t.full_name || t.email || "—"}</div>
-                <div style="font-size:.72rem;color:var(--text-muted)">Unit ${t.unit_number || "—"} · ${t.email || ""}</div>
+                <div style="font-weight:700;font-size:.875rem;color:var(--text-main)">${t.full_name || "—"}</div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">
+                  <i class="bi bi-house me-1"></i>Unit ${t.unit_number || "—"}
+                  &nbsp;·&nbsp;
+                  <i class="bi bi-envelope me-1"></i>${t.email || "—"}
+                </div>
               </div>
               <span class="badge-status badge-active">Active</span>
             </div>`,
               )
-              .join("");
+              .join("")}
+          `;
           } catch (err) {
-            el.innerHTML = `<p style="color:var(--danger-text);font-size:.875rem">Failed to load members.</p>`;
+            el.innerHTML = `<p style="color:var(--danger-text);font-size:.875rem">Error: ${err.message}</p>`;
           }
         });
 
