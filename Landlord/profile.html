@@ -67,9 +67,6 @@
         background: var(--primary-hover);
         transform: scale(1.1);
       }
-      .avatar-upload-btn.removing {
-        background: var(--danger);
-      }
       .avatar-drop-zone {
         border: 2px dashed var(--border);
         border-radius: 14px;
@@ -91,9 +88,6 @@
         color: var(--text-subtle);
         margin-bottom: 8px;
         display: block;
-      }
-      .avatar-drop-zone.drag-over i {
-        color: var(--primary);
       }
       .avatar-drop-zone p {
         font-size: 0.82rem;
@@ -267,7 +261,7 @@
       </div>
 
       <div class="content">
-        <!-- ══ AVATAR BANNER ══════════════════════════════════════ -->
+        <!-- Avatar banner -->
         <div class="card mb-4 p-4">
           <div class="d-flex align-items-center gap-4 flex-wrap">
             <div class="avatar-upload-wrap" id="avatarWrap">
@@ -333,7 +327,7 @@
 
         <div class="row g-4">
           <div class="col-md-5">
-            <!-- ══ PROFILE PICTURE CARD ══════════════════════════ -->
+            <!-- Profile picture card -->
             <div class="card mb-4">
               <div class="card-header-custom">
                 <i class="bi bi-image text-primary"></i>
@@ -353,8 +347,8 @@
                     <strong style="color: var(--text-main)"
                       >Click to upload</strong
                     >
-                    or drag &amp; drop<br />
-                    JPG, PNG or WEBP · Max 5 MB · Square looks best
+                    or drag &amp; drop<br />JPG, PNG or WEBP · Max 5 MB · Square
+                    looks best
                   </p>
                   <input
                     type="file"
@@ -453,7 +447,7 @@
           </div>
 
           <div class="col-md-7">
-            <!-- ══ PERSONAL INFO ══════════════════════════════════ -->
+            <!-- Personal info -->
             <div class="card mb-4">
               <div class="card-header-custom">
                 <i class="bi bi-person-fill text-primary"></i>
@@ -511,7 +505,7 @@
               </div>
             </div>
 
-            <!-- ══ CHANGE PASSWORD ════════════════════════════════ -->
+            <!-- Change password -->
             <div class="card">
               <div class="card-header-custom">
                 <i class="bi bi-shield-lock-fill text-primary"></i>
@@ -566,18 +560,212 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
     <script>
-      /* ── Backend base URL (matches landlord.js) ── */
+      /* ── FIX: read token from correct key (landlord_token first, fallback to token) ── */
       const BACKEND_URL =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
           ? "http://localhost:5000/api"
           : "https://rentms-backend-5.onrender.com/api";
 
-      LandlordProfile.init();
+      const getToken = () =>
+        localStorage.getItem("landlord_token") ||
+        localStorage.getItem("token") ||
+        "";
 
       const MAX_SIZE_MB = 5;
       let pendingDataUrl = null;
       let pendingFile = null;
+
+      /* ── Load profile on page load ── */
+      document.addEventListener("DOMContentLoaded", async () => {
+        RentMs.initSidebar();
+
+        /* FIX: load from localStorage first (instant, no flicker),
+           then sync from API to get latest data */
+        loadFromLocalStorage();
+        await loadFromApi();
+
+        /* Restore avatar */
+        restoreAvatar();
+      });
+
+      function loadFromLocalStorage() {
+        try {
+          const u = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          if (u.username) {
+            document.getElementById("profileName").value = u.username;
+            document.getElementById("profileNameDisplay").textContent =
+              u.username;
+            updateInitials(u.username);
+          }
+          if (u.email) {
+            document.getElementById("profileEmail").value = u.email;
+            document.getElementById("profileEmailDisplay").textContent =
+              u.email;
+          }
+          if (u.phone) document.getElementById("profilePhone").value = u.phone;
+          if (u.address)
+            document.getElementById("profileAddress").value = u.address;
+        } catch {}
+      }
+
+      async function loadFromApi() {
+        try {
+          const res = await fetch(BACKEND_URL + "/auth/me", {
+            headers: { Authorization: "Bearer " + getToken() },
+          });
+          const data = await res.json();
+          const p = data.data || data.user || {};
+
+          const name = p.username || p.name || "";
+          if (name) {
+            document.getElementById("profileName").value = name;
+            document.getElementById("profileNameDisplay").textContent = name;
+            updateInitials(name);
+          }
+          if (p.email) {
+            document.getElementById("profileEmail").value = p.email;
+            document.getElementById("profileEmailDisplay").textContent =
+              p.email;
+          }
+          if (p.phone) document.getElementById("profilePhone").value = p.phone;
+          if (p.address)
+            document.getElementById("profileAddress").value = p.address;
+
+          /* FIX: update localStorage with fresh data from API */
+          const stored = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          const updated = {
+            ...stored,
+            username: name,
+            email: p.email,
+            phone: p.phone,
+            address: p.address,
+          };
+          localStorage.setItem("landlord_user", JSON.stringify(updated));
+          localStorage.setItem("user", JSON.stringify(updated));
+
+          /* Restore avatar from API if not cached locally */
+          if (p.avatar_url && !localStorage.getItem("LANDLORD_AVATAR")) {
+            const full = p.avatar_url.startsWith("http")
+              ? p.avatar_url
+              : "https://rentms-backend-5.onrender.com/" +
+                p.avatar_url.replace(/^\//, "");
+            localStorage.setItem("LANDLORD_AVATAR", full);
+            applyAvatar(full);
+          }
+        } catch (err) {
+          console.warn("Profile load error:", err.message);
+        }
+      }
+
+      /* ── Save profile ── */
+      async function saveProfile() {
+        const name = document.getElementById("profileName").value.trim();
+        const email = document.getElementById("profileEmail").value.trim();
+        const phone = document.getElementById("profilePhone").value.trim();
+        const address = document.getElementById("profileAddress").value.trim();
+        const msgEl = document.getElementById("profileMsg");
+
+        if (!name || !email) {
+          showMsg(msgEl, "Name and email are required.", "error");
+          return;
+        }
+
+        try {
+          const res = await fetch(BACKEND_URL + "/auth/me", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + getToken(),
+            },
+            body: JSON.stringify({ username: name, email, phone, address }),
+          });
+          const data = await res.json();
+
+          if (!res.ok || data.error) {
+            showMsg(msgEl, data.message || "Failed to save.", "error");
+            return;
+          }
+
+          /* FIX: update BOTH localStorage keys so the data persists
+             across page navigations */
+          const stored = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          const updated = { ...stored, username: name, email, phone, address };
+          localStorage.setItem("landlord_user", JSON.stringify(updated));
+          localStorage.setItem("user", JSON.stringify(updated));
+
+          /* Update UI */
+          document.getElementById("profileNameDisplay").textContent = name;
+          document.getElementById("profileEmailDisplay").textContent = email;
+          document.getElementById("sidebarName").textContent = name;
+          const sav = document.getElementById("sidebarAvatar");
+          if (sav && !sav.style.backgroundImage)
+            sav.textContent = name.charAt(0).toUpperCase();
+          updateInitials(name);
+
+          showMsg(msgEl, "✅ Profile updated successfully!", "success");
+        } catch (err) {
+          showMsg(msgEl, "Network error. Please try again.", "error");
+        }
+      }
+
+      /* ── Change password ── */
+      async function changePassword() {
+        const current = document.getElementById("currentPw").value;
+        const newPw = document.getElementById("newPw").value;
+        const confirm = document.getElementById("confirmPw").value;
+        const msgEl = document.getElementById("pwMsg");
+
+        if (!current || !newPw) {
+          showMsg(msgEl, "All fields are required.", "error");
+          return;
+        }
+        if (newPw !== confirm) {
+          showMsg(msgEl, "Passwords do not match.", "error");
+          return;
+        }
+        if (newPw.length < 6) {
+          showMsg(msgEl, "Minimum 6 characters.", "error");
+          return;
+        }
+
+        try {
+          const res = await fetch(BACKEND_URL + "/auth/change-password", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + getToken(),
+            },
+            body: JSON.stringify({
+              current_password: current,
+              new_password: newPw,
+            }),
+          });
+          const data = await res.json();
+          if (res.ok && !data.error) {
+            ["currentPw", "newPw", "confirmPw"].forEach((id) => {
+              document.getElementById(id).value = "";
+            });
+            showMsg(msgEl, "✅ Password changed successfully!", "success");
+          } else {
+            showMsg(msgEl, data.message || "Failed.", "error");
+          }
+        } catch {
+          showMsg(msgEl, "Network error.", "error");
+        }
+      }
 
       /* ── Sync name display as landlord types ── */
       function syncNameDisplay() {
@@ -587,7 +775,6 @@
         updateInitials(name);
       }
 
-      /* ── Update avatar initials ── */
       function updateInitials(name) {
         const el = document.getElementById("avatarInitials");
         if (!el) return;
@@ -603,7 +790,7 @@
         el.textContent = initials;
       }
 
-      /* ── File selected (from either input) ── */
+      /* ── Avatar upload ── */
       function onAvatarFileSelected(input) {
         const file = input.files[0];
         input.value = "";
@@ -635,7 +822,6 @@
         reader.readAsDataURL(file);
       }
 
-      /* ── Show preview strip ── */
       function showCropStrip(file, dataUrl) {
         document.getElementById("cropPreviewImg").src = dataUrl;
         document.getElementById("cropFileName").textContent = file.name;
@@ -647,7 +833,6 @@
         showAvatarMsg("", "");
       }
 
-      /* ── Cancel selection ── */
       function cancelUpload() {
         pendingDataUrl = null;
         pendingFile = null;
@@ -657,88 +842,82 @@
         showAvatarMsg("", "");
       }
 
-      /* ── Confirm & upload ── */
       async function confirmUpload() {
         if (!pendingDataUrl) return;
-
         document.getElementById("cropStrip").classList.remove("show");
         const progress = document.getElementById("uploadProgress");
         const bar = document.getElementById("progressBar");
         progress.classList.add("show");
 
-        /* Simulate progress bar */
         let pct = 0;
         const tick = setInterval(() => {
           pct = Math.min(pct + Math.random() * 18, 90);
           bar.style.width = pct + "%";
         }, 120);
 
-        if (typeof DEV_MODE !== "undefined" && DEV_MODE) {
-          /* Dev mode — save to localStorage only */
-          await new Promise((r) => setTimeout(r, 900));
-          try {
-            localStorage.setItem("LANDLORD_AVATAR", pendingDataUrl);
-          } catch (e) {}
-          finishUpload(pendingDataUrl, tick, bar, progress);
-        } else {
-          /* Live mode — POST to backend */
-          try {
-            const formData = new FormData();
-            formData.append("avatar", pendingFile);
+        try {
+          const formData = new FormData();
+          formData.append("avatar", pendingFile);
 
-            const res = await fetch(BACKEND_URL + "/auth/avatar", {
-              method: "POST",
-              headers: {
-                /* NOTE: do NOT set Content-Type — browser sets it with the boundary */
-                Authorization: "Bearer " + localStorage.getItem("token"),
-              },
-              body: formData,
-            });
+          const res = await fetch(BACKEND_URL + "/auth/avatar", {
+            method: "POST",
+            /* FIX: use correct token key */
+            headers: { Authorization: "Bearer " + getToken() },
+            body: formData,
+          });
 
-            const json = await res.json().catch(() => ({}));
+          const json = await res.json().catch(() => ({}));
 
-            if (!res.ok || json.error) {
-              clearInterval(tick);
-              progress.classList.remove("show");
-              document.getElementById("dropZone").style.display = "";
-              showAvatarMsg(
-                json.message || "Upload failed. Please try again.",
-                "error",
-              );
-              return;
-            }
-
-            /* Backend returns a relative path e.g. "uploads/profile/xxx.jpg"
-               Build a full URL by prepending the backend origin. */
-            function toFullUrl(path) {
-              if (!path) return null;
-              if (path.startsWith("http")) return path; // already absolute
-              const origin = "https://rentms-backend-5.onrender.com";
-              return origin + "/" + path.replace(/^\//, ""); // ensure single slash
-            }
-            const rawUrl =
-              json.data?.avatar_url ||
-              json.avatar_url ||
-              json.data?.url ||
-              json.url ||
-              null;
-            const url = toFullUrl(rawUrl) || pendingDataUrl;
-
-            /* Also persist locally so it survives refresh */
-            try {
-              localStorage.setItem("LANDLORD_AVATAR", url);
-            } catch (e) {}
-
-            finishUpload(url, tick, bar, progress);
-          } catch (err) {
+          if (!res.ok || json.error) {
             clearInterval(tick);
             progress.classList.remove("show");
             document.getElementById("dropZone").style.display = "";
             showAvatarMsg(
-              "Network error. Please check your connection.",
+              json.message || "Upload failed. Please try again.",
               "error",
             );
+            return;
           }
+
+          const rawUrl =
+            json.data?.avatar_url ||
+            json.avatar_url ||
+            json.data?.url ||
+            json.url ||
+            null;
+          const url = rawUrl
+            ? rawUrl.startsWith("http")
+              ? rawUrl
+              : "https://rentms-backend-5.onrender.com/" +
+                rawUrl.replace(/^\//, "")
+            : pendingDataUrl;
+
+          /* FIX: save to localStorage so it persists across page navigations */
+          try {
+            localStorage.setItem("LANDLORD_AVATAR", url);
+          } catch {}
+
+          /* FIX: also update the avatar_url in the stored user object */
+          try {
+            const stored = JSON.parse(
+              localStorage.getItem("landlord_user") ||
+                localStorage.getItem("user") ||
+                "{}",
+            );
+            stored.avatar_url = url;
+            localStorage.setItem("landlord_user", JSON.stringify(stored));
+            localStorage.setItem("user", JSON.stringify(stored));
+          } catch {}
+
+          finishUpload(url, tick, bar, progress);
+        } catch {
+          clearInterval(tick);
+          progress.classList.remove("show");
+          document.getElementById("dropZone").style.display = "";
+          showAvatarMsg(
+            "Network error. Please check your connection.",
+            "error",
+          );
         }
       }
 
@@ -756,8 +935,7 @@
         }, 400);
       }
 
-      /* ── Apply avatar to all avatar elements on the page ── */
-      function applyAvatar(dataUrl) {
+      function applyAvatar(url) {
         const wrap = document.getElementById("avatarWrap");
         const initEl = document.getElementById("avatarInitials");
         if (wrap && initEl) {
@@ -769,27 +947,46 @@
             wrap.insertBefore(img, initEl);
             initEl.style.display = "none";
           }
-          img.src = dataUrl;
+          img.src = url;
         }
-        /* Sidebar avatar */
         const sav = document.getElementById("sidebarAvatar");
         if (sav) {
-          sav.style.backgroundImage = `url(${dataUrl})`;
+          sav.style.backgroundImage = `url(${url})`;
           sav.style.backgroundSize = "cover";
           sav.style.backgroundPosition = "center";
           sav.textContent = "";
         }
-        /* Show remove button */
         const rmBtn = document.getElementById("removePhotoBtn");
         if (rmBtn) rmBtn.style.display = "";
       }
 
-      /* ── Remove photo ── */
+      function restoreAvatar() {
+        try {
+          const saved = localStorage.getItem("LANDLORD_AVATAR");
+          if (saved) {
+            applyAvatar(saved);
+            return;
+          }
+        } catch {}
+      }
+
       function removePhoto() {
         if (!confirm("Remove your profile picture?")) return;
         try {
           localStorage.removeItem("LANDLORD_AVATAR");
-        } catch (e) {}
+        } catch {}
+
+        /* FIX: remove avatar_url from stored user too */
+        try {
+          const stored = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          delete stored.avatar_url;
+          localStorage.setItem("landlord_user", JSON.stringify(stored));
+          localStorage.setItem("user", JSON.stringify(stored));
+        } catch {}
 
         const wrap = document.getElementById("avatarWrap");
         const initEl = document.getElementById("avatarInitials");
@@ -805,6 +1002,17 @@
           sav.textContent = name ? name[0].toUpperCase() : "?";
         }
         document.getElementById("removePhotoBtn").style.display = "none";
+
+        /* Also remove from API */
+        fetch(BACKEND_URL + "/auth/me", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + getToken(),
+          },
+          body: JSON.stringify({ avatar_url: null }),
+        }).catch(() => {});
+
         showAvatarMsg("Profile picture removed.", "info");
       }
 
@@ -813,7 +1021,7 @@
         e.preventDefault();
         document.getElementById("dropZone").classList.add("drag-over");
       }
-      function onDragLeave(e) {
+      function onDragLeave() {
         document.getElementById("dropZone").classList.remove("drag-over");
       }
       function onDrop(e) {
@@ -823,7 +1031,7 @@
         if (file) processFile(file);
       }
 
-      /* ── Status message ── */
+      /* ── Message helpers ── */
       function showAvatarMsg(text, type) {
         const el = document.getElementById("avatarMsg");
         if (!el) return;
@@ -852,42 +1060,32 @@
         el.innerHTML = `<div style="background:${c.bg};border:1px solid ${c.border};border-radius:8px;padding:9px 13px;font-size:.8rem;font-weight:600;color:${c.color}">${text}</div>`;
       }
 
-      /* ── Helpers ── */
+      function showMsg(el, text, type) {
+        if (!el) return;
+        const colors = {
+          success: {
+            bg: "rgba(16,185,129,.1)",
+            border: "rgba(16,185,129,.3)",
+            color: "#34d399",
+          },
+          error: {
+            bg: "rgba(239,68,68,.08)",
+            border: "rgba(239,68,68,.25)",
+            color: "#f87171",
+          },
+        };
+        const c = colors[type] || colors.success;
+        el.innerHTML = `<div style="background:${c.bg};border:1px solid ${c.border};border-radius:8px;padding:9px 13px;font-size:.82rem;font-weight:600;color:${c.color};margin-bottom:12px">${text}</div>`;
+        setTimeout(() => {
+          if (el) el.innerHTML = "";
+        }, 4000);
+      }
+
       function formatBytes(b) {
         if (b < 1024) return b + " B";
         if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
         return (b / 1048576).toFixed(1) + " MB";
       }
-
-      /* ── Restore saved avatar on load ── */
-      (function restoreAvatar() {
-        try {
-          const saved = localStorage.getItem("LANDLORD_AVATAR");
-          if (saved) applyAvatar(saved);
-          else {
-            /* Also check if backend profile already has an avatar_url */
-            const token = localStorage.getItem("token");
-            if (!token) return;
-            fetch("https://rentms-backend-5.onrender.com/api/auth/me", {
-              headers: { Authorization: "Bearer " + token },
-            })
-              .then((r) => r.json())
-              .then((d) => {
-                const raw = d.data?.avatar_url;
-                if (!raw) return;
-                const full = raw.startsWith("http")
-                  ? raw
-                  : "https://rentms-backend-5.onrender.com/" +
-                    raw.replace(/^\//, "");
-                try {
-                  localStorage.setItem("LANDLORD_AVATAR", full);
-                } catch (e) {}
-                applyAvatar(full);
-              })
-              .catch(() => {});
-          }
-        } catch (e) {}
-      })();
     </script>
   </body>
 </html>
