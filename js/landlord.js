@@ -14,6 +14,43 @@
 const DEV_MODE = false;
 
 /* ============================================================
+   AUTO LOGOUT — signs out after 60 minutes of inactivity
+   Resets on any mouse move, click, or keypress.
+   ============================================================ */
+(function initAutoLogout() {
+  const TIMEOUT_MS = 60 * 60 * 1000; // 60 minutes
+  let _timer;
+
+  function resetTimer() {
+    clearTimeout(_timer);
+    _timer = setTimeout(() => {
+      /* Show a brief message then redirect */
+      alert("Your session has expired. Please log in again.");
+      localStorage.removeItem("landlord_token");
+      localStorage.removeItem("landlord_user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "../auth/login.html?session=expired";
+    }, TIMEOUT_MS);
+  }
+
+  /* Only run on landlord pages */
+  if (window.location.pathname.includes("/Landlord/")) {
+    [
+      "mousemove",
+      "mousedown",
+      "keypress",
+      "touchstart",
+      "scroll",
+      "click",
+    ].forEach((evt) =>
+      document.addEventListener(evt, resetTimer, { passive: true }),
+    );
+    resetTimer(); // start the timer immediately
+  }
+})();
+
+/* ============================================================
    MOCK DATA
    ============================================================ */
 const MOCK = {
@@ -1397,7 +1434,7 @@ const LandlordMessages = (() => {
   }
 
   async function loadGroups() {
-    const data = await RentMs.get("/landlords/groups");
+    const data = await RentMs.get("/landlord/groups");
     groups = data.data || [];
     renderGroups(groups);
   }
@@ -1461,7 +1498,7 @@ const LandlordMessages = (() => {
   }
 
   async function loadMessages(groupId) {
-    const data = await RentMs.get("/landlords/groups/" + groupId + "/messages");
+    const data = await RentMs.get("/landlord/groups/" + groupId + "/messages");
     const list = data.data || [];
     const box = document.getElementById("chatMessages");
     if (!box) return;
@@ -1497,7 +1534,7 @@ const LandlordMessages = (() => {
     const msg = input?.value.trim();
     if (!msg) return;
     input.value = "";
-    await RentMs.post("/landlords/groups/" + activeGroup.id + "/messages", {
+    await RentMs.post("/landlord/groups/" + activeGroup.id + "/messages", {
       content: msg,
     });
     await loadMessages(activeGroup.id);
@@ -1518,7 +1555,7 @@ const LandlordMessages = (() => {
       }
       return;
     }
-    const res = await RentMs.post("/landlords/groups", {
+    const res = await RentMs.post("/landlord/groups", {
       name,
       plaza_id: plaza || null,
       invite_code: code,
@@ -1554,7 +1591,7 @@ const LandlordMessages = (() => {
   window.regenCode = async function () {
     if (!activeGroup) return;
     const newCode = RentMs.genCode();
-    const res = await RentMs.put("/landlords/groups/" + activeGroup.id, {
+    const res = await RentMs.put("/landlord/groups/" + activeGroup.id, {
       invite_code: newCode,
     });
     if (res.data || (res.message && !res.error)) {

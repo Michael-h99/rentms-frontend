@@ -4,19 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Messages | Landlord Portal</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="../css/landlord.css" rel="stylesheet" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       /* ── Layout ── */
       .chat-layout {
@@ -56,7 +47,7 @@
       }
       .groups-search input:focus {
         border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+        box-shadow: 0 0 0 3px rgba(37,99,235,.12) !important;
       }
 
       .groups-list {
@@ -70,16 +61,11 @@
         gap: 12px;
         padding: 14px 16px;
         cursor: pointer;
-        border-bottom: 1px solid rgba(30, 41, 59, 0.5);
-        transition: background 0.15s;
+        border-bottom: 1px solid rgba(30,41,59,.5);
+        transition: background .15s;
       }
-      .group-item:hover {
-        background: rgba(37, 99, 235, 0.06);
-      }
-      .group-item.active {
-        background: rgba(37, 99, 235, 0.12);
-        border-left: 3px solid var(--primary);
-      }
+      .group-item:hover { background: rgba(37,99,235,.06); }
+      .group-item.active { background: rgba(37,99,235,.12); border-left: 3px solid var(--primary); }
 
       .group-icon {
         width: 42px;
@@ -97,14 +83,14 @@
 
       .group-item-name {
         font-weight: 700;
-        font-size: 0.875rem;
+        font-size: .875rem;
         color: var(--text-main);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
       .group-item-preview {
-        font-size: 0.72rem;
+        font-size: .72rem;
         color: var(--text-muted);
         white-space: nowrap;
         overflow: hidden;
@@ -133,20 +119,9 @@
         text-align: center;
         color: var(--text-muted);
       }
-      .empty-chat i {
-        font-size: 3rem;
-        opacity: 0.3;
-      }
-      .empty-chat h6 {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--text-main);
-        margin: 0;
-      }
-      .empty-chat p {
-        font-size: 0.82rem;
-        margin: 0;
-      }
+      .empty-chat i { font-size: 3rem; opacity: .3; }
+      .empty-chat h6 { font-size: .95rem; font-weight: 700; color: var(--text-main); margin: 0; }
+      .empty-chat p  { font-size: .82rem; margin: 0; }
 
       /* Chat header */
       .chat-header {
@@ -165,7 +140,7 @@
         background: linear-gradient(135deg, var(--primary), #7c3aed);
         color: #fff;
         font-weight: 800;
-        font-size: 0.95rem;
+        font-size: .95rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -184,22 +159,12 @@
       }
 
       /* Message bubbles */
-      .msg {
-        display: flex;
-        flex-direction: column;
-        max-width: 68%;
-      }
-      .msg.mine {
-        align-self: flex-end;
-        align-items: flex-end;
-      }
-      .msg.theirs {
-        align-self: flex-start;
-        align-items: flex-start;
-      }
+      .msg { display: flex; flex-direction: column; max-width: 68%; }
+      .msg.mine   { align-self: flex-end;  align-items: flex-end;  }
+      .msg.theirs { align-self: flex-start; align-items: flex-start; }
 
       .msg-sender {
-        font-size: 0.7rem;
+        font-size: .7rem;
         font-weight: 700;
         color: var(--text-muted);
         margin-bottom: 4px;
@@ -208,7 +173,7 @@
       .msg-bubble {
         padding: 11px 16px;
         border-radius: 18px;
-        font-size: 0.875rem;
+        font-size: .875rem;
         line-height: 1.6;
         word-break: break-word;
       }
@@ -224,7 +189,7 @@
         border-radius: 4px 18px 18px 18px;
       }
       .msg-time {
-        font-size: 0.65rem;
+        font-size: .65rem;
         color: var(--text-subtle);
         margin-top: 4px;
         padding: 0 4px;
@@ -242,11 +207,9 @@
         width: 100%;
         display: block;
         border-radius: 12px;
-        transition: opacity 0.15s;
+        transition: opacity .15s;
       }
-      .msg-img img:hover {
-        opacity: 0.9;
-      }
+      .msg-img img:hover { opacity: .9; }
 
       /* File attachment */
       .msg-file {
@@ -255,41 +218,24 @@
         gap: 10px;
         padding: 10px 14px;
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255,255,255,.1);
+        border: 1px solid rgba(255,255,255,.15);
         cursor: pointer;
         text-decoration: none;
         color: inherit;
         margin-top: 6px;
         max-width: 260px;
-        transition: background 0.15s;
+        transition: background .15s;
       }
       .msg.theirs .msg-file {
         background: var(--bg-body);
         border-color: var(--border);
       }
-      .msg-file:hover {
-        background: rgba(255, 255, 255, 0.18);
-      }
-      .msg.theirs .msg-file:hover {
-        background: var(--primary-glow);
-      }
-      .msg-file i {
-        font-size: 1.4rem;
-        flex-shrink: 0;
-      }
-      .msg-file-name {
-        font-size: 0.8rem;
-        font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 160px;
-      }
-      .msg-file-size {
-        font-size: 0.68rem;
-        opacity: 0.7;
-      }
+      .msg-file:hover { background: rgba(255,255,255,.18); }
+      .msg.theirs .msg-file:hover { background: var(--primary-glow); }
+      .msg-file i { font-size: 1.4rem; flex-shrink: 0; }
+      .msg-file-name { font-size: .8rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+      .msg-file-size { font-size: .68rem; opacity: .7; }
 
       /* ── Input bar ── */
       .chat-input-bar {
@@ -310,9 +256,7 @@
         gap: 8px;
         margin-bottom: 10px;
       }
-      .attach-strip:empty {
-        display: none;
-      }
+      .attach-strip:empty { display: none; }
 
       .attach-thumb {
         position: relative;
@@ -327,11 +271,7 @@
         justify-content: center;
         flex-shrink: 0;
       }
-      .attach-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+      .attach-thumb img { width: 100%; height: 100%; object-fit: cover; }
       .attach-thumb .file-label {
         display: flex;
         flex-direction: column;
@@ -340,42 +280,25 @@
         padding: 6px;
         text-align: center;
       }
-      .attach-thumb .file-label i {
-        font-size: 1.3rem;
-        color: var(--primary);
-      }
-      .attach-thumb .file-label span {
-        font-size: 0.55rem;
-        color: var(--text-muted);
-        font-weight: 700;
-        word-break: break-all;
-        line-height: 1.2;
-        max-width: 52px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+      .attach-thumb .file-label i { font-size: 1.3rem; color: var(--primary); }
+      .attach-thumb .file-label span { font-size: .55rem; color: var(--text-muted); font-weight: 700; word-break: break-all; line-height: 1.2; max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .attach-rm {
         position: absolute;
-        top: 3px;
-        right: 3px;
-        width: 18px;
-        height: 18px;
+        top: 3px; right: 3px;
+        width: 18px; height: 18px;
         border-radius: 50%;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0,0,0,.7);
         color: #fff;
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.6rem;
+        font-size: .6rem;
         padding: 0;
         line-height: 1;
       }
-      .attach-rm:hover {
-        background: var(--danger);
-      }
+      .attach-rm:hover { background: var(--danger); }
 
       /* Input row */
       .input-row {
@@ -390,8 +313,7 @@
         align-items: center;
       }
       .attach-btn {
-        width: 36px;
-        height: 36px;
+        width: 36px; height: 36px;
         border-radius: 50%;
         border: 1.5px solid var(--border);
         background: var(--bg-body);
@@ -400,15 +322,11 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.18s;
-        font-size: 0.95rem;
+        transition: all .18s;
+        font-size: .95rem;
         flex-shrink: 0;
       }
-      .attach-btn:hover {
-        border-color: var(--primary);
-        color: var(--primary);
-        background: var(--primary-glow);
-      }
+      .attach-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
 
       .msg-textarea {
         flex: 1 1 auto;
@@ -419,28 +337,21 @@
         border: 1.5px solid var(--border) !important;
         background: var(--bg-body) !important;
         font-family: inherit;
-        font-size: 0.875rem;
+        font-size: .875rem;
         line-height: 1.5;
         color: var(--text-main) !important;
         outline: none;
         resize: none;
         max-height: 120px;
         overflow-y: auto;
-        transition: border-color 0.2s;
+        transition: border-color .2s;
         -webkit-text-fill-color: var(--text-main) !important;
       }
-      .msg-textarea:focus {
-        border-color: var(--primary) !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
-      }
-      .msg-textarea::placeholder {
-        color: var(--text-subtle);
-        -webkit-text-fill-color: var(--text-subtle) !important;
-      }
+      .msg-textarea:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(37,99,235,.12) !important; }
+      .msg-textarea::placeholder { color: var(--text-subtle); -webkit-text-fill-color: var(--text-subtle) !important; }
 
       .send-btn {
-        width: 40px;
-        height: 40px;
+        width: 40px; height: 40px;
         border-radius: 50%;
         background: var(--primary);
         border: none;
@@ -450,20 +361,11 @@
         justify-content: center;
         cursor: pointer;
         flex-shrink: 0;
-        transition:
-          background 0.2s,
-          transform 0.15s;
-        font-size: 0.95rem;
+        transition: background .2s, transform .15s;
+        font-size: .95rem;
       }
-      .send-btn:hover {
-        background: var(--primary-hover);
-        transform: scale(1.07);
-      }
-      .send-btn:disabled {
-        background: var(--border);
-        cursor: not-allowed;
-        transform: none;
-      }
+      .send-btn:hover { background: var(--primary-hover); transform: scale(1.07); }
+      .send-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
 
       /* Date dividers */
       .date-divider {
@@ -474,34 +376,34 @@
       }
       .date-divider::before,
       .date-divider::after {
-        content: "";
+        content: '';
         flex: 1;
         height: 1px;
         background: var(--border);
       }
       .date-divider span {
-        font-size: 0.68rem;
+        font-size: .68rem;
         font-weight: 700;
         color: var(--text-subtle);
         white-space: nowrap;
-        letter-spacing: 0.04em;
+        letter-spacing: .04em;
         text-transform: uppercase;
       }
 
       /* Invite code box */
       .invite-code-display {
         background: var(--bg-body);
-        border: 2px dashed rgba(37, 99, 235, 0.4);
+        border: 2px dashed rgba(37,99,235,.4);
         border-radius: 14px;
         padding: 20px;
         text-align: center;
         margin: 12px 0;
       }
       .invite-code-text {
-        font-family: "Courier New", monospace;
+        font-family: 'Courier New', monospace;
         font-size: 2rem;
         font-weight: 900;
-        letter-spacing: 0.2em;
+        letter-spacing: .2em;
         color: var(--primary);
       }
 
@@ -516,155 +418,65 @@
         color: var(--text-muted);
         gap: 10px;
       }
-      .empty-groups i {
-        font-size: 2rem;
-        opacity: 0.3;
-      }
+      .empty-groups i { font-size: 2rem; opacity: .3; }
 
       /* Lightbox */
       .lightbox {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.92);
+        background: rgba(0,0,0,.92);
         z-index: 9999;
         align-items: center;
         justify-content: center;
         cursor: zoom-out;
       }
-      .lightbox.open {
-        display: flex;
-      }
-      .lightbox img {
-        max-width: 90vw;
-        max-height: 90vh;
-        border-radius: 10px;
-        object-fit: contain;
-      }
-      .lightbox-close {
-        position: absolute;
-        top: 20px;
-        right: 24px;
-        color: #fff;
-        font-size: 1.8rem;
-        cursor: pointer;
-        background: none;
-        border: none;
-        opacity: 0.8;
-      }
-      .lightbox-close:hover {
-        opacity: 1;
-      }
+      .lightbox.open { display: flex; }
+      .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 10px; object-fit: contain; }
+      .lightbox-close { position: absolute; top: 20px; right: 24px; color: #fff; font-size: 1.8rem; cursor: pointer; background: none; border: none; opacity: .8; }
+      .lightbox-close:hover { opacity: 1; }
 
       @media (max-width: 768px) {
-        .chat-layout {
-          flex-direction: column;
-          height: auto;
-        }
-        .groups-panel {
-          width: 100%;
-          height: 220px;
-          border-right: none;
-          border-bottom: 1px solid var(--border);
-        }
-        .chat-panel {
-          height: calc(100vh - 284px);
-        }
+        .chat-layout { flex-direction: column; height: auto; }
+        .groups-panel { width: 100%; height: 220px; border-right: none; border-bottom: 1px solid var(--border); }
+        .chat-panel { height: calc(100vh - 284px); }
       }
     </style>
   </head>
   <body>
     <div class="sidebar">
       <div class="sidebar-brand">
-        <a
-          href="dashboard.html"
-          class="d-flex align-items-center gap-2 text-decoration-none"
-        >
-          <i
-            class="bi bi-houses-fill"
-            style="font-size: 1.4rem; color: #2563eb; flex-shrink: 0"
-          ></i>
-          <span
-            style="
-              font-size: 1.1rem;
-              font-weight: 800;
-              color: #2563eb;
-              letter-spacing: -0.02em;
-              line-height: 1;
-            "
-            >RentMS</span
-          >
+        <a href="dashboard.html" class="d-flex align-items-center gap-2 text-decoration-none">
+          <i class="bi bi-houses-fill" style="font-size:1.4rem;color:#2563eb;flex-shrink:0"></i>
+          <span style="font-size:1.1rem;font-weight:800;color:#2563eb;letter-spacing:-.02em;line-height:1">RentMS</span>
         </a>
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
-          ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
-        >
-        <a href="plazas.html" class="nav-link"
-          ><i class="bi bi-buildings"></i> My Plazas</a
-        >
-        <a href="tenants.html" class="nav-link"
-          ><i class="bi bi-people-fill"></i> Tenants</a
-        >
-        <a href="payments.html" class="nav-link"
-          ><i class="bi bi-credit-card-fill"></i> Payments</a
-        >
+        <a href="dashboard.html" class="nav-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+        <a href="plazas.html" class="nav-link"><i class="bi bi-buildings"></i> My Plazas</a>
+        <a href="tenants.html" class="nav-link"><i class="bi bi-people-fill"></i> Tenants</a>
+        <a href="payments.html" class="nav-link"><i class="bi bi-credit-card-fill"></i> Payments</a>
         <div class="nav-section">Management</div>
-        <a href="invite-codes.html" class="nav-link"
-          ><i class="bi bi-key-fill"></i> Invite Codes</a
-        >
-        <a href="maintenance.html" class="nav-link"
-          ><i class="bi bi-tools"></i> Maintenance</a
-        >
-        <a href="messages.html" class="nav-link active"
-          ><i class="bi bi-chat-dots-fill"></i> Messages</a
-        >
-        <a href="announcement.html" class="nav-link"
-          ><i class="bi bi-megaphone-fill"></i> Announcements</a
-        >
-        <a href="notifications.html" class="nav-link"
-          ><i class="bi bi-bell-fill"></i> Notifications</a
-        >
+        <a href="invite-codes.html" class="nav-link"><i class="bi bi-key-fill"></i> Invite Codes</a>
+        <a href="maintenance.html" class="nav-link"><i class="bi bi-tools"></i> Maintenance</a>
+        <a href="messages.html" class="nav-link active"><i class="bi bi-chat-dots-fill"></i> Messages</a>
+        <a href="announcement.html" class="nav-link"><i class="bi bi-megaphone-fill"></i> Announcements</a>
+        <a href="notifications.html" class="nav-link"><i class="bi bi-bell-fill"></i> Notifications</a>
         <div class="nav-section">Reports</div>
-        <a href="reports.html" class="nav-link"
-          ><i class="bi bi-bar-chart-fill"></i> Reports</a
-        >
+        <a href="reports.html" class="nav-link"><i class="bi bi-bar-chart-fill"></i> Reports</a>
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
-          ><i class="bi bi-person-fill"></i> Profile</a
-        >
-        <a href="settings.html" class="nav-link"
-          ><i class="bi bi-gear-fill"></i> Settings</a
-        >
+        <a href="profile.html" class="nav-link"><i class="bi bi-person-fill"></i> Profile</a>
+        <a href="settings.html" class="nav-link"><i class="bi bi-gear-fill"></i> Settings</a>
       </nav>
       <div class="sidebar-footer">
         <div class="d-flex align-items-center gap-2">
           <div class="s-avatar" id="sidebarAvatar">?</div>
-          <div style="min-width: 0; flex: 1">
-            <div
-              style="
-                color: var(--text-main);
-                font-size: 0.85rem;
-                font-weight: 700;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              "
-              id="sidebarName"
-            >
-              Landlord
-            </div>
-            <div style="color: var(--text-muted); font-size: 0.72rem">
-              Landlord
-            </div>
+          <div style="min-width:0;flex:1">
+            <div style="color:var(--text-main);font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="sidebarName">Landlord</div>
+            <div style="color:var(--text-muted);font-size:.72rem">Landlord</div>
           </div>
-          <a
-            href="../index.html"
-            style="color: var(--text-muted); flex-shrink: 0"
-            title="Logout"
-            ><i class="bi bi-box-arrow-right"></i
-          ></a>
+          <a href="../index.html" style="color:var(--text-muted);flex-shrink:0" title="Logout"><i class="bi bi-box-arrow-right"></i></a>
         </div>
       </div>
     </div>
@@ -673,14 +485,8 @@
       <div class="topbar">
         <span class="topbar-title">Group Messages</span>
         <div class="d-flex align-items-center gap-2">
-          <a href="notifications.html" class="topbar-btn"
-            ><i class="bi bi-bell"></i
-          ></a>
-          <button
-            class="btn btn-primary btn-sm px-3"
-            data-bs-toggle="modal"
-            data-bs-target="#createGroupModal"
-          >
+          <a href="notifications.html" class="topbar-btn"><i class="bi bi-bell"></i></a>
+          <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#createGroupModal">
             <i class="bi bi-plus-lg me-1"></i> Create Group
           </button>
         </div>
@@ -690,35 +496,16 @@
         <!-- ── Groups panel ── -->
         <div class="groups-panel">
           <div class="groups-panel-header">
-            <span
-              style="
-                font-weight: 700;
-                color: var(--text-main);
-                font-size: 0.9rem;
-              "
-              >Groups</span
-            >
-            <span
-              style="font-size: 0.75rem; color: var(--text-muted)"
-              id="groupCount"
-              >0 groups</span
-            >
+            <span style="font-weight:700;color:var(--text-main);font-size:.9rem">Groups</span>
+            <span style="font-size:.75rem;color:var(--text-muted)" id="groupCount">0 groups</span>
           </div>
           <div class="groups-search">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Search groups…"
-              id="groupSearch"
-              oninput="filterGroups()"
-            />
+            <input type="text" class="form-control" placeholder="Search groups…" id="groupSearch" oninput="filterGroups()" />
           </div>
           <div class="groups-list" id="groupList">
             <div class="empty-groups">
               <i class="bi bi-chat-square-dots"></i>
-              <p style="font-size: 0.82rem">
-                No groups yet.<br />Create your first group.
-              </p>
+              <p style="font-size:.82rem">No groups yet.<br/>Create your first group.</p>
             </div>
           </div>
         </div>
@@ -730,56 +517,25 @@
             <i class="bi bi-chat-dots"></i>
             <h6>Select a group to start chatting</h6>
             <p>Create a group and invite tenants using an invite code.</p>
-            <button
-              class="btn btn-primary btn-sm mt-2"
-              data-bs-toggle="modal"
-              data-bs-target="#createGroupModal"
-            >
+            <button class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#createGroupModal">
               <i class="bi bi-plus-lg me-1"></i> Create Group
             </button>
           </div>
 
           <!-- Active chat -->
-          <div
-            id="chatActive"
-            style="display: none; flex: 1; flex-direction: column; height: 100%"
-          >
+          <div id="chatActive" style="display:none;flex:1;flex-direction:column;height:100%">
             <!-- Header -->
             <div class="chat-header">
               <div class="chat-header-icon" id="chatIcon">?</div>
-              <div style="flex: 1; min-width: 0">
-                <div
-                  style="
-                    font-weight: 800;
-                    color: var(--text-main);
-                    font-size: 0.95rem;
-                  "
-                  id="chatGroupName"
-                >
-                  —
-                </div>
-                <div
-                  style="font-size: 0.72rem; color: var(--text-muted)"
-                  id="chatMemberCount"
-                >
-                  — members
-                </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-weight:800;color:var(--text-main);font-size:.95rem" id="chatGroupName">—</div>
+                <div style="font-size:.72rem;color:var(--text-muted)" id="chatMemberCount">— members</div>
               </div>
               <div class="d-flex gap-2">
-                <button
-                  class="btn btn-sm btn-outline-secondary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#membersModal"
-                  style="font-size: 0.75rem"
-                >
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#membersModal" style="font-size:.75rem">
                   <i class="bi bi-people me-1"></i> Members
                 </button>
-                <button
-                  class="btn btn-sm btn-outline-primary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#inviteCodeModal"
-                  style="font-size: 0.75rem"
-                >
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#inviteCodeModal" style="font-size:.75rem">
                   <i class="bi bi-link-45deg me-1"></i> Invite Code
                 </button>
               </div>
@@ -787,7 +543,7 @@
 
             <!-- Messages -->
             <div class="chat-messages" id="chatMessages">
-              <div class="empty-chat" style="padding: 40px 0">
+              <div class="empty-chat" style="padding:40px 0">
                 <i class="bi bi-chat-dots"></i>
                 <p>No messages yet. Say hello!</p>
               </div>
@@ -798,53 +554,23 @@
               <div class="attach-strip" id="attachStrip"></div>
               <div class="input-row">
                 <div class="input-attach-btns">
-                  <button
-                    class="attach-btn"
-                    title="Send image"
-                    onclick="document.getElementById('imgPicker').click()"
-                  >
+                  <button class="attach-btn" title="Send image" onclick="document.getElementById('imgPicker').click()">
                     <i class="bi bi-image"></i>
                   </button>
-                  <button
-                    class="attach-btn"
-                    title="Attach file"
-                    onclick="document.getElementById('filePicker').click()"
-                  >
+                  <button class="attach-btn" title="Attach file" onclick="document.getElementById('filePicker').click()">
                     <i class="bi bi-paperclip"></i>
                   </button>
                 </div>
-                <input
-                  type="file"
-                  id="imgPicker"
-                  accept="image/*"
-                  multiple
-                  style="display: none"
-                  onchange="handleFiles(this.files, 'image')"
-                />
-                <input
-                  type="file"
-                  id="filePicker"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,.csv"
-                  multiple
-                  style="display: none"
-                  onchange="handleFiles(this.files, 'file')"
-                />
+                <input type="file" id="imgPicker" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files,'image')" />
+                <input type="file" id="filePicker" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,.csv" multiple style="display:none" onchange="handleFiles(this.files,'file')" />
                 <textarea
                   class="msg-textarea"
                   id="msgInput"
                   placeholder="Type a message to all tenants…"
                   rows="1"
-                  style="flex: 1; min-width: 0"
-                  oninput="
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-                  "
-                  onkeydown="
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault();
-                      sendMsg();
-                    }
-                  "
+                  style="flex:1;min-width:0;"
+                  oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';"
+                  onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"
                 ></textarea>
                 <button class="send-btn" onclick="sendMsg()" id="sendBtn">
                   <i class="bi bi-send-fill"></i>
@@ -862,20 +588,12 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title fw-bold">Create New Group</h5>
-            <button
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-            ></button>
+            <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4">
             <div class="mb-3">
               <label class="form-label fw-semibold">Group Name *</label>
-              <input
-                type="text"
-                class="form-control"
-                id="groupName"
-                placeholder="e.g. Accra Heights Residents"
-              />
+              <input type="text" class="form-control" id="groupName" placeholder="e.g. Accra Heights Residents" />
             </div>
             <div class="mb-3">
               <label class="form-label fw-semibold">Plaza</label>
@@ -886,33 +604,16 @@
             <div class="mb-3">
               <label class="form-label fw-semibold">Invite Code</label>
               <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="groupCode"
-                  placeholder="Auto-generated"
-                />
-                <button class="btn btn-outline-secondary" onclick="genCode()">
-                  <i class="bi bi-arrow-clockwise"></i>
-                </button>
+                <input type="text" class="form-control" id="groupCode" placeholder="Auto-generated" />
+                <button class="btn btn-outline-secondary" onclick="genCode()"><i class="bi bi-arrow-clockwise"></i></button>
               </div>
-              <div class="form-text">
-                Share this code with tenants so they can join.
-              </div>
+              <div class="form-text">Share this code with tenants so they can join.</div>
             </div>
-            <div
-              id="groupError"
-              class="text-danger mt-2"
-              style="font-size: 0.8rem; display: none"
-            ></div>
+            <div id="groupError" class="text-danger mt-2" style="font-size:.8rem;display:none"></div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancel
-            </button>
-            <button class="btn btn-primary px-4" onclick="createGroup()">
-              Create Group
-            </button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-primary px-4" onclick="createGroup()">Create Group</button>
           </div>
         </div>
       </div>
@@ -924,40 +625,22 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title fw-bold">Invite Code</h5>
-            <button
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-            ></button>
+            <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4 text-center">
-            <p style="font-size: 0.85rem; color: var(--text-muted)">
-              Share this code with tenants to join
-              <strong id="codeGroupName">—</strong>
-            </p>
+            <p style="font-size:.85rem;color:var(--text-muted)">Share this code with tenants to join <strong id="codeGroupName">—</strong></p>
             <div class="invite-code-display">
               <div class="invite-code-text" id="displayCode">—</div>
             </div>
             <div class="d-flex gap-2 justify-content-center mt-3">
-              <button
-                class="btn btn-outline-primary btn-sm"
-                onclick="copyCode()"
-              >
+              <button class="btn btn-outline-primary btn-sm" onclick="copyCode()">
                 <i class="bi bi-clipboard me-1"></i> Copy
               </button>
-              <button
-                class="btn btn-outline-secondary btn-sm"
-                onclick="regenCode()"
-              >
+              <button class="btn btn-outline-secondary btn-sm" onclick="regenCode()">
                 <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
               </button>
             </div>
-            <div
-              class="alert alert-success mt-3 py-2 d-none"
-              id="copyAlert"
-              style="font-size: 0.8rem"
-            >
-              Copied!
-            </div>
+            <div class="alert alert-success mt-3 py-2 d-none" id="copyAlert" style="font-size:.8rem">Copied!</div>
           </div>
         </div>
       </div>
@@ -969,15 +652,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title fw-bold">Group Members</h5>
-            <button
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-            ></button>
+            <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body p-4" id="membersList">
-            <p style="color: var(--text-muted); font-size: 0.875rem">
-              No members yet. Share the invite code with your tenants.
-            </p>
+            <p style="color:var(--text-muted);font-size:.875rem">No members yet. Share the invite code with your tenants.</p>
           </div>
         </div>
       </div>
@@ -992,287 +670,244 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
     <script>
-      const BASE =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-          ? "http://localhost:5000/api"
-          : "https://rentms-backend-5.onrender.com/api";
+      const BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000/api'
+        : 'https://rentms-backend-5.onrender.com/api';
       const getToken = () =>
-        localStorage.getItem("landlord_token") ||
-        localStorage.getItem("token") ||
-        "";
+        localStorage.getItem('landlord_token') || localStorage.getItem('token') || '';
 
-      let pendingFiles = [];
-      let _activeGroupId = null;
-      let _pollTimer = null;
+      let pendingFiles    = [];
+      let _activeGroupId  = null;
+      let _pollTimer      = null;
 
       /* ── Init ── */
       LandlordMessages.init();
 
-      /* FIX 2: Patch openGroup so messages render with new bubble styles */
+      /* FIX 2: Patch openGroup so messages render with new bubble styles
+         Also save last opened group so it reopens on page refresh */
       const _origOpenGroup = LandlordMessages.openGroup.bind(LandlordMessages);
-      LandlordMessages.openGroup = async function (id) {
+      LandlordMessages.openGroup = async function(id) {
         clearInterval(_pollTimer);
         _activeGroupId = id;
+        localStorage.setItem('l_activeGroupId', id);
         await _origOpenGroup(id);
         /* Re-render messages using our styled builder */
         await reloadMessages(id);
         _pollTimer = setInterval(() => reloadMessages(id), 30000);
       };
 
+      /* FIX: After groups load, auto-open the last active group */
+      const _origLoadGroups = LandlordMessages.init;
+      document.addEventListener('DOMContentLoaded', () => {
+        /* Wait for landlord.js init to complete then restore last group */
+        setTimeout(async () => {
+          const savedId = parseInt(localStorage.getItem('l_activeGroupId'), 10);
+          if (savedId && !_activeGroupId) {
+            try { await LandlordMessages.openGroup(savedId); } catch {}
+          }
+        }, 1500);
+      });
+
       async function reloadMessages(groupId) {
         try {
-          const res = await fetch(
-            BASE + `/landlord/groups/${groupId}/messages`,
-            {
-              headers: { Authorization: "Bearer " + getToken() },
-            },
-          );
+          const res  = await fetch(BASE + `/landlord/groups/${groupId}/messages`, {
+            headers: { Authorization: 'Bearer ' + getToken() }
+          });
           const data = await res.json();
           const msgs = data?.data || [];
-          const box = document.getElementById("chatMessages");
+          const box  = document.getElementById('chatMessages');
           if (!box) return;
-          const meId = JSON.parse(
-            localStorage.getItem("landlord_user") ||
-              localStorage.getItem("user") ||
-              "{}",
-          ).id;
+          const meId = JSON.parse(localStorage.getItem('landlord_user') || localStorage.getItem('user') || '{}').id;
           if (!msgs.length) {
             box.innerHTML = `<div class="empty-chat" style="padding:40px 0"><i class="bi bi-chat-dots"></i><p>No messages yet. Say hello!</p></div>`;
             return;
           }
-          box.innerHTML = "";
-          msgs.forEach((m) =>
-            box.appendChild(
-              buildBubble(m, String(m.sender_id) === String(meId)),
-            ),
-          );
+          box.innerHTML = '';
+          msgs.forEach(m => box.appendChild(buildBubble(m, String(m.sender_id) === String(meId))));
           box.scrollTop = box.scrollHeight;
         } catch {}
       }
 
       function buildBubble(m, mine) {
-        const wrap = document.createElement("div");
-        wrap.className = "msg " + (mine ? "mine" : "theirs");
+        const wrap = document.createElement('div');
+        wrap.className = 'msg ' + (mine ? 'mine' : 'theirs');
         if (!mine) {
-          const snd = document.createElement("div");
-          snd.className = "msg-sender";
-          snd.textContent = m.sender_name || "Tenant";
+          const snd = document.createElement('div');
+          snd.className   = 'msg-sender';
+          snd.textContent = m.sender_name || 'Tenant';
           wrap.appendChild(snd);
         }
         const text = m.content || m.message;
         if (text) {
-          const bbl = document.createElement("div");
-          bbl.className = "msg-bubble";
+          const bbl = document.createElement('div');
+          bbl.className   = 'msg-bubble';
           bbl.textContent = text;
           wrap.appendChild(bbl);
         }
-        if (m.file_url && m.file_type === "image") {
-          const imgDiv = document.createElement("div");
-          imgDiv.className = "msg-img";
-          const url = m.file_url.startsWith("http")
-            ? m.file_url
-            : BASE.replace("/api", "") + "/" + m.file_url;
+        if (m.file_url && m.file_type === 'image') {
+          const imgDiv = document.createElement('div');
+          imgDiv.className = 'msg-img';
+          const url = m.file_url.startsWith('http') ? m.file_url : BASE.replace('/api','') + '/' + m.file_url;
           imgDiv.innerHTML = `<img src="${url}" alt="" onclick="openLightbox('${url}')" />`;
           wrap.appendChild(imgDiv);
         } else if (m.file_url) {
-          const url = m.file_url.startsWith("http")
-            ? m.file_url
-            : BASE.replace("/api", "") + "/" + m.file_url;
-          const ext = m.file_url.split(".").pop().toUpperCase();
-          const fDiv = document.createElement("a");
-          fDiv.className = "msg-file";
-          fDiv.href = url;
-          fDiv.download = "";
-          fDiv.innerHTML = `<i class="bi ${fileIcon(ext)}"></i><div><div class="msg-file-name">${m.file_url.split("/").pop()}</div></div>`;
+          const url = m.file_url.startsWith('http') ? m.file_url : BASE.replace('/api','') + '/' + m.file_url;
+          const ext = m.file_url.split('.').pop().toUpperCase();
+          const fDiv = document.createElement('a');
+          fDiv.className = 'msg-file';
+          fDiv.href      = url;
+          fDiv.download  = '';
+          fDiv.innerHTML = `<i class="bi ${fileIcon(ext)}"></i><div><div class="msg-file-name">${m.file_url.split('/').pop()}</div></div>`;
           wrap.appendChild(fDiv);
         }
-        const ts = document.createElement("div");
-        ts.className = "msg-time";
+        const ts = document.createElement('div');
+        ts.className   = 'msg-time';
         ts.textContent = m.created_at
-          ? new Date(m.created_at).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : "now";
+          ? new Date(m.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })
+          : 'now';
         wrap.appendChild(ts);
         return wrap;
       }
 
       /* FIX 3: Load members when Members modal opens */
-      document
-        .getElementById("membersModal")
-        .addEventListener("show.bs.modal", async () => {
-          const el = document.getElementById("membersList");
-          if (!_activeGroupId) {
-            el.innerHTML =
-              '<p style="color:var(--text-muted);font-size:.875rem">Please select a group first.</p>';
+      document.getElementById('membersModal').addEventListener('show.bs.modal', async () => {
+        const el = document.getElementById('membersList');
+        if (!_activeGroupId) {
+          el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">Please select a group first.</p>';
+          return;
+        }
+        el.innerHTML = '<div class="d-flex align-items-center gap-2" style="color:var(--text-muted);font-size:.85rem"><span class="spinner-border spinner-border-sm"></span> Loading…</div>';
+        try {
+          /* Step 1: get all groups to find plaza_id for this group */
+          const grpRes  = await fetch(BASE + '/landlord/groups', {
+            headers: { Authorization: 'Bearer ' + getToken() }
+          });
+          const grpData = await grpRes.json();
+          const allGrps = grpData?.data || [];
+          /* FIX: use == not === so number/string mismatch doesn't fail */
+          const grp = allGrps.find(g => g.id == _activeGroupId);
+
+          if (!grp) {
+            el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">Could not find group (ID: ${_activeGroupId}). Try reloading the page.</p>`;
             return;
           }
-          el.innerHTML =
-            '<div class="d-flex align-items-center gap-2" style="color:var(--text-muted);font-size:.85rem"><span class="spinner-border spinner-border-sm"></span> Loading…</div>';
-          try {
-            /* Step 1: get all groups to find plaza_id for this group */
-            const grpRes = await fetch(BASE + "/landlord/groups", {
-              headers: { Authorization: "Bearer " + getToken() },
-            });
-            const grpData = await grpRes.json();
-            const allGrps = grpData?.data || [];
-            /* FIX: use == not === so number/string mismatch doesn't fail */
-            const grp = allGrps.find((g) => g.id == _activeGroupId);
 
-            if (!grp) {
-              el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">Could not find group (ID: ${_activeGroupId}). Try reloading the page.</p>`;
-              return;
-            }
+          /* Step 2: get tenants for that plaza */
+          const tenRes  = await fetch(BASE + `/landlord/plazas/${grp.plaza_id}/tenants`, {
+            headers: { Authorization: 'Bearer ' + getToken() }
+          });
+          const tenData = await tenRes.json();
+          const tenants = tenData?.data || [];
 
-            /* Step 2: get tenants for that plaza */
-            const tenRes = await fetch(
-              BASE + `/landlord/plazas/${grp.plaza_id}/tenants`,
-              {
-                headers: { Authorization: "Bearer " + getToken() },
-              },
-            );
-            const tenData = await tenRes.json();
-            const tenants = tenData?.data || [];
+          if (!tenants.length) {
+            el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">No active tenants in this plaza yet.</p>';
+            return;
+          }
 
-            if (!tenants.length) {
-              el.innerHTML =
-                '<p style="color:var(--text-muted);font-size:.875rem">No active tenants in this plaza yet.</p>';
-              return;
-            }
-
-            el.innerHTML = `
+          el.innerHTML = `
             <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">
-              ${tenants.length} tenant${tenants.length !== 1 ? "s" : ""} in ${grp.plaza_name || "this plaza"}
+              ${tenants.length} tenant${tenants.length !== 1 ? 's' : ''} in ${grp.plaza_name || 'this plaza'}
             </div>
-            ${tenants
-              .map(
-                (t) => `
+            ${tenants.map(t => `
             <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid var(--border)">
               <div style="width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem;flex-shrink:0">
-                ${(t.full_name || t.email || "?").charAt(0).toUpperCase()}
+                ${(t.full_name || t.email || '?').charAt(0).toUpperCase()}
               </div>
               <div style="flex:1;min-width:0">
-                <div style="font-weight:700;font-size:.875rem;color:var(--text-main)">${t.full_name || "—"}</div>
+                <div style="font-weight:700;font-size:.875rem;color:var(--text-main)">${t.full_name || '—'}</div>
                 <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">
-                  <i class="bi bi-house me-1"></i>Unit ${t.unit_number || "—"}
+                  <i class="bi bi-house me-1"></i>Unit ${t.unit_number || '—'}
                   &nbsp;·&nbsp;
-                  <i class="bi bi-envelope me-1"></i>${t.email || "—"}
+                  <i class="bi bi-envelope me-1"></i>${t.email || '—'}
                 </div>
               </div>
               <span class="badge-status badge-active">Active</span>
-            </div>`,
-              )
-              .join("")}
+            </div>`).join('')}
           `;
-          } catch (err) {
-            el.innerHTML = `<p style="color:var(--danger-text);font-size:.875rem">Error: ${err.message}</p>`;
-          }
-        });
+        } catch (err) {
+          el.innerHTML = `<p style="color:var(--danger-text);font-size:.875rem">Error: ${err.message}</p>`;
+        }
+      });
 
       /* ── File handling ── */
       function handleFiles(files, type) {
-        Array.from(files).forEach((file) => {
+        Array.from(files).forEach(file => {
           const reader = new FileReader();
-          reader.onload = (e) => {
+          reader.onload = e => {
             pendingFiles.push({ type, file, dataUrl: e.target.result });
             renderAttachStrip();
           };
           reader.readAsDataURL(file);
         });
-        document.getElementById("imgPicker").value = "";
-        document.getElementById("filePicker").value = "";
+        document.getElementById('imgPicker').value  = '';
+        document.getElementById('filePicker').value = '';
       }
 
       function renderAttachStrip() {
-        const strip = document.getElementById("attachStrip");
-        strip.innerHTML = "";
+        const strip = document.getElementById('attachStrip');
+        strip.innerHTML = '';
         pendingFiles.forEach((item, i) => {
-          const thumb = document.createElement("div");
-          thumb.className = "attach-thumb";
-          if (item.type === "image") {
+          const thumb = document.createElement('div');
+          thumb.className = 'attach-thumb';
+          if (item.type === 'image') {
             thumb.innerHTML = `<img src="${item.dataUrl}" alt="" />`;
           } else {
-            const ext = item.file.name.split(".").pop().toUpperCase();
+            const ext = item.file.name.split('.').pop().toUpperCase();
             thumb.innerHTML = `<div class="file-label"><i class="bi ${fileIcon(ext)}"></i><span>${item.file.name}</span></div>`;
           }
-          const rm = document.createElement("button");
-          rm.className = "attach-rm";
-          rm.innerHTML = "&times;";
-          rm.onclick = () => {
-            pendingFiles.splice(i, 1);
-            renderAttachStrip();
-          };
+          const rm = document.createElement('button');
+          rm.className = 'attach-rm';
+          rm.innerHTML = '&times;';
+          rm.onclick   = () => { pendingFiles.splice(i, 1); renderAttachStrip(); };
           thumb.appendChild(rm);
           strip.appendChild(thumb);
         });
       }
 
       function fileIcon(ext) {
-        const m = {
-          PDF: "bi-file-pdf-fill",
-          DOC: "bi-file-word-fill",
-          DOCX: "bi-file-word-fill",
-          XLS: "bi-file-excel-fill",
-          XLSX: "bi-file-excel-fill",
-          ZIP: "bi-file-zip-fill",
-          RAR: "bi-file-zip-fill",
-          TXT: "bi-file-text-fill",
-          CSV: "bi-filetype-csv",
-        };
-        return m[ext] || "bi-file-earmark-fill";
+        const m = { PDF:'bi-file-pdf-fill', DOC:'bi-file-word-fill', DOCX:'bi-file-word-fill',
+          XLS:'bi-file-excel-fill', XLSX:'bi-file-excel-fill', ZIP:'bi-file-zip-fill',
+          RAR:'bi-file-zip-fill', TXT:'bi-file-text-fill', CSV:'bi-filetype-csv' };
+        return m[ext] || 'bi-file-earmark-fill';
       }
 
       /* ── Override sendMsg to support attachments + optimistic render ── */
-      window.sendMsg = async function () {
-        const input = document.getElementById("msgInput");
-        const text = input?.value.trim();
+      window.sendMsg = async function() {
+        const input = document.getElementById('msgInput');
+        const text  = input?.value.trim();
         if (!text && !pendingFiles.length) return;
 
-        const box = document.getElementById("chatMessages");
+        const box = document.getElementById('chatMessages');
         /* Remove empty state if present */
-        const emptyEl = box?.querySelector(".empty-chat");
+        const emptyEl = box?.querySelector('.empty-chat');
         if (emptyEl) emptyEl.remove();
 
         /* Optimistic: show text bubble immediately */
         if (text && box) {
-          box.appendChild(
-            buildBubble(
-              {
-                content: text,
-                sender_id: "me",
-                created_at: new Date().toISOString(),
-              },
-              true,
-            ),
-          );
+          box.appendChild(buildBubble({ content: text, sender_id: 'me', created_at: new Date().toISOString() }, true));
           box.scrollTop = box.scrollHeight;
         }
 
         /* Optimistic: show file previews immediately */
         if (pendingFiles.length && box) {
-          pendingFiles.forEach((item) => {
-            const wrap = document.createElement("div");
-            wrap.className = "msg mine";
-            if (item.type === "image") {
-              const imgDiv = document.createElement("div");
-              imgDiv.className = "msg-img";
+          pendingFiles.forEach(item => {
+            const wrap = document.createElement('div');
+            wrap.className = 'msg mine';
+            if (item.type === 'image') {
+              const imgDiv = document.createElement('div');
+              imgDiv.className = 'msg-img';
               imgDiv.innerHTML = `<img src="${item.dataUrl}" alt="" onclick="openLightbox('${item.dataUrl}')" />`;
               wrap.appendChild(imgDiv);
             } else {
-              const ext = item.file.name.split(".").pop().toUpperCase();
-              const fDiv = document.createElement("a");
-              fDiv.className = "msg-file";
+              const ext  = item.file.name.split('.').pop().toUpperCase();
+              const fDiv = document.createElement('a');
+              fDiv.className = 'msg-file';
               fDiv.innerHTML = `<i class="bi ${fileIcon(ext)}"></i><div><div class="msg-file-name">${item.file.name}</div><div class="msg-file-size">${formatBytes(item.file.size)}</div></div>`;
               wrap.appendChild(fDiv);
             }
-            const ts = document.createElement("div");
-            ts.className = "msg-time";
-            ts.textContent = new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
+            const ts = document.createElement('div');
+            ts.className   = 'msg-time';
+            ts.textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
             wrap.appendChild(ts);
             box.appendChild(wrap);
           });
@@ -1282,44 +917,36 @@
         }
 
         /* Clear input */
-        if (input) {
-          input.value = "";
-          input.style.height = "auto";
-        }
+        if (input) { input.value = ''; input.style.height = 'auto'; }
 
         /* Send to API */
         if (_activeGroupId && text) {
           try {
             await fetch(BASE + `/landlord/groups/${_activeGroupId}/messages`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + getToken(),
-              },
-              body: JSON.stringify({ content: text }),
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+              body:    JSON.stringify({ content: text }),
             });
           } catch {}
         }
       };
 
       function formatBytes(b) {
-        if (b < 1024) return b + " B";
-        if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
-        return (b / 1048576).toFixed(1) + " MB";
+        if (b < 1024) return b + ' B';
+        if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+        return (b/1048576).toFixed(1) + ' MB';
       }
 
       /* ── Lightbox ── */
       function openLightbox(src) {
-        document.getElementById("lightboxImg").src = src;
-        document.getElementById("lightbox").classList.add("open");
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightbox').classList.add('open');
       }
       function closeLightbox() {
-        document.getElementById("lightbox").classList.remove("open");
-        document.getElementById("lightboxImg").src = "";
+        document.getElementById('lightbox').classList.remove('open');
+        document.getElementById('lightboxImg').src = '';
       }
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeLightbox();
-      });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
     </script>
   </body>
 </html>
