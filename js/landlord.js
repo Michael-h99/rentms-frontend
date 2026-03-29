@@ -197,8 +197,19 @@ const RentMs = (() => {
     const nameEl = document.getElementById("sidebarName");
     const avatarEl = document.getElementById("sidebarAvatar");
     if (nameEl && u.username) nameEl.textContent = u.username;
-    if (avatarEl && u.username)
-      avatarEl.textContent = u.username.charAt(0).toUpperCase();
+    if (avatarEl) {
+      /* FIX: restore saved avatar on every page — not just profile page */
+      const savedAvatar = localStorage.getItem("LANDLORD_AVATAR");
+      if (savedAvatar) {
+        avatarEl.style.backgroundImage = `url(${savedAvatar})`;
+        avatarEl.style.backgroundSize = "cover";
+        avatarEl.style.backgroundPosition = "center";
+        avatarEl.style.borderRadius = "50%";
+        avatarEl.textContent = "";
+      } else if (u.username) {
+        avatarEl.textContent = u.username.charAt(0).toUpperCase();
+      }
+    }
   }
 
   function showMsg(elId, text, type = "success") {
@@ -1386,7 +1397,7 @@ const LandlordMessages = (() => {
   }
 
   async function loadGroups() {
-    const data = await RentMs.get("/landlord/groups");
+    const data = await RentMs.get("/landlords/groups");
     groups = data.data || [];
     renderGroups(groups);
   }
@@ -1408,7 +1419,7 @@ const LandlordMessages = (() => {
         <div class="group-icon">${g.name.charAt(0).toUpperCase()}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:700;color:var(--text-main);font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.name}</div>
-          <div style="font-size:.75rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.last_message || "No messages yet"}</div>
+          <div style="font-size:.75rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.last_message || (g.message_count ? g.message_count + " messages" : "No messages yet")}</div>
         </div>
         ${g.unread_count ? `<span style="background:var(--primary);color:#fff;font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:20px">${g.unread_count}</span>` : ""}
       </div>`,
@@ -1439,15 +1450,18 @@ const LandlordMessages = (() => {
     RentMs.setText("chatGroupName", activeGroup.name);
     RentMs.setText(
       "chatMemberCount",
-      (activeGroup.member_count || 0) + " members",
+      (activeGroup.member_count || activeGroup.message_count || 0) + " members",
     );
     RentMs.setText("displayCode", activeGroup.invite_code || "—");
     await loadMessages(id);
-    pollTimer = setInterval(() => loadMessages(id), 5000);
+    pollTimer = setInterval(
+      () => loadMessages(id),
+      30000,
+    ); /* FIX: was 5s, increased to 30s to reduce spam */
   }
 
   async function loadMessages(groupId) {
-    const data = await RentMs.get("/landlord/groups/" + groupId + "/messages");
+    const data = await RentMs.get("/landlords/groups/" + groupId + "/messages");
     const list = data.data || [];
     const box = document.getElementById("chatMessages");
     if (!box) return;
@@ -1468,7 +1482,7 @@ const LandlordMessages = (() => {
         return `<div class="d-flex ${mine ? "justify-content-end" : "justify-content-start"} mb-3 msg ${mine ? "mine" : "theirs"}">
         <div>
           ${!mine ? `<div style="font-size:.72rem;font-weight:700;color:var(--text-muted);margin-bottom:3px">${m.sender_name || "Member"}</div>` : ""}
-          <div class="msg-bubble">${m.message}</div>
+          <div class="msg-bubble">${m.content || m.message || ""}</div>
           <div style="font-size:.65rem;color:var(--text-muted);margin-top:3px;text-align:${mine ? "right" : "left"}">${RentMs.timeAgo(m.created_at)}</div>
         </div>
       </div>`;
@@ -1483,8 +1497,8 @@ const LandlordMessages = (() => {
     const msg = input?.value.trim();
     if (!msg) return;
     input.value = "";
-    await RentMs.post("/landlord/groups/" + activeGroup.id + "/messages", {
-      message: msg,
+    await RentMs.post("/landlords/groups/" + activeGroup.id + "/messages", {
+      content: msg,
     });
     await loadMessages(activeGroup.id);
     const g = groups.find((x) => x.id === activeGroup.id);
@@ -1504,7 +1518,7 @@ const LandlordMessages = (() => {
       }
       return;
     }
-    const res = await RentMs.post("/landlord/groups", {
+    const res = await RentMs.post("/landlords/groups", {
       name,
       plaza_id: plaza || null,
       invite_code: code,
@@ -1540,7 +1554,7 @@ const LandlordMessages = (() => {
   window.regenCode = async function () {
     if (!activeGroup) return;
     const newCode = RentMs.genCode();
-    const res = await RentMs.put("/landlord/groups/" + activeGroup.id, {
+    const res = await RentMs.put("/landlords/groups/" + activeGroup.id, {
       invite_code: newCode,
     });
     if (res.data || (res.message && !res.error)) {
