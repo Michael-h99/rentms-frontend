@@ -235,8 +235,9 @@ const RentMs = (() => {
     const avatarEl = document.getElementById("sidebarAvatar");
     if (nameEl && u.username) nameEl.textContent = u.username;
     if (avatarEl) {
-      /* FIX: restore saved avatar on every page — not just profile page */
-      const savedAvatar = localStorage.getItem("LANDLORD_AVATAR");
+      /* FIX: restore saved avatar on every page */
+      const savedAvatar =
+        localStorage.getItem("LANDLORD_AVATAR") || u.avatar_url;
       if (savedAvatar) {
         avatarEl.style.backgroundImage = `url(${savedAvatar})`;
         avatarEl.style.backgroundSize = "cover";
@@ -245,6 +246,38 @@ const RentMs = (() => {
         avatarEl.textContent = "";
       } else if (u.username) {
         avatarEl.textContent = u.username.charAt(0).toUpperCase();
+      }
+
+      /* FIX: if no avatar cached, fetch from API silently and cache it */
+      if (!savedAvatar && !DEV_MODE) {
+        get("/auth/me")
+          .then((data) => {
+            const raw = data?.data?.avatar_url || data?.user?.avatar_url;
+            if (!raw) return;
+            const full = raw.startsWith("http")
+              ? raw
+              : "https://rentms-backend-5.onrender.com/" +
+                raw.replace(/^\//, "");
+            localStorage.setItem("LANDLORD_AVATAR", full);
+            /* Apply to sidebar */
+            avatarEl.style.backgroundImage = `url(${full})`;
+            avatarEl.style.backgroundSize = "cover";
+            avatarEl.style.backgroundPosition = "center";
+            avatarEl.style.borderRadius = "50%";
+            avatarEl.textContent = "";
+            /* Update stored user */
+            try {
+              const stored = JSON.parse(
+                localStorage.getItem("landlord_user") ||
+                  localStorage.getItem("user") ||
+                  "{}",
+              );
+              stored.avatar_url = full;
+              localStorage.setItem("landlord_user", JSON.stringify(stored));
+              localStorage.setItem("user", JSON.stringify(stored));
+            } catch {}
+          })
+          .catch(() => {});
       }
     }
   }

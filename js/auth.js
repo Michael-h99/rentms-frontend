@@ -247,30 +247,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const role = res.user?.role;
 
-        /* FIX: fetch and cache avatar immediately after login so it
-           shows on all pages without waiting for profile page to load */
-        try {
-          const meRes = await fetch(
-            (window.location.hostname === "localhost" ||
-            window.location.hostname === "127.0.0.1"
-              ? "http://localhost:5000/api"
-              : "https://rentms-backend-5.onrender.com/api") + "/auth/me",
-            { headers: { Authorization: "Bearer " + res.token } },
-          );
-          const meData = await meRes.json();
-          const avatarUrl = meData?.data?.avatar_url;
-          if (avatarUrl) {
-            const full = avatarUrl.startsWith("http")
-              ? avatarUrl
-              : "https://rentms-backend-5.onrender.com/" +
-                avatarUrl.replace(/^\//, "");
-            if (role === "tenant") {
-              localStorage.setItem("TENANT_AVATAR", full);
-            } else {
-              localStorage.setItem("LANDLORD_AVATAR", full);
+        /* FIX: cache avatar from login response first,
+           then fetch full profile for any additional data */
+        const cacheAvatar = async (token, userRole) => {
+          try {
+            const meRes = await fetch(
+              "https://rentms-backend-5.onrender.com/api/auth/me",
+              { headers: { Authorization: "Bearer " + token } },
+            );
+            const meData = await meRes.json();
+            const raw = meData?.data?.avatar_url || meData?.user?.avatar_url;
+            if (raw) {
+              const full = raw.startsWith("http")
+                ? raw
+                : "https://rentms-backend-5.onrender.com/" +
+                  raw.replace(/^\//, "");
+              const key =
+                userRole === "tenant" ? "TENANT_AVATAR" : "LANDLORD_AVATAR";
+              localStorage.setItem(key, full);
+              /* Update stored user with avatar */
+              const uKey =
+                userRole === "tenant" ? "tenant_user" : "landlord_user";
+              try {
+                const u = JSON.parse(localStorage.getItem(uKey) || "{}");
+                u.avatar_url = full;
+                localStorage.setItem(uKey, JSON.stringify(u));
+                localStorage.setItem("user", JSON.stringify(u));
+              } catch {}
             }
-          }
-        } catch {}
+          } catch {}
+        };
+        /* Await this before redirecting */
+        await cacheAvatar(res.token, role);
 
         window.location.href =
           role === "tenant"
