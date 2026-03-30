@@ -246,6 +246,32 @@ document.addEventListener("DOMContentLoaded", () => {
         saveSessionByRole(res.token, res.user);
 
         const role = res.user?.role;
+
+        /* FIX: fetch and cache avatar immediately after login so it
+           shows on all pages without waiting for profile page to load */
+        try {
+          const meRes = await fetch(
+            (window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1"
+              ? "http://localhost:5000/api"
+              : "https://rentms-backend-5.onrender.com/api") + "/auth/me",
+            { headers: { Authorization: "Bearer " + res.token } },
+          );
+          const meData = await meRes.json();
+          const avatarUrl = meData?.data?.avatar_url;
+          if (avatarUrl) {
+            const full = avatarUrl.startsWith("http")
+              ? avatarUrl
+              : "https://rentms-backend-5.onrender.com/" +
+                avatarUrl.replace(/^\//, "");
+            if (role === "tenant") {
+              localStorage.setItem("TENANT_AVATAR", full);
+            } else {
+              localStorage.setItem("LANDLORD_AVATAR", full);
+            }
+          }
+        } catch {}
+
         window.location.href =
           role === "tenant"
             ? "../Tenants/dashboard.html"
