@@ -442,7 +442,7 @@ const LandlordDashboard = (() => {
           <tbody>${list
             .map(
               (p) => `<tr>
-            <td><a href="tenant-details.html?id=${p.tenant_id}" style="font-weight:700;color:var(--text-main);text-decoration:none">${p.tenant_name}</a></td>
+            <td><a href="tenants-detail.html?id=${p.tenant_id}" style="font-weight:700;color:var(--text-main);text-decoration:none">${p.tenant_name}</a></td>
             <td style="font-weight:700">${RentMs.ghs(p.amount)}</td>
             <td style="color:var(--text-muted)">${RentMs.fmt(p.payment_date)}</td>
             <td>${RentMs.statusBadge(p.status)}</td>
@@ -688,7 +688,7 @@ const LandlordPlazaDetails = (() => {
         <td style="font-weight:700">${RentMs.ghs(t.rent_amount)}</td>
         <td>${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
         <td>${RentMs.statusBadge(t.status || "active")}</td>
-        <td><a href="tenant-details.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary">View</a></td>
+        <td><a href="tenants-detail.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary">View</a></td>
       </tr>`;
       })
       .join("");
@@ -890,7 +890,7 @@ const LandlordTenants = (() => {
         <td style="color:var(--text-muted)">${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
         <td>${RentMs.statusBadge(t.payment_status === "overdue" ? "overdue" : t.status || "active")}</td>
         <td>
-          <a href="tenant-details.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary me-1">View</a>
+          <a href="tenants-detail.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary me-1">View</a>
           <button class="btn btn-sm btn-outline-danger" onclick="LandlordTenants.askRemove(${t.id})"><i class="bi bi-trash"></i></button>
         </td>
       </tr>`;
