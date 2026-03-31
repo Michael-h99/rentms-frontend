@@ -688,7 +688,7 @@ const LandlordPlazaDetails = (() => {
         <td style="font-weight:700">${RentMs.ghs(t.rent_amount)}</td>
         <td>${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
         <td>${RentMs.statusBadge(t.status || "active")}</td>
-        <td><a href="tenant-details.html?id=${t.id}" class="btn btn-sm btn-outline-primary">View</a></td>
+        <td><a href="tenant-details.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary">View</a></td>
       </tr>`;
       })
       .join("");
@@ -806,8 +806,12 @@ const LandlordTenants = (() => {
     RentMs.guardAuth();
     RentMs.initSidebar();
     await loadAll();
-    const btn = document.getElementById("confirmRemoveBtn");
-    if (btn) btn.addEventListener("click", doRemove);
+    /* FIX: use event delegation so listener survives modal re-renders */
+    document.addEventListener("click", function (e) {
+      if (e.target && e.target.id === "confirmRemoveBtn") {
+        doRemove();
+      }
+    });
   }
 
   async function loadAll() {
@@ -886,7 +890,7 @@ const LandlordTenants = (() => {
         <td style="color:var(--text-muted)">${t.lease_end ? RentMs.fmtMonth(t.lease_end) : "—"}</td>
         <td>${RentMs.statusBadge(t.payment_status === "overdue" ? "overdue" : t.status || "active")}</td>
         <td>
-          <a href="tenant-details.html?id=${t.id}" class="btn btn-sm btn-outline-primary me-1">View</a>
+          <a href="tenant-details.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary me-1">View</a>
           <button class="btn btn-sm btn-outline-danger" onclick="LandlordTenants.askRemove(${t.id})"><i class="bi bi-trash"></i></button>
         </td>
       </tr>`;
@@ -951,8 +955,36 @@ const LandlordTenants = (() => {
   }
   async function doRemove() {
     if (!removeId) return;
-    await RentMs.del("/landlord/tenancies/" + removeId + "/tenant");
+    const btn = document.getElementById("confirmRemoveBtn");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Removing…";
+    }
+    try {
+      const res = await RentMs.del(
+        "/landlord/tenancies/" + removeId + "/tenant",
+      );
+      if (res.error) {
+        alert("Failed to remove: " + (res.message || "Unknown error"));
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Remove";
+        }
+        return;
+      }
+    } catch (e) {
+      alert("Network error: " + e.message);
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Remove";
+      }
+      return;
+    }
     RentMs.modal("removeModal", "hide");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Remove";
+    }
     removeId = null;
     loadAll();
   }
