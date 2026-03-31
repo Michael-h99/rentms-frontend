@@ -12,6 +12,53 @@
     />
     <link rel="stylesheet" href="css/main.css" />
     <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+    <style>
+      /* ── Mobile nav action buttons ── */
+      .nav-actions-mobile {
+        display: none;
+        padding: 12px 0 4px;
+        gap: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        margin-top: 8px;
+      }
+      .nav-actions-mobile a {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: opacity 0.15s;
+      }
+      .nav-actions-mobile a:hover {
+        opacity: 0.85;
+      }
+      /* Only show when nav is open on mobile */
+      @media (max-width: 768px) {
+        .nav-links.open + .nav-actions-mobile,
+        .nav-links.active + .nav-actions-mobile {
+          display: flex;
+        }
+        /* Also always show the mobile actions when menu is open */
+        .nav-container.menu-open .nav-actions-mobile {
+          display: flex;
+        }
+        /* Hide desktop nav-actions on mobile */
+        .nav-actions {
+          display: none !important;
+        }
+        /* Show mobile actions below nav-links */
+        .nav-links {
+          /* ensure flex column */
+          flex-direction: column;
+        }
+        .nav-actions-mobile {
+          display: none;
+          flex-direction: row;
+        }
+      }
+    </style>
   </head>
   <body class="dark-mode">
     <!-- ── HEADER ── -->
@@ -42,6 +89,21 @@
             <li><a href="#how-it-works">How It Works</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#contact">Contact</a></li>
+            <!-- FIX: Login/Register inside the mobile nav list so they show when hamburger opens -->
+            <li class="nav-mobile-actions">
+              <a
+                href="auth/login.html"
+                class="btn btn-secondary"
+                style="display: inline-block; margin-right: 8px"
+                >Login</a
+              >
+              <a
+                href="auth/register.html"
+                class="btn btn-primary"
+                style="display: inline-block"
+                >Get Started</a
+              >
+            </li>
           </ul>
           <div class="nav-actions">
             <a href="auth/login.html" class="btn btn-secondary">Login</a>
@@ -455,11 +517,37 @@
         </div>
         <div class="footer-bottom">
           <p>&copy; 2026 RentMS Ghana. All rights reserved.</p>
-          <p style="font-size: 0.8rem; color: var(--text-muted)"></p>
         </div>
       </div>
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+      /* FIX: hide .nav-mobile-actions on desktop, show on mobile inside open menu */
+      (function () {
+        const style = document.createElement("style");
+        style.textContent = `
+          .nav-mobile-actions { display: none; }
+          @media (max-width: 900px) {
+            .nav-mobile-actions {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              padding: 14px 0 6px;
+              border-top: 1px solid rgba(255,255,255,.1);
+              margin-top: 6px;
+              list-style: none;
+            }
+            .nav-mobile-actions .btn {
+              flex: 1;
+              text-align: center;
+              padding: 10px 8px;
+              font-size: .875rem;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      })();
+    </script>
   </body>
 </html>
