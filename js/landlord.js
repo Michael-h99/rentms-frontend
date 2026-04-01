@@ -502,6 +502,57 @@ const LandlordPlazas = (() => {
     render(all);
   }
 
+  /* Upload plaza image */
+  async function uploadImage(plazaId, input) {
+    const file = input.files[0];
+    input.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be under 5 MB.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("image", file);
+    const token =
+      localStorage.getItem("landlord_token") ||
+      localStorage.getItem("token") ||
+      "";
+    const BASE =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+        ? "http://localhost:5000/api"
+        : "https://rentms-backend-5.onrender.com/api";
+    try {
+      const res = await fetch(`${BASE}/landlord/plazas/${plazaId}/image`, {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Upload failed.");
+        return;
+      }
+      /* Update card header immediately */
+      const header = document
+        .querySelector(`#imgUpload_${plazaId}`)
+        ?.closest(".plaza-header");
+      if (header && data.data?.image_url) {
+        header.style.background = `url('${data.data.image_url}') center/cover no-repeat`;
+        const icon = header.querySelector(".bi-buildings-fill");
+        if (icon) icon.remove();
+      }
+      const p = all.find((x) => x.id === plazaId);
+      if (p && data.data?.image_url) p.image_url = data.data.image_url;
+    } catch (e) {
+      alert("Network error: " + e.message);
+    }
+  }
+
   function render(list) {
     const grid = document.getElementById("plazaGrid");
     const empty = document.getElementById("emptyState");
@@ -526,8 +577,12 @@ const LandlordPlazas = (() => {
         return `
         <div class="col-md-6 col-lg-4 plaza-item" data-status="${tag}" data-name="${p.name.toLowerCase()}">
           <div class="plaza-card" onclick="location.href='plaza-details.html?id=${p.id}'">
-            <div class="plaza-header" style="background:${gradients[i % gradients.length]}">
-              <i class="bi bi-buildings-fill"></i>
+            <div class="plaza-header" style="${
+              p.image_url
+                ? `background-image:url(${p.image_url.startsWith("http") ? p.image_url : "https://rentms-backend-5.onrender.com/" + p.image_url});background-size:cover;background-position:center;`
+                : `background:${gradients[i % gradients.length]};`
+            }">
+              ${!p.image_url ? '<i class="bi bi-buildings-fill"></i>' : ""}
               <span class="badge-status ${pc === 100 ? "badge-active" : pc === 0 ? "badge-overdue" : "badge-pending"}"
                     style="position:absolute;top:10px;right:10px">
                 ${pc === 100 ? "Full" : pc === 0 ? "Empty" : "Partial"}
@@ -586,6 +641,16 @@ const LandlordPlazas = (() => {
     RentMs.setValue("plazaUnits", p.total_units);
     const t = document.getElementById("plazaModalTitle");
     if (t) t.textContent = "Edit Plaza";
+    /* FIX: preload existing image in upload zone */
+    if (p.image_url && typeof showPreview === "function") {
+      showPreview(
+        p.image_url.startsWith("http")
+          ? p.image_url
+          : "https://rentms-backend-5.onrender.com/" + p.image_url,
+      );
+    } else if (typeof removeImg === "function") {
+      removeImg();
+    }
     RentMs.modal("plazaModal");
   }
 
@@ -614,6 +679,11 @@ const LandlordPlazas = (() => {
       return;
     }
     const body = { name, location, total_units: parseInt(units) };
+    /* FIX: include image_url from plaza page upload widget */
+    if (window._pendingPlazaImageUrl !== undefined) {
+      body.image_url = window._pendingPlazaImageUrl;
+      window._pendingPlazaImageUrl = undefined;
+    }
     const res = editingId
       ? await RentMs.put("/landlord/plazas/" + editingId, body)
       : await RentMs.post("/landlord/plazas", body);
@@ -629,7 +699,48 @@ const LandlordPlazas = (() => {
     }
   };
 
-  return { init, edit, openAdd };
+  /* FIX: upload plaza image */
+  async function uploadImage(plazaId, input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be under 5MB.");
+      return;
+    }
+
+    const BASE =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+        ? "http://localhost:5000/api"
+        : "https://rentms-backend-5.onrender.com/api";
+    const token =
+      localStorage.getItem("landlord_token") ||
+      localStorage.getItem("token") ||
+      "";
+
+    const formData = new FormData();
+    formData.append("image", file);
+    try {
+      const res = await fetch(BASE + "/landlord/plazas/" + plazaId + "/image", {
+        method: "POST",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.data?.image_url) {
+        /* Update the card header immediately without full reload */
+        const idx = all.findIndex((p) => p.id === plazaId);
+        if (idx > -1) all[idx].image_url = data.data.image_url;
+        render(all);
+      } else {
+        alert("Upload failed: " + (data.message || "Unknown error"));
+      }
+    } catch (e) {
+      alert("Network error: " + e.message);
+    }
+  }
+
+  return { init, edit, openAdd, uploadImage };
 })();
 
 /* ============================================================
@@ -891,7 +1002,7 @@ const LandlordTenants = (() => {
         <td>${RentMs.statusBadge(t.payment_status === "overdue" ? "overdue" : t.status || "active")}</td>
         <td>
           <a href="tenants-detail.html?id=${t.tenant_id}" class="btn btn-sm btn-outline-primary me-1">View</a>
-          <button class="btn btn-sm btn-outline-danger" onclick="LandlordTenants.askRemove(${t.id})"><i class="bi bi-trash"></i></button>
+          ${t.status === "active" ? `<button class="btn btn-sm btn-outline-danger" onclick="LandlordTenants.askRemove(${t.id})"><i class="bi bi-trash"></i></button>` : ""}
         </td>
       </tr>`;
       })

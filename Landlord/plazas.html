@@ -13,6 +13,71 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
+    <style>
+      /* ── Plaza image upload ── */
+      .img-upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 18px 14px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        background: var(--bg-body);
+        position: relative;
+      }
+      .img-upload-zone:hover {
+        border-color: var(--primary);
+        background: var(--primary-glow);
+      }
+      .img-upload-zone.has-img {
+        border-style: solid;
+        border-color: var(--primary);
+      }
+      .img-upload-zone .preview-img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+      }
+      .img-upload-zone .placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 0;
+      }
+      .img-upload-zone .placeholder i {
+        font-size: 1.6rem;
+        color: var(--text-muted);
+      }
+      .img-upload-zone .placeholder span {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+      .img-remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.55);
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        transition: background 0.15s;
+      }
+      .img-remove-btn:hover {
+        background: var(--danger);
+      }
+    </style>
   </head>
   <body>
     <div class="sidebar">
@@ -109,7 +174,6 @@
         </div>
       </div>
     </div>
-    <!-- end .sidebar -->
 
     <div class="main">
       <div class="topbar">
@@ -166,9 +230,7 @@
         </div>
 
         <!-- Grid -->
-        <div class="row g-3" id="plazaGrid">
-          <!-- Populated by JS -->
-        </div>
+        <div class="row g-3" id="plazaGrid"></div>
 
         <!-- Empty state -->
         <div id="emptyState" class="empty-state">
@@ -204,10 +266,60 @@
           </div>
           <div class="modal-body p-4">
             <input type="hidden" id="editPlazaId" />
+
+            <!-- Image upload -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size: 0.875rem"
+                >Plaza Photo
+                <span style="color: var(--text-muted); font-weight: 400"
+                  >(optional)</span
+                ></label
+              >
+              <div
+                class="img-upload-zone"
+                id="imgUploadZone"
+                onclick="document.getElementById('plazaImgInput').click()"
+              >
+                <div class="placeholder" id="imgPlaceholder">
+                  <i class="bi bi-image"></i>
+                  <span>Click to upload a photo of your plaza</span>
+                  <span style="font-size: 0.72rem; color: var(--text-subtle)"
+                    >JPG, PNG · Max 5MB</span
+                  >
+                </div>
+                <img
+                  id="imgPreview"
+                  class="preview-img"
+                  src=""
+                  alt=""
+                  style="display: none"
+                />
+                <button
+                  class="img-remove-btn"
+                  id="imgRemoveBtn"
+                  style="display: none"
+                  onclick="
+                    event.stopPropagation();
+                    removeImg();
+                  "
+                >
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+              <input
+                type="file"
+                id="plazaImgInput"
+                accept="image/*"
+                style="display: none"
+                onchange="onImgSelected(this)"
+              />
+            </div>
+
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Plaza Name *</label
-              ><input
+              >
+              <input
                 type="text"
                 class="form-control"
                 id="plazaName"
@@ -217,7 +329,8 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Location *</label
-              ><input
+              >
+              <input
                 type="text"
                 class="form-control"
                 id="plazaLocation"
@@ -227,7 +340,8 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Total Units *</label
-              ><input
+              >
+              <input
                 type="number"
                 class="form-control"
                 id="plazaUnits"
@@ -254,37 +368,121 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="../js/landlord.js"></script>
     <script>
-      LandlordPlazas.init();
-    </script>
-    <!-- DEV MODE BANNER — remove when going live -->
-    <div
-      id="devBanner"
-      style="
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 9999;
-        background: #f59e0b;
-        color: #000;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-align: center;
-        padding: 5px;
-        letter-spacing: 0.05em;
-      "
-    ></div>
-    <script>
-      // Hide banner automatically when DEV_MODE is off
-      document.addEventListener("DOMContentLoaded", () => {
-        if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
-          const b = document.getElementById("devBanner");
-          if (b) b.remove();
+      const BACKEND =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000"
+          : "https://rentms-backend-5.onrender.com";
+      const getToken = () =>
+        localStorage.getItem("landlord_token") ||
+        localStorage.getItem("token") ||
+        "";
+
+      let _pendingImgFile = null;
+      let _pendingImgDataUrl = null;
+
+      /* ── Image selection ── */
+      function onImgSelected(input) {
+        const file = input.files[0];
+        input.value = "";
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          alert("Please select an image file.");
+          return;
         }
-      });
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Image must be under 5MB.");
+          return;
+        }
+        _pendingImgFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          _pendingImgDataUrl = e.target.result;
+          showPreview(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function showPreview(src) {
+        document.getElementById("imgPlaceholder").style.display = "none";
+        const img = document.getElementById("imgPreview");
+        img.src = src;
+        img.style.display = "block";
+        document.getElementById("imgRemoveBtn").style.display = "";
+        document.getElementById("imgUploadZone").classList.add("has-img");
+      }
+
+      function removeImg() {
+        _pendingImgFile = null;
+        _pendingImgDataUrl = null;
+        document.getElementById("imgPlaceholder").style.display = "";
+        const img = document.getElementById("imgPreview");
+        img.src = "";
+        img.style.display = "none";
+        document.getElementById("imgRemoveBtn").style.display = "none";
+        document.getElementById("imgUploadZone").classList.remove("has-img");
+      }
+
+      function resetImgUpload() {
+        removeImg();
+      }
+
+      /* ── Upload image to backend, returns URL ── */
+      async function uploadPlazaImage(file) {
+        const formData = new FormData();
+        formData.append("image", file);
+        const res = await fetch(BACKEND + "/api/landlord/plazas/upload-image", {
+          method: "POST",
+          headers: { Authorization: "Bearer " + getToken() },
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok || data.error)
+          throw new Error(data.message || "Upload failed");
+        const raw = data.data?.image_url || data.image_url || "";
+        return raw.startsWith("http")
+          ? raw
+          : BACKEND + "/" + raw.replace(/^\//, "");
+      }
+
+      /* ── Override savePlaza to handle image ── */
+      const _origSavePlaza = window.savePlaza;
+      window.savePlaza = async function () {
+        const saveBtn = document.querySelector(
+          '#plazaModal .btn-primary[onclick="savePlaza()"]',
+        );
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.textContent = "Saving…";
+        }
+
+        try {
+          /* Upload image first if one was selected */
+          if (_pendingImgFile) {
+            try {
+              const url = await uploadPlazaImage(_pendingImgFile);
+              /* Store URL to be picked up by LandlordPlazas.savePlaza */
+              window._pendingPlazaImageUrl = url;
+            } catch (e) {
+              console.warn("Image upload failed:", e.message);
+              window._pendingPlazaImageUrl = null;
+            }
+          } else {
+            window._pendingPlazaImageUrl = null;
+          }
+          await _origSavePlaza();
+          resetImgUpload();
+        } finally {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Plaza";
+          }
+        }
+      };
+
+      LandlordPlazas.init();
     </script>
   </body>
 </html>
