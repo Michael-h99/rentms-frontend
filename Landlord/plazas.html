@@ -26,6 +26,10 @@
           background 0.2s;
         background: var(--bg-body);
         position: relative;
+        min-height: 130px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .img-upload-zone:hover {
         border-color: var(--primary);
@@ -37,7 +41,7 @@
       }
       .img-upload-zone .preview-img {
         width: 100%;
-        height: 120px;
+        height: 200px;
         object-fit: cover;
         border-radius: 8px;
         display: block;
@@ -429,7 +433,7 @@
         removeImg();
       }
 
-      /* ── Upload image to backend, returns URL ── */
+      /* ── Upload image to backend, returns full URL ── */
       async function uploadPlazaImage(file) {
         const formData = new FormData();
         formData.append("image", file);
@@ -442,6 +446,8 @@
         if (!res.ok || data.error)
           throw new Error(data.message || "Upload failed");
         const raw = data.data?.image_url || data.image_url || "";
+        /* FIX: always return full absolute URL so it works cross-origin */
+        if (!raw) throw new Error("No image URL returned");
         return raw.startsWith("http")
           ? raw
           : BACKEND + "/" + raw.replace(/^\//, "");
@@ -463,14 +469,16 @@
           if (_pendingImgFile) {
             try {
               const url = await uploadPlazaImage(_pendingImgFile);
-              /* Store URL to be picked up by LandlordPlazas.savePlaza */
               window._pendingPlazaImageUrl = url;
+              console.log("Image uploaded:", url);
             } catch (e) {
               console.warn("Image upload failed:", e.message);
+              /* Still save plaza without image if upload fails */
               window._pendingPlazaImageUrl = null;
             }
           } else {
-            window._pendingPlazaImageUrl = null;
+            /* No new image selected — don't overwrite existing */
+            window._pendingPlazaImageUrl = undefined;
           }
           await _origSavePlaza();
           resetImgUpload();
