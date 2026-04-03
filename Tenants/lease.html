@@ -394,15 +394,126 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/landlord.js"></script>
-    <script src="../js/tenant.js"></script>
+    <script src="../js/tenants.js"></script>
     <script>
-      TenantLease.init();
+      const BASE =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000/api"
+          : "https://rentms-backend-5.onrender.com/api";
+      const getToken = () =>
+        localStorage.getItem("tenant_token") ||
+        localStorage.getItem("token") ||
+        "";
+      const fmt = (d) =>
+        d
+          ? new Date(d).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            })
+          : "—";
+      const setText = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val ?? "—";
+      };
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (typeof _T !== "undefined") await _T.initSidebar();
+        await loadLease();
+      });
+
+      async function loadLease() {
+        try {
+          const res = await fetch(BASE + "/tenant/lease", {
+            headers: { Authorization: "Bearer " + getToken() },
+          });
+          const data = await res.json();
+          const t = data.data || data.tenancy || data;
+
+          if (!t || !t.unit_number) {
+            setText("leaseStatusText", "No Active Lease");
+            setText("leaseStatusSub", "No tenancy found for your account");
+            setText("leaseStatusBadge", "Inactive");
+            return;
+          }
+
+          setText("lPlaza", t.plaza_name || "—");
+          setText("lUnit", t.unit_number || "—");
+          setText("lFloor", t.floor || "—");
+          setText("lType", t.unit_type || "—");
+          setText("lAddress", t.plaza_location || t.location || "—");
+          setText("lStart", fmt(t.lease_start));
+          setText("lEnd", fmt(t.lease_end));
+          setText(
+            "lRent",
+            t.rent_amount
+              ? "GHS " + parseFloat(t.rent_amount).toFixed(2)
+              : "GHS 0",
+          );
+          setText(
+            "sideAmtDue",
+            t.rent_amount
+              ? "GHS " + parseFloat(t.rent_amount).toFixed(2)
+              : "GHS 0",
+          );
+          setText(
+            "lDeposit",
+            t.security_deposit
+              ? "GHS " + parseFloat(t.security_deposit).toFixed(2)
+              : "—",
+          );
+          setText("lLeaseType", t.lease_type || "—");
+
+          if (t.lease_start && t.lease_end) {
+            const months = Math.round(
+              (new Date(t.lease_end) - new Date(t.lease_start)) /
+                (1000 * 60 * 60 * 24 * 30),
+            );
+            setText("lDuration", months + " months");
+          }
+          if (t.lease_end) {
+            const days = Math.ceil(
+              (new Date(t.lease_end) - new Date()) / (1000 * 60 * 60 * 24),
+            );
+            const total = t.lease_start
+              ? Math.ceil(
+                  (new Date(t.lease_end) - new Date(t.lease_start)) /
+                    (1000 * 60 * 60 * 24),
+                )
+              : 365;
+            const pct = Math.max(
+              0,
+              Math.min(100, Math.round((days / total) * 100)),
+            );
+            setText("daysLeft", days > 0 ? String(days) : "0");
+            setText(
+              "daysLeftSub",
+              days > 0 ? "days remaining" : "Lease expired",
+            );
+            const bar = document.getElementById("leaseProgressBar");
+            if (bar) bar.style.width = pct + "%";
+            const now = new Date();
+            const due = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            setText("sideDueDate", "Due " + fmt(due));
+          }
+
+          setText(
+            "lLandlordName",
+            t.landlord_name || t.landlord_username || "—",
+          );
+          setText("lLandlordPhone", t.landlord_phone || "—");
+          setText("lLandlordEmail", t.landlord_email || "—");
+        } catch (err) {
+          console.error("Lease load error:", err);
+        }
+      }
+
       function sendRenewal() {
         alert("Renewal request sent to your landlord.");
         bootstrap.Modal.getInstance(
           document.getElementById("renewModal"),
-        ).hide();
+        )?.hide();
       }
       function openSidebar() {
         document.getElementById("sidebar").classList.add("open");
