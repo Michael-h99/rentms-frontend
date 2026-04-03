@@ -464,7 +464,11 @@
           : BACKEND + "/" + raw.replace(/^\//, "");
       }
 
-      /* ── Override savePlaza — image already uploaded in onImgSelected ── */
+      /* FIX: init first so landlord.js sets window.savePlaza,
+         THEN override it so our version wraps the correct function */
+      LandlordPlazas.init();
+
+      /* ── Override savePlaza AFTER init so we wrap the real function ── */
       const _origSavePlaza = window.savePlaza;
       window.savePlaza = async function () {
         const saveBtn = document.querySelector(
@@ -475,7 +479,6 @@
           saveBtn.textContent = "Saving…";
         }
         try {
-          /* _pendingPlazaImageUrl is already set by onImgSelected */
           console.log("Saving plaza with image:", window._pendingPlazaImageUrl);
           await _origSavePlaza();
           resetImgUpload();
@@ -486,8 +489,6 @@
           }
         }
       };
-
-      LandlordPlazas.init();
     </script>
   </body>
 </html>
