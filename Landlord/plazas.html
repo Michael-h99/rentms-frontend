@@ -387,8 +387,8 @@
       let _pendingImgFile = null;
       let _pendingImgDataUrl = null;
 
-      /* ── Image selection ── */
-      function onImgSelected(input) {
+      /* ── Image selection — upload immediately and store URL ── */
+      async function onImgSelected(input) {
         const file = input.files[0];
         input.value = "";
         if (!file) return;
@@ -400,13 +400,24 @@
           alert("Image must be under 5MB.");
           return;
         }
-        _pendingImgFile = file;
+
+        /* Show local preview immediately */
         const reader = new FileReader();
         reader.onload = (e) => {
-          _pendingImgDataUrl = e.target.result;
           showPreview(e.target.result);
         };
         reader.readAsDataURL(file);
+
+        /* Upload to backend immediately and cache the URL */
+        try {
+          const url = await uploadPlazaImage(file);
+          window._pendingPlazaImageUrl = url;
+          console.log("Plaza image ready:", url);
+        } catch (e) {
+          console.warn("Image upload failed:", e.message);
+          window._pendingPlazaImageUrl = null;
+          alert("Image upload failed: " + e.message);
+        }
       }
 
       function showPreview(src) {
@@ -453,7 +464,7 @@
           : BACKEND + "/" + raw.replace(/^\//, "");
       }
 
-      /* ── Override savePlaza to handle image ── */
+      /* ── Override savePlaza — image already uploaded in onImgSelected ── */
       const _origSavePlaza = window.savePlaza;
       window.savePlaza = async function () {
         const saveBtn = document.querySelector(
@@ -463,23 +474,9 @@
           saveBtn.disabled = true;
           saveBtn.textContent = "Saving…";
         }
-
         try {
-          /* Upload image first if one was selected */
-          if (_pendingImgFile) {
-            try {
-              const url = await uploadPlazaImage(_pendingImgFile);
-              window._pendingPlazaImageUrl = url;
-              console.log("Image uploaded:", url);
-            } catch (e) {
-              console.warn("Image upload failed:", e.message);
-              /* Still save plaza without image if upload fails */
-              window._pendingPlazaImageUrl = null;
-            }
-          } else {
-            /* No new image selected — don't overwrite existing */
-            window._pendingPlazaImageUrl = undefined;
-          }
+          /* _pendingPlazaImageUrl is already set by onImgSelected */
+          console.log("Saving plaza with image:", window._pendingPlazaImageUrl);
           await _origSavePlaza();
           resetImgUpload();
         } finally {
