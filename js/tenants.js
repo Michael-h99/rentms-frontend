@@ -5,6 +5,38 @@
  *          TenantAnnouncements, TenantNotifications, TenantProfile
  */
 
+/* ============================================================
+   AUTO LOGOUT — signs out after 60 minutes of inactivity
+   ============================================================ */
+(function initAutoLogout() {
+  const TIMEOUT_MS = 60 * 60 * 1000; // 60 minutes
+  let _timer;
+  function resetTimer() {
+    clearTimeout(_timer);
+    _timer = setTimeout(() => {
+      alert("Your session has expired. Please log in again.");
+      localStorage.removeItem("tenant_token");
+      localStorage.removeItem("tenant_user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "../auth/login.html?session=expired";
+    }, TIMEOUT_MS);
+  }
+  if (window.location.pathname.includes("/Tenants/")) {
+    [
+      "mousemove",
+      "mousedown",
+      "keypress",
+      "touchstart",
+      "scroll",
+      "click",
+    ].forEach((evt) =>
+      document.addEventListener(evt, resetTimer, { passive: true }),
+    );
+    resetTimer();
+  }
+})();
+
 /* ── Shared helpers ── */
 const _T = (() => {
   /*
@@ -110,14 +142,9 @@ const _T = (() => {
     }
   }
 
-  /*
-   * FIX: initSidebar now also fetches /auth/me if localStorage has no name,
-   * so the sidebar always shows the real username even after a hard refresh.
-   */
   async function initSidebar() {
     let u = user();
 
-    /* If username is missing, fetch it fresh from the backend */
     if (!u.username && token()) {
       try {
         const res = await fetch(BASE + "/auth/me", {
@@ -126,7 +153,6 @@ const _T = (() => {
         const json = await res.json();
         if (json.data?.username) {
           u = json.data;
-          /* Save back so future page loads are instant */
           try {
             localStorage.setItem("tenant_user", JSON.stringify(u));
             localStorage.setItem("user", JSON.stringify(u));
@@ -140,11 +166,23 @@ const _T = (() => {
     const name = u.username || u.full_name || u.name || "";
 
     if (nameEl) nameEl.textContent = name || "Tenant";
-    if (avatarEl)
-      avatarEl.textContent = name ? name.charAt(0).toUpperCase() : "T";
+
+    /* FIX: restore saved avatar on every page */
+    if (avatarEl) {
+      const savedAvatar = localStorage.getItem("TENANT_AVATAR") || u.avatar_url;
+      if (savedAvatar) {
+        avatarEl.style.backgroundImage = `url(${savedAvatar})`;
+        avatarEl.style.backgroundSize = "cover";
+        avatarEl.style.backgroundPosition = "center";
+        avatarEl.style.borderRadius = "50%";
+        avatarEl.textContent = "";
+      } else {
+        avatarEl.textContent = name ? name.charAt(0).toUpperCase() : "T";
+      }
+    }
   }
 
-  return { user, token, ghs, fmt, ago, badge, api, initSidebar };
+  return { user, token, ghs, fmt, ago, badge, api, initSidebar, BASE };
 })();
 
 /* ══════════════════════════════════════════
@@ -155,17 +193,13 @@ const TenantDashboard = {
     await _T.initSidebar();
     const u = _T.user();
     const el = (id) => document.getElementById(id);
-
-    /* FIX: use full_name || username || name with fallback chain */
     const displayName = u.full_name || u.username || u.name || "Tenant";
     if (el("welcomeName")) el("welcomeName").textContent = displayName;
     if (el("welcomeAvatar"))
       el("welcomeAvatar").textContent = displayName.charAt(0).toUpperCase();
-
     const data = await _T.api("GET", "/tenant/dashboard");
     if (!data) return;
     const { lease, payments, maintenance, announcements } = data;
-
     if (el("statAmountDue"))
       el("statAmountDue").textContent = _T.ghs(lease?.amount_due);
     if (el("statDueDate"))
@@ -178,7 +212,6 @@ const TenantDashboard = {
     if (el("welcomeSub"))
       el("welcomeSub").textContent =
         `Unit ${lease?.unit || "—"} · ${lease?.plaza || "—"}`;
-
     if (lease) {
       if (el("leasePlaza")) el("leasePlaza").textContent = lease.plaza || "—";
       if (el("leaseUnit")) el("leaseUnit").textContent = lease.unit || "—";
@@ -199,7 +232,6 @@ const TenantDashboard = {
         if (el("leaseBar")) el("leaseBar").style.width = pct + "%";
       }
     }
-
     const payEl = el("recentPayments");
     if (payEl && payments?.length) {
       payEl.innerHTML = `<div class="table-responsive"><table class="table" style="margin:0"><tbody>
@@ -216,7 +248,6 @@ const TenantDashboard = {
           .join("")}
       </tbody></table></div>`;
     }
-
     const mEl = el("maintList");
     if (mEl && maintenance?.length) {
       mEl.innerHTML =
@@ -237,7 +268,6 @@ const TenantDashboard = {
           .join("") +
         `</div>`;
     }
-
     const aEl = el("annList");
     if (aEl && announcements?.length) {
       aEl.innerHTML =
@@ -358,47 +388,60 @@ const TenantLease = {
   async init() {
     await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/lease");
-    const l = data?.lease;
+    /* FIX: API returns data.data not data.lease */
+    const l = data?.data || data?.lease;
     if (!l) return;
     const el = (id) => document.getElementById(id);
     const set = (id, val) => {
       const e = el(id);
       if (e) e.textContent = val || "—";
     };
-    set("lPlaza", l.plaza);
-    set("lUnit", l.unit);
-    set("lFloor", l.floor);
-    set("lType", l.type);
-    set("lAddress", l.address);
-    set("lStart", _T.fmt(l.start_date));
-    set("lEnd", _T.fmt(l.end_date));
-    set("lRent", _T.ghs(l.rent));
-    set("lDeposit", _T.ghs(l.deposit));
+    set("lPlaza", l.plaza_name || l.plaza || "—");
+    set("lUnit", l.unit_number || l.unit || "—");
+    set("lFloor", l.floor || "N/A");
+    set("lType", l.unit_type || "N/A");
+    set("lAddress", l.plaza_location || l.address || "—");
+    set("lStart", _T.fmt(l.lease_start || l.start_date));
+    set("lEnd", _T.fmt(l.lease_end || l.end_date));
+    set("lRent", _T.ghs(l.rent_amount || l.rent));
+    set("lDeposit", _T.ghs(l.security_deposit || l.deposit));
     set("lLeaseType", l.lease_type || "Monthly");
-    set("lLandlordName", l.landlord_name);
-    set("lLandlordPhone", l.landlord_phone);
-    set("lLandlordEmail", l.landlord_email);
-    set("sideAmtDue", _T.ghs(l.amount_due));
-    set("sideDueDate", _T.fmt(l.next_due_date));
-    if (el("lDuration") && l.start_date && l.end_date) {
+    /* FIX: use landlord_username or email prefix as name fallback */
+    const landlordName =
+      l.landlord_name ||
+      l.landlord_username ||
+      (l.landlord_email ? l.landlord_email.split("@")[0] : "—");
+    set("lLandlordName", landlordName);
+    set("lLandlordPhone", l.landlord_phone || "—");
+    set("lLandlordEmail", l.landlord_email || "—");
+    set("sideAmtDue", _T.ghs(l.rent_amount || l.amount_due));
+    const startDate = l.lease_start || l.start_date;
+    const endDate = l.lease_end || l.end_date;
+    if (el("lDuration") && startDate && endDate) {
       const months = Math.round(
-        (new Date(l.end_date) - new Date(l.start_date)) / (30 * 86400000),
+        (new Date(endDate) - new Date(startDate)) / (30 * 86400000),
       );
-      el("lDuration").textContent = months + " months";
+      el("lDuration").textContent =
+        months > 0 ? months + " months" : "< 1 month";
     }
-    if (l.start_date && l.end_date) {
-      const total = new Date(l.end_date) - new Date(l.start_date);
-      const done = Date.now() - new Date(l.start_date);
+    if (startDate && endDate) {
+      const total = new Date(endDate) - new Date(startDate);
+      const done = Date.now() - new Date(startDate);
       const pct = Math.min(100, Math.round((done / total) * 100));
       const days = Math.max(
         0,
-        Math.ceil((new Date(l.end_date) - Date.now()) / 86400000),
+        Math.ceil((new Date(endDate) - Date.now()) / 86400000),
       );
       if (el("daysLeft")) el("daysLeft").textContent = days;
       if (el("daysLeftSub"))
-        el("daysLeftSub").textContent = "of your lease remaining";
+        el("daysLeftSub").textContent =
+          days > 0 ? "of your lease remaining" : "Lease expired";
       if (el("leaseProgressBar"))
         el("leaseProgressBar").style.width = pct + "%";
+      /* Next payment due — 1st of next month */
+      const now = new Date();
+      const due = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      set("sideDueDate", "Due " + _T.fmt(due));
     }
     const status = l.status || "active";
     if (el("leaseStatusBadge"))
@@ -558,17 +601,15 @@ const TenantMessages = {
     const input = document.getElementById("msgInput");
     const msg = input?.value.trim();
     if (!msg || !this.groupId) return;
-    if (msg && this.groupId) {
-      await _T.api("POST", `/tenant/groups/${this.groupId}/messages`, {
-        message: msg,
-      });
-      input.value = "";
-      input.style.height = "auto";
-      this.pendingFiles = [];
-      const ap = document.getElementById("attachPreview");
-      if (ap) ap.innerHTML = "";
-      await this.loadMessages();
-    }
+    await _T.api("POST", `/tenant/groups/${this.groupId}/messages`, {
+      message: msg,
+    });
+    input.value = "";
+    input.style.height = "auto";
+    this.pendingFiles = [];
+    const ap = document.getElementById("attachPreview");
+    if (ap) ap.innerHTML = "";
+    await this.loadMessages();
   },
   attachFiles(input) {
     this.pendingFiles = [...input.files];
@@ -693,9 +734,9 @@ const TenantNotifications = {
       .querySelectorAll("#notifTabs .nav-link")
       .forEach((l) => l.classList.remove("active"));
     if (linkEl) linkEl.classList.add("active");
-    const filtered =
-      type === "all" ? this.all : this.all.filter((n) => n.type === type);
-    this.render(filtered);
+    this.render(
+      type === "all" ? this.all : this.all.filter((n) => n.type === type),
+    );
   },
   render(list) {
     const el = document.getElementById("notifList");
@@ -708,9 +749,7 @@ const TenantNotifications = {
       .map(
         (n) => `
       <div class="notif-item ${n.read || n.read_at ? "" : "unread"}" onclick="TenantNotifications.markRead(${n.id})">
-        <div class="notif-icon ${n.type || "payment"}">
-          <i class="bi ${this.iconMap[n.type] || "bi-bell"}"></i>
-        </div>
+        <div class="notif-icon ${n.type || "payment"}"><i class="bi ${this.iconMap[n.type] || "bi-bell"}"></i></div>
         <div style="flex:1;min-width:0">
           <div class="notif-title">${n.title || "Notification"}</div>
           <div class="notif-body">${n.body || ""}</div>
@@ -771,7 +810,7 @@ const TenantProfile = {
   },
   async savePersonal() {
     const val = (id) => document.getElementById(id)?.value.trim();
-    const result = await _T.api("PUT", "/tenant/profile", {
+    await _T.api("PUT", "/tenant/profile", {
       name: val("pName"),
       email: val("pEmail"),
       phone: val("pPhone"),

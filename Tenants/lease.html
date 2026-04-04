@@ -440,8 +440,8 @@
 
           setText("lPlaza", t.plaza_name || "—");
           setText("lUnit", t.unit_number || "—");
-          setText("lFloor", t.floor || "—");
-          setText("lType", t.unit_type || "—");
+          setText("lFloor", t.floor || "N/A");
+          setText("lType", t.unit_type || "N/A");
           setText("lAddress", t.plaza_location || t.location || "—");
           setText("lStart", fmt(t.lease_start));
           setText("lEnd", fmt(t.lease_end));
@@ -498,10 +498,12 @@
             setText("sideDueDate", "Due " + fmt(due));
           }
 
-          setText(
-            "lLandlordName",
-            t.landlord_name || t.landlord_username || "—",
-          );
+          /* FIX: use landlord_username or email prefix when full_name is null */
+          const landlordDisplay =
+            t.landlord_name ||
+            t.landlord_username ||
+            (t.landlord_email ? t.landlord_email.split("@")[0] : "—");
+          setText("lLandlordName", landlordDisplay);
           setText("lLandlordPhone", t.landlord_phone || "—");
           setText("lLandlordEmail", t.landlord_email || "—");
         } catch (err) {
