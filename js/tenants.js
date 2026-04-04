@@ -22,19 +22,18 @@
       window.location.href = "../auth/login.html?session=expired";
     }, TIMEOUT_MS);
   }
-  if (window.location.pathname.includes("/Tenants/")) {
-    [
-      "mousemove",
-      "mousedown",
-      "keypress",
-      "touchstart",
-      "scroll",
-      "click",
-    ].forEach((evt) =>
-      document.addEventListener(evt, resetTimer, { passive: true }),
-    );
-    resetTimer();
-  }
+  /* Run on all pages that load tenants.js */
+  [
+    "mousemove",
+    "mousedown",
+    "keypress",
+    "touchstart",
+    "scroll",
+    "click",
+  ].forEach((evt) =>
+    document.addEventListener(evt, resetTimer, { passive: true }),
+  );
+  resetTimer();
 })();
 
 /* ── Shared helpers ── */
