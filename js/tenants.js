@@ -198,33 +198,43 @@ const TenantDashboard = {
       el("welcomeAvatar").textContent = displayName.charAt(0).toUpperCase();
     const data = await _T.api("GET", "/tenant/dashboard");
     if (!data) return;
-    const { lease, payments, maintenance, announcements } = data;
+    /* FIX: API returns data.data not data directly */
+    const d = data.data || data;
+    const lease = d.lease || {};
+    const paySum = d.payment_summary || {};
+
+    /* FIX: use correct field names from actual API response */
     if (el("statAmountDue"))
-      el("statAmountDue").textContent = _T.ghs(lease?.amount_due);
+      el("statAmountDue").textContent = _T.ghs(lease.rent_amount || 0);
     if (el("statDueDate"))
-      el("statDueDate").textContent = _T.fmt(lease?.next_due_date);
+      el("statDueDate").textContent = d.is_overdue ? "Overdue" : "1st of month";
     if (el("statLastPaid"))
-      el("statLastPaid").textContent = _T.fmt(payments?.[0]?.paid_at);
+      el("statLastPaid").textContent = _T.fmt(paySum.last_payment_date) || "—";
     if (el("statOpenRequests"))
-      el("statOpenRequests").textContent =
-        maintenance?.filter((m) => m.status === "open").length || 0;
+      el("statOpenRequests").textContent = d.open_maintenance || 0;
     if (el("welcomeSub"))
       el("welcomeSub").textContent =
-        `Unit ${lease?.unit || "—"} · ${lease?.plaza || "—"}`;
-    if (lease) {
-      if (el("leasePlaza")) el("leasePlaza").textContent = lease.plaza || "—";
-      if (el("leaseUnit")) el("leaseUnit").textContent = lease.unit || "—";
-      if (el("leaseRent")) el("leaseRent").textContent = _T.ghs(lease.rent);
-      if (el("leaseEnd")) el("leaseEnd").textContent = _T.fmt(lease.end_date);
+        `Unit ${lease.unit_number || "—"} · ${lease.plaza_name || "—"}`;
+
+    if (lease.id) {
+      if (el("leasePlaza"))
+        el("leasePlaza").textContent = lease.plaza_name || "—";
+      if (el("leaseUnit"))
+        el("leaseUnit").textContent = lease.unit_number || "—";
+      if (el("leaseRent"))
+        el("leaseRent").textContent = _T.ghs(lease.rent_amount);
+      if (el("leaseEnd")) el("leaseEnd").textContent = _T.fmt(lease.lease_end);
       if (el("leaseStatus"))
-        el("leaseStatus").innerHTML = _T.badge(lease.status || "active");
-      if (lease.start_date && lease.end_date) {
-        const total = new Date(lease.end_date) - new Date(lease.start_date);
-        const done = Date.now() - new Date(lease.start_date);
+        el("leaseStatus").innerHTML = _T.badge(
+          d.is_overdue ? "overdue" : lease.status || "active",
+        );
+      if (lease.lease_start && lease.lease_end) {
+        const total = new Date(lease.lease_end) - new Date(lease.lease_start);
+        const done = Date.now() - new Date(lease.lease_start);
         const pct = Math.min(100, Math.round((done / total) * 100));
         const days = Math.max(
           0,
-          Math.ceil((new Date(lease.end_date) - Date.now()) / 86400000),
+          Math.ceil((new Date(lease.lease_end) - Date.now()) / 86400000),
         );
         if (el("leaseDaysLeft"))
           el("leaseDaysLeft").textContent = days + " days left";
