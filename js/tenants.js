@@ -792,46 +792,110 @@ const TenantNotifications = {
 const TenantProfile = {
   async init() {
     await _T.initSidebar();
-    const data = await _T.api("GET", "/tenant/profile");
-    const p = data?.profile || {};
-    const u = _T.user();
     const el = (id) => document.getElementById(id);
     const set = (id, val) => {
       const e = el(id);
       if (e) e.textContent = val || "—";
     };
-    const name = p.name || u.full_name || u.username || "";
+
+    /* Load from localStorage first for instant display */
+    const u = _T.user();
+    const cachedName = u.full_name || u.username || "";
+    if (cachedName) {
+      set("profileName", cachedName);
+      set("profileEmail", u.email || "—");
+      const av = el("profileAvatar");
+      if (av) av.textContent = cachedName.charAt(0).toUpperCase();
+      if (el("pName")) el("pName").value = u.full_name || "";
+      if (el("pUsername")) el("pUsername").value = u.username || "";
+      if (el("pEmail")) el("pEmail").value = u.email || "";
+      if (el("pPhone")) el("pPhone").value = u.phone || "";
+    }
+
+    /* Fetch fresh profile from API */
+    const data = await _T.api("GET", "/auth/me");
+    const p = data?.data || data?.user || {};
+
+    const name = p.full_name || p.username || p.name || cachedName || "";
     set("profileName", name);
-    set("profileEmail", p.email || u.email);
-    set("profileUnit", p.unit || "—");
-    set("profilePlaza", p.plaza || "—");
-    set("profileJoined", _T.fmt(u.created_at || p.joined_at));
+    set("profileEmail", p.email || "—");
+    set("profileJoined", _T.fmt(p.created_at || u.created_at));
+
     const av = el("profileAvatar");
     if (av) av.textContent = (name || "T").charAt(0).toUpperCase();
-    if (el("pName")) el("pName").value = name;
-    if (el("pUsername")) el("pUsername").value = u.username || "";
+
+    if (el("pName")) el("pName").value = p.full_name || p.name || "";
+    if (el("pUsername")) el("pUsername").value = p.username || "";
     if (el("pEmail")) el("pEmail").value = p.email || "";
     if (el("pPhone")) el("pPhone").value = p.phone || "";
     if (el("pDob")) el("pDob").value = p.dob || "";
     if (el("pOccupation")) el("pOccupation").value = p.occupation || "";
     if (el("pEcName")) el("pEcName").value = p.ec_name || "";
     if (el("pEcPhone")) el("pEcPhone").value = p.ec_phone || "";
+
+    /* FIX: fetch tenancy to get unit and plaza */
+    const leaseData = await _T.api("GET", "/tenant/lease");
+    const lease = leaseData?.data || leaseData?.tenancy || {};
+    set("profileUnit", lease.unit_number || "—");
+    set("profilePlaza", lease.plaza_name || "—");
+
+    /* Update localStorage with fresh data */
+    try {
+      const updated = {
+        ...u,
+        ...p,
+        unit_number: lease.unit_number,
+        plaza_name: lease.plaza_name,
+      };
+      localStorage.setItem("tenant_user", JSON.stringify(updated));
+      localStorage.setItem("user", JSON.stringify(updated));
+    } catch {}
   },
   async savePersonal() {
     const val = (id) => document.getElementById(id)?.value.trim();
-    await _T.api("PUT", "/tenant/profile", {
-      name: val("pName"),
-      email: val("pEmail"),
-      phone: val("pPhone"),
+    const name = val("pName");
+    const email = val("pEmail");
+    const phone = val("pPhone");
+
+    const res = await _T.api("PATCH", "/auth/me", {
+      full_name: name,
+      username: val("pUsername") || name,
+      email,
+      phone,
       dob: val("pDob"),
       occupation: val("pOccupation"),
       ec_name: val("pEcName"),
       ec_phone: val("pEcPhone"),
     });
-    const alertEl = document.getElementById("saveAlert");
-    if (alertEl) {
-      alertEl.style.display = "";
-      setTimeout(() => (alertEl.style.display = "none"), 3000);
+
+    if (res) {
+      /* FIX: persist to localStorage so data survives page navigation */
+      try {
+        const u = _T.user();
+        const updated = {
+          ...u,
+          full_name: name,
+          username: val("pUsername") || name,
+          email,
+          phone,
+        };
+        localStorage.setItem("tenant_user", JSON.stringify(updated));
+        localStorage.setItem("user", JSON.stringify(updated));
+      } catch {}
+
+      /* Update display */
+      const el = (id) => document.getElementById(id);
+      if (el("profileName")) el("profileName").textContent = name || "—";
+      if (el("profileEmail")) el("profileEmail").textContent = email || "—";
+      if (el("profileAvatar") && name)
+        el("profileAvatar").textContent = name.charAt(0).toUpperCase();
+      if (el("sidebarName") && name) el("sidebarName").textContent = name;
+
+      const alertEl = document.getElementById("saveAlert");
+      if (alertEl) {
+        alertEl.style.display = "";
+        setTimeout(() => (alertEl.style.display = "none"), 3000);
+      }
     }
   },
   async changePassword() {

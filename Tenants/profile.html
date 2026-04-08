@@ -3,25 +3,161 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile | Tenant Portal</title>
+    <title>Profile | Landlord Portal</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <!-- FIX: was landlord.css -->
-    <link href="../css/tenant.css" rel="stylesheet" />
+    <link href="../css/landlord.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
+    <style>
+      .avatar-upload-wrap {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        flex-shrink: 0;
+      }
+      .avatar-upload-wrap .avatar-img {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        border: 3px solid var(--border);
+        background: var(--bg-body);
+      }
+      .avatar-upload-wrap .avatar-initials {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        background: var(--primary-glow);
+        border: 3px solid var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: -0.02em;
+      }
+      .avatar-upload-btn {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 2.5px solid var(--bg-card);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition:
+          background 0.15s,
+          transform 0.15s;
+        z-index: 2;
+      }
+      .avatar-upload-btn:hover {
+        background: var(--primary-hover);
+        transform: scale(1.1);
+      }
+      .avatar-drop-zone {
+        border: 2px dashed var(--border);
+        border-radius: 14px;
+        padding: 24px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        background: var(--bg-body);
+      }
+      .avatar-drop-zone:hover,
+      .avatar-drop-zone.drag-over {
+        border-color: var(--primary);
+        background: var(--primary-glow);
+      }
+      .avatar-drop-zone i {
+        font-size: 2rem;
+        color: var(--text-subtle);
+        margin-bottom: 8px;
+        display: block;
+      }
+      .avatar-drop-zone p {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+      }
+      .crop-strip {
+        display: none;
+        margin-top: 16px;
+        background: var(--bg-body);
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        gap: 16px;
+        align-items: center;
+      }
+      .crop-strip.show {
+        display: flex;
+      }
+      .crop-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2.5px solid var(--primary);
+        flex-shrink: 0;
+      }
+      .crop-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .crop-info .file-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--text-main);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .crop-info .file-size {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+      .upload-progress {
+        display: none;
+        margin-top: 12px;
+      }
+      .upload-progress.show {
+        display: block;
+      }
+      .upload-progress .bar-track {
+        height: 5px;
+        background: var(--border);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .upload-progress .bar-fill {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 3px;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+    </style>
   </head>
   <body>
-    <div
-      class="sidebar-overlay"
-      id="sidebarOverlay"
-      onclick="closeSidebar()"
-    ></div>
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -37,6 +173,7 @@
               font-weight: 800;
               color: #2563eb;
               letter-spacing: -0.02em;
+              line-height: 1;
             "
             >RentMS</span
           >
@@ -44,34 +181,44 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
+        <a href="dashboard.html" class="nav-link"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
-          ><i class="bi bi-credit-card-fill"></i> Make Payment</a
+        <a href="plazas.html" class="nav-link"
+          ><i class="bi bi-buildings"></i> My Plazas</a
         >
-        <a href="payment-history.html" class="nav-link" onclick="closeSidebar()"
-          ><i class="bi bi-clock-history"></i> Payment History</a
+        <a href="tenants.html" class="nav-link"
+          ><i class="bi bi-people-fill"></i> Tenants</a
         >
-        <a href="lease.html" class="nav-link" onclick="closeSidebar()"
-          ><i class="bi bi-file-text-fill"></i> My Lease</a
+        <a href="payments.html" class="nav-link"
+          ><i class="bi bi-credit-card-fill"></i> Payments</a
         >
-        <div class="nav-section">Support</div>
-        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
+        <div class="nav-section">Management</div>
+        <a href="invite-codes.html" class="nav-link"
+          ><i class="bi bi-key-fill"></i> Invite Codes</a
+        >
+        <a href="maintenance.html" class="nav-link"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
+        <a href="messages.html" class="nav-link"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcements.html" class="nav-link" onclick="closeSidebar()"
+        <a href="announcement.html" class="nav-link"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
+        <a href="notifications.html" class="nav-link"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
+        <div class="nav-section">Reports</div>
+        <a href="reports.html" class="nav-link"
+          ><i class="bi bi-bar-chart-fill"></i> Reports</a
+        >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link active" onclick="closeSidebar()"
+        <a href="profile.html" class="nav-link active"
           ><i class="bi bi-person-fill"></i> Profile</a
+        >
+        <a href="settings.html" class="nav-link"
+          ><i class="bi bi-gear-fill"></i> Settings</a
         >
       </nav>
       <div class="sidebar-footer">
@@ -89,10 +236,10 @@
               "
               id="sidebarName"
             >
-              Tenant
+              Landlord
             </div>
             <div style="color: var(--text-muted); font-size: 0.72rem">
-              Tenant
+              Landlord
             </div>
           </div>
           <a
@@ -107,13 +254,6 @@
 
     <div class="main">
       <div class="topbar">
-        <button
-          class="sidebar-toggle me-2"
-          onclick="openSidebar()"
-          aria-label="Open menu"
-        >
-          <i class="bi bi-list" style="font-size: 1.2rem"></i>
-        </button>
         <span class="topbar-title">My Profile</span>
         <a href="notifications.html" class="topbar-btn"
           ><i class="bi bi-bell"></i
@@ -121,561 +261,830 @@
       </div>
 
       <div class="content">
-        <div id="saveAlert" class="alert-success-sm mb-4" style="display: none">
-          <i class="bi bi-check-circle-fill me-2"></i> Profile updated
-          successfully.
+        <!-- Avatar banner -->
+        <div class="card mb-4 p-4">
+          <div class="d-flex align-items-center gap-4 flex-wrap">
+            <div class="avatar-upload-wrap" id="avatarWrap">
+              <div class="avatar-initials" id="avatarInitials">?</div>
+              <label
+                class="avatar-upload-btn"
+                for="avatarFileInput"
+                title="Change photo"
+              >
+                <i class="bi bi-camera-fill"></i>
+              </label>
+              <input
+                type="file"
+                id="avatarFileInput"
+                accept="image/*"
+                style="display: none"
+                onchange="onAvatarFileSelected(this)"
+              />
+            </div>
+            <div style="flex: 1; min-width: 0">
+              <h5
+                style="
+                  font-weight: 700;
+                  color: var(--text-main);
+                  margin-bottom: 2px;
+                "
+                id="profileNameDisplay"
+              >
+                —
+              </h5>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.875rem;
+                  margin-bottom: 6px;
+                "
+                id="profileEmailDisplay"
+              >
+                —
+              </p>
+              <span
+                style="
+                  background: var(--primary-glow);
+                  color: var(--primary);
+                  font-size: 0.75rem;
+                  font-weight: 700;
+                  padding: 3px 12px;
+                  border-radius: 20px;
+                "
+                >Landlord</span
+              >
+            </div>
+            <button
+              id="removePhotoBtn"
+              onclick="removePhoto()"
+              style="display: none"
+              class="btn btn-sm btn-outline-danger"
+            >
+              <i class="bi bi-trash me-1"></i> Remove Photo
+            </button>
+          </div>
         </div>
 
         <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="card p-4 text-center">
-              <div
-                style="
-                  position: relative;
-                  display: inline-block;
-                  margin: 0 auto 16px;
-                "
-              >
+          <div class="col-md-5">
+            <!-- Profile picture card -->
+            <div class="card mb-4">
+              <div class="card-header-custom">
+                <i class="bi bi-image text-primary"></i>
+                <h6>Profile Picture</h6>
+              </div>
+              <div class="p-4">
                 <div
-                  class="avatar avatar-lg"
-                  id="profileAvatar"
-                  style="margin: 0 auto"
+                  class="avatar-drop-zone"
+                  id="dropZone"
+                  onclick="document.getElementById('avatarFileInput2').click()"
+                  ondragover="onDragOver(event)"
+                  ondragleave="onDragLeave(event)"
+                  ondrop="onDrop(event)"
                 >
-                  ?
+                  <i class="bi bi-cloud-arrow-up"></i>
+                  <p>
+                    <strong style="color: var(--text-main)"
+                      >Click to upload</strong
+                    >
+                    or drag &amp; drop<br />JPG, PNG or WEBP · Max 5 MB · Square
+                    looks best
+                  </p>
+                  <input
+                    type="file"
+                    id="avatarFileInput2"
+                    accept="image/*"
+                    style="display: none"
+                    onchange="onAvatarFileSelected(this)"
+                  />
                 </div>
-                <button
-                  onclick="document.getElementById('avatarInput').click()"
-                  style="
-                    position: absolute;
-                    bottom: 0;
-                    right: 0;
-                    width: 28px;
-                    height: 28px;
-                    border-radius: 50%;
-                    background: var(--primary);
-                    border: none;
-                    color: #fff;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    font-size: 0.7rem;
-                  "
-                >
-                  <i class="bi bi-pencil-fill"></i>
-                </button>
-                <input
-                  type="file"
-                  id="avatarInput"
-                  accept="image/*"
-                  style="display: none"
-                  onchange="TenantProfile.previewAvatar(this)"
-                />
-              </div>
-              <div
-                style="
-                  font-size: 1.1rem;
-                  font-weight: 800;
-                  color: var(--text-main);
-                "
-                id="profileName"
-              >
-                —
-              </div>
-              <div
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  margin-bottom: 16px;
-                "
-                id="profileEmail"
-              >
-                —
-              </div>
-              <div
-                style="
-                  background: var(--bg-body);
-                  border: 1px solid var(--border);
-                  border-radius: 10px;
-                  padding: 12px;
-                  text-align: left;
-                  font-size: 0.8rem;
-                "
-              >
-                <div class="d-flex justify-content-between mb-2">
-                  <span style="color: var(--text-muted)">Unit</span
-                  ><span style="font-weight: 700" id="profileUnit">—</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span style="color: var(--text-muted)">Plaza</span
-                  ><span style="font-weight: 700" id="profilePlaza">—</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span style="color: var(--text-muted)">Member since</span
-                  ><span style="font-weight: 700" id="profileJoined">—</span>
-                </div>
-              </div>
-              <button
-                class="btn btn-outline-danger btn-sm mt-3 w-100"
-                data-bs-toggle="modal"
-                data-bs-target="#logoutModal"
-              >
-                <i class="bi bi-box-arrow-right me-1"></i> Log Out
-              </button>
-            </div>
-          </div>
 
-          <div class="col-lg-8">
-            <div class="card">
-              <ul class="nav nav-tabs px-3 pt-3">
-                <li class="nav-item">
-                  <a
-                    class="nav-link active"
-                    data-bs-toggle="tab"
-                    href="#tabPersonal"
-                    >Personal Info</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tabSecurity"
-                    >Security</a
-                  >
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-bs-toggle="tab" href="#tabNotifPrefs"
-                    >Notifications</a
-                  >
-                </li>
-              </ul>
-              <div class="tab-content p-4">
-                <!-- Personal -->
-                <div class="tab-pane fade show active" id="tabPersonal">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="form-label fw-semibold">Full Name *</label
-                      ><input
-                        type="text"
-                        class="form-control"
-                        id="pName"
-                        placeholder="Your full name"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-semibold">Username</label
-                      ><input
-                        type="text"
-                        class="form-control"
-                        id="pUsername"
-                        placeholder="username"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-semibold"
-                        >Email Address *</label
-                      ><input
-                        type="email"
-                        class="form-control"
-                        id="pEmail"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-semibold">Phone Number</label
-                      ><input
-                        type="tel"
-                        class="form-control"
-                        id="pPhone"
-                        placeholder="055 123 4567"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-semibold">Date of Birth</label
-                      ><input type="date" class="form-control" id="pDob" />
-                    </div>
-                    <div class="col-md-6">
-                      <label class="form-label fw-semibold">Occupation</label
-                      ><input
-                        type="text"
-                        class="form-control"
-                        id="pOccupation"
-                        placeholder="e.g. Software Engineer"
-                      />
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label fw-semibold"
-                        >Emergency Contact</label
-                      >
-                      <div class="row g-2">
-                        <div class="col-6">
-                          <input
-                            type="text"
-                            class="form-control"
-                            id="pEcName"
-                            placeholder="Contact name"
-                          />
-                        </div>
-                        <div class="col-6">
-                          <input
-                            type="tel"
-                            class="form-control"
-                            id="pEcPhone"
-                            placeholder="Phone number"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12 pt-2">
+                <div class="crop-strip" id="cropStrip">
+                  <img
+                    id="cropPreviewImg"
+                    class="crop-preview"
+                    src=""
+                    alt="preview"
+                  />
+                  <div class="crop-info">
+                    <div class="file-name" id="cropFileName">—</div>
+                    <div class="file-size" id="cropFileSize">—</div>
+                    <div class="d-flex gap-2 mt-2">
                       <button
-                        class="btn btn-primary px-4"
-                        onclick="TenantProfile.savePersonal()"
+                        class="btn btn-primary btn-sm px-3"
+                        onclick="confirmUpload()"
                       >
-                        <i class="bi bi-check-lg me-1"></i> Save Changes
+                        <i class="bi bi-check-lg me-1"></i>Use This Photo
+                      </button>
+                      <button
+                        class="btn btn-outline-secondary btn-sm"
+                        onclick="cancelUpload()"
+                      >
+                        Cancel
                       </button>
                     </div>
                   </div>
                 </div>
-                <!-- Security -->
-                <div class="tab-pane fade" id="tabSecurity">
-                  <h6 style="font-weight: 800; margin-bottom: 20px">
-                    Change Password
-                  </h6>
+
+                <div class="upload-progress" id="uploadProgress">
                   <div
-                    class="d-flex flex-column gap-3"
-                    style="max-width: 420px"
-                  >
-                    <div>
-                      <label class="form-label fw-semibold"
-                        >Current Password</label
-                      ><input
-                        type="password"
-                        class="form-control"
-                        id="pwCurrent"
-                        placeholder="••••••••"
-                      />
-                    </div>
-                    <div>
-                      <label class="form-label fw-semibold">New Password</label>
-                      <input
-                        type="password"
-                        class="form-control"
-                        id="pwNew"
-                        placeholder="••••••••"
-                        oninput="checkPwStrength(this.value)"
-                      />
-                      <div
-                        style="
-                          height: 4px;
-                          border-radius: 100px;
-                          background: var(--border);
-                          margin-top: 8px;
-                          overflow: hidden;
-                        "
-                      >
-                        <div
-                          id="pwBar"
-                          style="
-                            height: 100%;
-                            border-radius: 100px;
-                            width: 0%;
-                            transition: 0.3s;
-                          "
-                        ></div>
-                      </div>
-                      <div
-                        id="pwLabel"
-                        style="
-                          font-size: 0.72rem;
-                          margin-top: 4px;
-                          font-weight: 600;
-                          color: var(--text-muted);
-                        "
-                      ></div>
-                    </div>
-                    <div>
-                      <label class="form-label fw-semibold"
-                        >Confirm New Password</label
-                      ><input
-                        type="password"
-                        class="form-control"
-                        id="pwConfirm"
-                        placeholder="••••••••"
-                      />
-                    </div>
-                    <button
-                      class="btn btn-primary"
-                      onclick="TenantProfile.changePassword()"
-                    >
-                      <i class="bi bi-shield-lock me-1"></i> Update Password
-                    </button>
-                  </div>
-                  <hr style="border-color: var(--border); margin: 28px 0" />
-                  <h6
                     style="
-                      font-weight: 800;
-                      margin-bottom: 4px;
-                      color: var(--danger);
-                    "
-                  >
-                    Danger Zone
-                  </h6>
-                  <p
-                    style="
-                      font-size: 0.82rem;
+                      font-size: 0.78rem;
+                      font-weight: 700;
                       color: var(--text-muted);
-                      margin-bottom: 14px;
                     "
                   >
-                    Deleting your account is permanent and cannot be undone.
-                  </p>
-                  <button
-                    class="btn btn-sm"
-                    style="
-                      background: var(--danger-light);
-                      color: var(--danger-text);
-                      border: 1px solid rgba(239, 68, 68, 0.3);
-                    "
-                    data-bs-toggle="modal"
-                    data-bs-target="#deleteModal"
-                  >
-                    <i class="bi bi-trash me-1"></i> Delete Account
-                  </button>
-                </div>
-                <!-- Notifications -->
-                <div class="tab-pane fade" id="tabNotifPrefs">
-                  <h6 style="font-weight: 800; margin-bottom: 20px">
-                    Notification Preferences
-                  </h6>
-                  <div class="d-flex flex-column gap-1">
-                    <div class="toggle-row">
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.875rem">
-                          Payment Reminders
-                        </div>
-                        <div
-                          style="font-size: 0.78rem; color: var(--text-muted)"
-                        >
-                          Get notified when rent is due
-                        </div>
-                      </div>
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="nPayment"
-                          checked
-                        />
-                      </div>
-                    </div>
-                    <div class="toggle-row">
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.875rem">
-                          Maintenance Updates
-                        </div>
-                        <div
-                          style="font-size: 0.78rem; color: var(--text-muted)"
-                        >
-                          Status changes on your requests
-                        </div>
-                      </div>
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="nMaint"
-                          checked
-                        />
-                      </div>
-                    </div>
-                    <div class="toggle-row">
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.875rem">
-                          Announcements
-                        </div>
-                        <div
-                          style="font-size: 0.78rem; color: var(--text-muted)"
-                        >
-                          New posts from your landlord
-                        </div>
-                      </div>
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="nAnn"
-                          checked
-                        />
-                      </div>
-                    </div>
-                    <div class="toggle-row">
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.875rem">
-                          Messages
-                        </div>
-                        <div
-                          style="font-size: 0.78rem; color: var(--text-muted)"
-                        >
-                          New direct messages
-                        </div>
-                      </div>
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="nMsg"
-                          checked
-                        />
-                      </div>
-                    </div>
-                    <div class="toggle-row">
-                      <div>
-                        <div style="font-weight: 700; font-size: 0.875rem">
-                          Lease Alerts
-                        </div>
-                        <div
-                          style="font-size: 0.78rem; color: var(--text-muted)"
-                        >
-                          Renewal reminders and lease updates
-                        </div>
-                      </div>
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          id="nLease"
-                          checked
-                        />
-                      </div>
-                    </div>
+                    Uploading…
                   </div>
-                  <button
-                    class="btn btn-primary mt-4"
-                    onclick="TenantProfile.saveNotifPrefs()"
+                  <div class="bar-track">
+                    <div class="bar-fill" id="progressBar"></div>
+                  </div>
+                </div>
+
+                <div
+                  id="avatarMsg"
+                  style="margin-top: 12px; font-size: 0.82rem"
+                ></div>
+
+                <div
+                  style="
+                    margin-top: 16px;
+                    padding: 12px 14px;
+                    background: var(--bg-body);
+                    border-radius: 10px;
+                    border: 1px solid var(--border);
+                  "
+                >
+                  <div
+                    style="
+                      font-size: 0.72rem;
+                      font-weight: 800;
+                      color: var(--text-muted);
+                      text-transform: uppercase;
+                      letter-spacing: 0.07em;
+                      margin-bottom: 8px;
+                    "
                   >
-                    <i class="bi bi-check-lg me-1"></i> Save Preferences
-                  </button>
+                    Tips for a great photo
+                  </div>
+                  <ul
+                    style="
+                      margin: 0;
+                      padding-left: 16px;
+                      font-size: 0.78rem;
+                      color: var(--text-muted);
+                      line-height: 1.8;
+                    "
+                  >
+                    <li>Use a clear, well-lit face photo</li>
+                    <li>Square images work best (1:1 ratio)</li>
+                    <li>Minimum 200×200 px recommended</li>
+                    <li>Tenants see this on messages &amp; announcements</li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Logout modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content text-center p-4">
-          <div style="font-size: 2rem; margin-bottom: 12px">👋</div>
-          <h5 class="fw-bold mb-2">Log Out?</h5>
-          <p
-            style="
-              font-size: 0.85rem;
-              color: var(--text-muted);
-              margin-bottom: 20px;
-            "
-          >
-            You'll need to log back in to access your dashboard.
-          </p>
-          <div class="d-flex gap-2">
-            <button
-              class="btn btn-danger flex-fill"
-              onclick="
-                localStorage.clear();
-                location.href = '../index.html';
-              "
-            >
-              Log Out
-            </button>
-            <button class="btn btn-secondary flex-fill" data-bs-dismiss="modal">
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+          <div class="col-md-7">
+            <!-- Personal info -->
+            <div class="card mb-4">
+              <div class="card-header-custom">
+                <i class="bi bi-person-fill text-primary"></i>
+                <h6>Personal Information</h6>
+              </div>
+              <div class="p-4">
+                <div id="profileMsg"></div>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Username</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="profileName"
+                      placeholder="Your Username"
+                      oninput="syncNameDisplay()"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Email Address</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="profileEmail"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="profilePhone"
+                      placeholder="+233 20 000 0000"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Address</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="profileAddress"
+                      placeholder="Your address"
+                    />
+                  </div>
+                  <div class="col-12 pt-2">
+                    <button
+                      class="btn btn-primary px-4"
+                      onclick="saveProfile()"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-    <!-- Delete modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title fw-bold text-danger">
-              <i class="bi bi-exclamation-triangle me-2"></i>Delete Account
-            </h5>
-            <button
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body p-4">
-            <p
-              style="
-                font-size: 0.875rem;
-                color: var(--text-muted);
-                margin-bottom: 16px;
-              "
-            >
-              This will permanently delete your account and all associated data.
-              This cannot be undone.
-            </p>
-            <label class="form-label fw-semibold"
-              >Enter your password to confirm</label
-            >
-            <input
-              type="password"
-              class="form-control"
-              id="deletePassword"
-              placeholder="••••••••"
-            />
-          </div>
-          <div class="modal-footer">
-            <button
-              class="btn btn-danger"
-              onclick="TenantProfile.deleteAccount()"
-            >
-              <i class="bi bi-trash me-1"></i> Delete My Account
-            </button>
-            <button class="btn btn-secondary" data-bs-dismiss="modal">
-              Cancel
-            </button>
+            <!-- Change password -->
+            <div class="card">
+              <div class="card-header-custom">
+                <i class="bi bi-shield-lock-fill text-primary"></i>
+                <h6>Change Password</h6>
+              </div>
+              <div class="p-4">
+                <div id="pwMsg"></div>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label class="form-label">Current Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="currentPw"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">New Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="newPw"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label">Confirm New Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="confirmPw"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div class="col-12 pt-2">
+                    <button
+                      class="btn btn-outline-primary px-4"
+                      onclick="changePassword()"
+                    >
+                      Update Password
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/landlord.js"></script>
-    <script src="../js/tenants.js"></script>
+
     <script>
-      TenantProfile.init();
-      function checkPwStrength(val) {
-        const score = [
-          val.length >= 8,
-          /[A-Z]/.test(val),
-          /[0-9]/.test(val),
-          /[^A-Za-z0-9]/.test(val),
-        ].filter(Boolean).length;
-        const levels = [
-          { w: "0%", c: "transparent", t: "" },
-          { w: "25%", c: "#ef4444", t: "Weak" },
-          { w: "50%", c: "#f59e0b", t: "Fair" },
-          { w: "75%", c: "#3b82f6", t: "Good" },
-          { w: "100%", c: "#10b981", t: "Strong" },
-        ];
-        document.getElementById("pwBar").style.cssText =
-          `width:${levels[score].w};background:${levels[score].c};height:100%;border-radius:100px;transition:.3s`;
-        document.getElementById("pwLabel").textContent = levels[score].t;
-        document.getElementById("pwLabel").style.color = levels[score].c;
+      /* ── FIX: read token from correct key (landlord_token first, fallback to token) ── */
+      const BACKEND_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5000/api"
+          : "https://rentms-backend-5.onrender.com/api";
+
+      const getToken = () =>
+        localStorage.getItem("landlord_token") ||
+        localStorage.getItem("token") ||
+        "";
+
+      const MAX_SIZE_MB = 5;
+      let pendingDataUrl = null;
+      let pendingFile = null;
+
+      /* ── Load profile on page load ── */
+      document.addEventListener("DOMContentLoaded", async () => {
+        RentMs.initSidebar();
+
+        /* FIX: load from localStorage first (instant, no flicker),
+           then sync from API to get latest data */
+        loadFromLocalStorage();
+        await loadFromApi();
+
+        /* Restore avatar */
+        restoreAvatar();
+      });
+
+      function loadFromLocalStorage() {
+        try {
+          const u = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          if (u.username) {
+            document.getElementById("profileName").value = u.username;
+            document.getElementById("profileNameDisplay").textContent =
+              u.username;
+            updateInitials(u.username);
+          }
+          if (u.email) {
+            document.getElementById("profileEmail").value = u.email;
+            document.getElementById("profileEmailDisplay").textContent =
+              u.email;
+          }
+          if (u.phone) document.getElementById("profilePhone").value = u.phone;
+          if (u.address)
+            document.getElementById("profileAddress").value = u.address;
+        } catch {}
       }
-      function openSidebar() {
-        document.getElementById("sidebar").classList.add("open");
-        document.getElementById("sidebarOverlay").classList.add("show");
-        document.body.style.overflow = "hidden";
+
+      async function loadFromApi() {
+        try {
+          const res = await fetch(BACKEND_URL + "/auth/me", {
+            headers: { Authorization: "Bearer " + getToken() },
+          });
+          const data = await res.json();
+          const p = data.data || data.user || {};
+
+          const name = p.username || p.name || "";
+          if (name) {
+            document.getElementById("profileName").value = name;
+            document.getElementById("profileNameDisplay").textContent = name;
+            updateInitials(name);
+          }
+          if (p.email) {
+            document.getElementById("profileEmail").value = p.email;
+            document.getElementById("profileEmailDisplay").textContent =
+              p.email;
+          }
+          if (p.phone) document.getElementById("profilePhone").value = p.phone;
+          if (p.address)
+            document.getElementById("profileAddress").value = p.address;
+
+          /* FIX: update localStorage with fresh data from API */
+          const stored = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          const updated = {
+            ...stored,
+            username: name,
+            email: p.email,
+            phone: p.phone,
+            address: p.address,
+          };
+          localStorage.setItem("landlord_user", JSON.stringify(updated));
+          localStorage.setItem("user", JSON.stringify(updated));
+
+          /* Restore avatar from API if not cached locally */
+          if (p.avatar_url && !localStorage.getItem("LANDLORD_AVATAR")) {
+            const full = p.avatar_url.startsWith("http")
+              ? p.avatar_url
+              : "https://rentms-backend-5.onrender.com/" +
+                p.avatar_url.replace(/^\//, "");
+            localStorage.setItem("LANDLORD_AVATAR", full);
+            applyAvatar(full);
+          }
+        } catch (err) {
+          console.warn("Profile load error:", err.message);
+        }
       }
-      function closeSidebar() {
-        document.getElementById("sidebar").classList.remove("open");
-        document.getElementById("sidebarOverlay").classList.remove("show");
-        document.body.style.overflow = "";
+
+      /* ── Save profile ── */
+      async function saveProfile() {
+        const name = document.getElementById("profileName").value.trim();
+        const email = document.getElementById("profileEmail").value.trim();
+        const phone = document.getElementById("profilePhone").value.trim();
+        const address = document.getElementById("profileAddress").value.trim();
+        const msgEl = document.getElementById("profileMsg");
+
+        if (!name || !email) {
+          showMsg(msgEl, "Name and email are required.", "error");
+          return;
+        }
+
+        try {
+          const res = await fetch(BACKEND_URL + "/auth/me", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + getToken(),
+            },
+            body: JSON.stringify({ username: name, email, phone, address }),
+          });
+          const data = await res.json();
+
+          if (!res.ok || data.error) {
+            showMsg(msgEl, data.message || "Failed to save.", "error");
+            return;
+          }
+
+          /* FIX: update BOTH localStorage keys so the data persists
+             across page navigations */
+          const stored = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          const updated = { ...stored, username: name, email, phone, address };
+          localStorage.setItem("landlord_user", JSON.stringify(updated));
+          localStorage.setItem("user", JSON.stringify(updated));
+
+          /* Update UI */
+          document.getElementById("profileNameDisplay").textContent = name;
+          document.getElementById("profileEmailDisplay").textContent = email;
+          document.getElementById("sidebarName").textContent = name;
+          const sav = document.getElementById("sidebarAvatar");
+          if (sav && !sav.style.backgroundImage)
+            sav.textContent = name.charAt(0).toUpperCase();
+          updateInitials(name);
+
+          showMsg(msgEl, "✅ Profile updated successfully!", "success");
+        } catch (err) {
+          showMsg(msgEl, "Network error. Please try again.", "error");
+        }
+      }
+
+      /* ── Change password ── */
+      async function changePassword() {
+        const current = document.getElementById("currentPw").value;
+        const newPw = document.getElementById("newPw").value;
+        const confirm = document.getElementById("confirmPw").value;
+        const msgEl = document.getElementById("pwMsg");
+
+        if (!current || !newPw) {
+          showMsg(msgEl, "All fields are required.", "error");
+          return;
+        }
+        if (newPw !== confirm) {
+          showMsg(msgEl, "Passwords do not match.", "error");
+          return;
+        }
+        if (newPw.length < 6) {
+          showMsg(msgEl, "Minimum 6 characters.", "error");
+          return;
+        }
+
+        try {
+          const res = await fetch(BACKEND_URL + "/auth/change-password", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + getToken(),
+            },
+            body: JSON.stringify({
+              current_password: current,
+              new_password: newPw,
+            }),
+          });
+          const data = await res.json();
+          if (res.ok && !data.error) {
+            ["currentPw", "newPw", "confirmPw"].forEach((id) => {
+              document.getElementById(id).value = "";
+            });
+            showMsg(msgEl, "✅ Password changed successfully!", "success");
+          } else {
+            showMsg(msgEl, data.message || "Failed.", "error");
+          }
+        } catch {
+          showMsg(msgEl, "Network error.", "error");
+        }
+      }
+
+      /* ── Sync name display as landlord types ── */
+      function syncNameDisplay() {
+        const name = document.getElementById("profileName").value.trim();
+        const el = document.getElementById("profileNameDisplay");
+        if (el) el.textContent = name || "—";
+        updateInitials(name);
+      }
+
+      function updateInitials(name) {
+        const el = document.getElementById("avatarInitials");
+        if (!el) return;
+        const initials = name
+          ? name
+              .trim()
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2)
+              .toUpperCase()
+          : "?";
+        el.textContent = initials;
+      }
+
+      /* ── Avatar upload ── */
+      function onAvatarFileSelected(input) {
+        const file = input.files[0];
+        input.value = "";
+        if (!file) return;
+        processFile(file);
+      }
+
+      function processFile(file) {
+        if (!file.type.startsWith("image/")) {
+          showAvatarMsg(
+            "Please select an image file (JPG, PNG, or WEBP).",
+            "error",
+          );
+          return;
+        }
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+          showAvatarMsg(
+            `File is too large. Maximum size is ${MAX_SIZE_MB} MB.`,
+            "error",
+          );
+          return;
+        }
+        pendingFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          pendingDataUrl = e.target.result;
+          showCropStrip(file, pendingDataUrl);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function showCropStrip(file, dataUrl) {
+        document.getElementById("cropPreviewImg").src = dataUrl;
+        document.getElementById("cropFileName").textContent = file.name;
+        document.getElementById("cropFileSize").textContent = formatBytes(
+          file.size,
+        );
+        document.getElementById("cropStrip").classList.add("show");
+        document.getElementById("dropZone").style.display = "none";
+        showAvatarMsg("", "");
+      }
+
+      function cancelUpload() {
+        pendingDataUrl = null;
+        pendingFile = null;
+        document.getElementById("cropStrip").classList.remove("show");
+        document.getElementById("dropZone").style.display = "";
+        document.getElementById("uploadProgress").classList.remove("show");
+        showAvatarMsg("", "");
+      }
+
+      async function confirmUpload() {
+        if (!pendingDataUrl) return;
+        document.getElementById("cropStrip").classList.remove("show");
+        const progress = document.getElementById("uploadProgress");
+        const bar = document.getElementById("progressBar");
+        progress.classList.add("show");
+
+        let pct = 0;
+        const tick = setInterval(() => {
+          pct = Math.min(pct + Math.random() * 18, 90);
+          bar.style.width = pct + "%";
+        }, 120);
+
+        try {
+          const formData = new FormData();
+          formData.append("avatar", pendingFile);
+
+          const res = await fetch(BACKEND_URL + "/auth/avatar", {
+            method: "POST",
+            /* FIX: use correct token key */
+            headers: { Authorization: "Bearer " + getToken() },
+            body: formData,
+          });
+
+          const json = await res.json().catch(() => ({}));
+
+          if (!res.ok || json.error) {
+            clearInterval(tick);
+            progress.classList.remove("show");
+            document.getElementById("dropZone").style.display = "";
+            showAvatarMsg(
+              json.message || "Upload failed. Please try again.",
+              "error",
+            );
+            return;
+          }
+
+          const rawUrl =
+            json.data?.avatar_url ||
+            json.avatar_url ||
+            json.data?.url ||
+            json.url ||
+            null;
+          const url = rawUrl
+            ? rawUrl.startsWith("http")
+              ? rawUrl
+              : "https://rentms-backend-5.onrender.com/" +
+                rawUrl.replace(/^\//, "")
+            : pendingDataUrl;
+
+          /* FIX: save to localStorage so it persists across page navigations */
+          try {
+            localStorage.setItem("LANDLORD_AVATAR", url);
+          } catch {}
+
+          /* FIX: also update the avatar_url in the stored user object */
+          try {
+            const stored = JSON.parse(
+              localStorage.getItem("landlord_user") ||
+                localStorage.getItem("user") ||
+                "{}",
+            );
+            stored.avatar_url = url;
+            localStorage.setItem("landlord_user", JSON.stringify(stored));
+            localStorage.setItem("user", JSON.stringify(stored));
+          } catch {}
+
+          finishUpload(url, tick, bar, progress);
+        } catch {
+          clearInterval(tick);
+          progress.classList.remove("show");
+          document.getElementById("dropZone").style.display = "";
+          showAvatarMsg(
+            "Network error. Please check your connection.",
+            "error",
+          );
+        }
+      }
+
+      function finishUpload(dataUrl, tick, bar, progress) {
+        clearInterval(tick);
+        bar.style.width = "100%";
+        setTimeout(() => {
+          progress.classList.remove("show");
+          bar.style.width = "0%";
+          applyAvatar(dataUrl);
+          document.getElementById("dropZone").style.display = "";
+          showAvatarMsg("✅ Profile picture updated!", "success");
+          pendingDataUrl = null;
+          pendingFile = null;
+        }, 400);
+      }
+
+      function applyAvatar(url) {
+        const wrap = document.getElementById("avatarWrap");
+        const initEl = document.getElementById("avatarInitials");
+        if (wrap && initEl) {
+          let img = wrap.querySelector(".avatar-img");
+          if (!img) {
+            img = document.createElement("img");
+            img.className = "avatar-img";
+            img.alt = "Profile photo";
+            wrap.insertBefore(img, initEl);
+            initEl.style.display = "none";
+          }
+          img.src = url;
+        }
+        const sav = document.getElementById("sidebarAvatar");
+        if (sav) {
+          sav.style.backgroundImage = `url(${url})`;
+          sav.style.backgroundSize = "cover";
+          sav.style.backgroundPosition = "center";
+          sav.textContent = "";
+        }
+        const rmBtn = document.getElementById("removePhotoBtn");
+        if (rmBtn) rmBtn.style.display = "";
+      }
+
+      function restoreAvatar() {
+        try {
+          const saved = localStorage.getItem("LANDLORD_AVATAR");
+          if (saved) {
+            applyAvatar(saved);
+            return;
+          }
+        } catch {}
+      }
+
+      function removePhoto() {
+        if (!confirm("Remove your profile picture?")) return;
+        try {
+          localStorage.removeItem("LANDLORD_AVATAR");
+        } catch {}
+
+        /* FIX: remove avatar_url from stored user too */
+        try {
+          const stored = JSON.parse(
+            localStorage.getItem("landlord_user") ||
+              localStorage.getItem("user") ||
+              "{}",
+          );
+          delete stored.avatar_url;
+          localStorage.setItem("landlord_user", JSON.stringify(stored));
+          localStorage.setItem("user", JSON.stringify(stored));
+        } catch {}
+
+        const wrap = document.getElementById("avatarWrap");
+        const initEl = document.getElementById("avatarInitials");
+        const img = wrap?.querySelector(".avatar-img");
+        if (img) img.remove();
+        if (initEl) initEl.style.display = "";
+
+        const sav = document.getElementById("sidebarAvatar");
+        if (sav) {
+          sav.style.backgroundImage = "";
+          const name =
+            document.getElementById("sidebarName")?.textContent || "";
+          sav.textContent = name ? name[0].toUpperCase() : "?";
+        }
+        document.getElementById("removePhotoBtn").style.display = "none";
+
+        /* Also remove from API */
+        fetch(BACKEND_URL + "/auth/me", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + getToken(),
+          },
+          body: JSON.stringify({ avatar_url: null }),
+        }).catch(() => {});
+
+        showAvatarMsg("Profile picture removed.", "info");
+      }
+
+      /* ── Drag & drop ── */
+      function onDragOver(e) {
+        e.preventDefault();
+        document.getElementById("dropZone").classList.add("drag-over");
+      }
+      function onDragLeave() {
+        document.getElementById("dropZone").classList.remove("drag-over");
+      }
+      function onDrop(e) {
+        e.preventDefault();
+        document.getElementById("dropZone").classList.remove("drag-over");
+        const file = e.dataTransfer.files[0];
+        if (file) processFile(file);
+      }
+
+      /* ── Message helpers ── */
+      function showAvatarMsg(text, type) {
+        const el = document.getElementById("avatarMsg");
+        if (!el) return;
+        if (!text) {
+          el.innerHTML = "";
+          return;
+        }
+        const colors = {
+          success: {
+            bg: "rgba(16,185,129,.1)",
+            border: "rgba(16,185,129,.3)",
+            color: "#34d399",
+          },
+          error: {
+            bg: "rgba(239,68,68,.08)",
+            border: "rgba(239,68,68,.25)",
+            color: "#f87171",
+          },
+          info: {
+            bg: "rgba(37,99,235,.08)",
+            border: "rgba(37,99,235,.2)",
+            color: "#60a5fa",
+          },
+        };
+        const c = colors[type] || colors.info;
+        el.innerHTML = `<div style="background:${c.bg};border:1px solid ${c.border};border-radius:8px;padding:9px 13px;font-size:.8rem;font-weight:600;color:${c.color}">${text}</div>`;
+      }
+
+      function showMsg(el, text, type) {
+        if (!el) return;
+        const colors = {
+          success: {
+            bg: "rgba(16,185,129,.1)",
+            border: "rgba(16,185,129,.3)",
+            color: "#34d399",
+          },
+          error: {
+            bg: "rgba(239,68,68,.08)",
+            border: "rgba(239,68,68,.25)",
+            color: "#f87171",
+          },
+        };
+        const c = colors[type] || colors.success;
+        el.innerHTML = `<div style="background:${c.bg};border:1px solid ${c.border};border-radius:8px;padding:9px 13px;font-size:.82rem;font-weight:600;color:${c.color};margin-bottom:12px">${text}</div>`;
+        setTimeout(() => {
+          if (el) el.innerHTML = "";
+        }, 4000);
+      }
+
+      function formatBytes(b) {
+        if (b < 1024) return b + " B";
+        if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
+        return (b / 1048576).toFixed(1) + " MB";
       }
     </script>
   </body>
