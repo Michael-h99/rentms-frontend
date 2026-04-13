@@ -260,8 +260,7 @@ const API = (() => {
   ══════════════════════════════════════════════════════════ */
   const Auth = {
     login: (email, password) => post("/auth/login", { email, password }),
-    adminLogin: (email, password) =>
-      post("/auth/admin-login", { email, password }),
+    adminLogin: (email, password) => post("/auth/login", { email, password }),
     register: (data) => post("/auth/register", data),
     /*
      * FIX 4 — Auth.getMe was missing:
