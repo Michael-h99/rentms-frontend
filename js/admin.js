@@ -577,33 +577,34 @@ const AdminDashboard = (() => {
     const el = document.getElementById("activityFeed");
     if (!el) return;
     const act = d?.recentActivity || {};
+    /* FIX: use explicit colors so text is always visible on dark bg */
     el.innerHTML = `
       <div class="activity-row">
-        <div class="activity-dot" style="background:var(--primary)"></div>
+        <div class="activity-dot" style="background:#3b82f6"></div>
         <div style="min-width:0;flex:1">
-          <div style="font-size:.85rem;font-weight:600">${act.actions_today || 0} platform actions today</div>
-          <div style="font-size:.72rem;color:var(--text-muted)">Platform · just now</div>
+          <div style="font-size:.85rem;font-weight:600;color:#e2e8f0">${act.actions_today || 0} platform actions today</div>
+          <div style="font-size:.72rem;color:#94a3b8">Platform · just now</div>
         </div>
       </div>
       <div class="activity-row">
-        <div class="activity-dot" style="background:var(--success)"></div>
+        <div class="activity-dot" style="background:#10b981"></div>
         <div style="min-width:0;flex:1">
-          <div style="font-size:.85rem;font-weight:600">${d?.users?.active_users || 0} active users</div>
-          <div style="font-size:.72rem;color:var(--text-muted)">Users · today</div>
+          <div style="font-size:.85rem;font-weight:600;color:#e2e8f0">${d?.users?.active_users || 0} active users on platform</div>
+          <div style="font-size:.72rem;color:#94a3b8">Users · today</div>
         </div>
       </div>
       <div class="activity-row">
-        <div class="activity-dot" style="background:var(--warning)"></div>
+        <div class="activity-dot" style="background:#f59e0b"></div>
         <div style="min-width:0;flex:1">
-          <div style="font-size:.85rem;font-weight:600">${d?.tenancies?.active_tenancies || 0} active tenancies</div>
-          <div style="font-size:.72rem;color:var(--text-muted)">Leases · current</div>
+          <div style="font-size:.85rem;font-weight:600;color:#e2e8f0">${d?.tenancies?.active_tenancies || 0} active tenancies</div>
+          <div style="font-size:.72rem;color:#94a3b8">Leases · current</div>
         </div>
       </div>
       <div class="activity-row">
-        <div class="activity-dot" style="background:var(--success)"></div>
+        <div class="activity-dot" style="background:#10b981"></div>
         <div style="min-width:0;flex:1">
-          <div style="font-size:.85rem;font-weight:600">Total revenue: ${Admin.fmt.currency(d?.payments?.total_revenue || 0)}</div>
-          <div style="font-size:.72rem;color:var(--text-muted)">Payments · all time</div>
+          <div style="font-size:.85rem;font-weight:600;color:#e2e8f0">Total revenue: ${Admin.fmt.currency(d?.payments?.total_revenue || 0)}</div>
+          <div style="font-size:.72rem;color:#94a3b8">Payments · all time</div>
         </div>
       </div>`;
   }
