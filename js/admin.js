@@ -1202,10 +1202,19 @@ const AdminMaintenance = (() => {
    ───────────────────────────────────────────────────────────── */
 
 const AdminPlazas = (() => {
+  let all = [],
+    filtered = [];
+
   async function init() {
     Admin.initSidebar();
     const r = await Admin.api("GET", "/admin/plazas");
-    const all = r?.data || [];
+    all = Array.isArray(r?.data) ? r.data : r?.data?.plazas || [];
+    filtered = [...all];
+    renderStats();
+    render();
+  }
+
+  function renderStats() {
     const set = (id, v) => {
       const el = document.getElementById(id);
       if (el) el.textContent = v;
@@ -1213,28 +1222,164 @@ const AdminPlazas = (() => {
     set("plazaTotal", all.length);
     set(
       "plazaUnits",
-      all.reduce((s, p) => s + (p.total_units || 0), 0),
+      all.reduce((s, p) => s + (parseInt(p.total_units) || 0), 0),
     );
-    const el = document.getElementById("plazasGrid");
-    if (el)
-      el.innerHTML = all.length
-        ? all
-            .map(
-              (p) =>
-                `<div class="col-md-6 col-xl-4"><div class="plaza-card"><div style="font-weight:800">${p.name}</div><div style="font-size:.78rem;color:var(--text-muted)">${p.location || "—"}</div><div style="font-size:.78rem;margin-top:8px">Landlord: ${p.landlord_name || "—"}</div><div style="font-weight:700;color:var(--success-text);margin-top:4px">${p.total_units || 0} units</div></div></div>`,
-            )
-            .join("")
-        : '<div class="col-12"><div class="empty-state" style="padding:40px"><i class="bi bi-buildings"></i><p>No plazas found</p></div></div>';
+    set(
+      "plazaOccupied",
+      all.reduce((s, p) => s + (parseInt(p.occupied_units) || 0), 0),
+    );
+    set(
+      "plazaVacant",
+      all.reduce(
+        (s, p) =>
+          s +
+          (parseInt(p.total_units) || 0) -
+          (parseInt(p.occupied_units) || 0),
+        0,
+      ),
+    );
   }
-  return {
-    init,
-    filter: () => {},
-    clearFilters: () => {},
-    setView: () => {},
-    render: () => {},
-    viewPlaza: () => {},
-    savePlaza: () => {},
-  };
+
+  function filter() {
+    const q = (
+      document.getElementById("plazaSearch")?.value || ""
+    ).toLowerCase();
+    filtered = all.filter(
+      (p) =>
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.landlord_name || "").toLowerCase().includes(q),
+    );
+    render();
+  }
+
+  function clearFilters() {
+    const el = document.getElementById("plazaSearch");
+    if (el) el.value = "";
+    filtered = [...all];
+    render();
+  }
+
+  function setView(mode) {
+    document
+      .getElementById("gridBtn")
+      ?.classList.toggle("active", mode === "grid");
+    document
+      .getElementById("listBtn")
+      ?.classList.toggle("active", mode === "list");
+    const grid = document.getElementById("plazasGrid");
+    const list = document.getElementById("plazasList");
+    if (grid) grid.style.display = mode === "grid" ? "" : "none";
+    if (list) list.style.display = mode === "list" ? "" : "none";
+    render();
+  }
+
+  function render() {
+    const el = document.getElementById("plazasGrid");
+    if (!el) {
+      renderList();
+      return;
+    }
+    if (!filtered.length) {
+      el.innerHTML =
+        '<div class="col-12"><div class="empty-state" style="padding:40px"><i class="bi bi-buildings"></i><p>No plazas found</p></div></div>';
+      return;
+    }
+    el.innerHTML = filtered
+      .map((p) => {
+        const occ = parseInt(p.occupied_units) || 0;
+        const total = parseInt(p.total_units) || 1;
+        const rate = Math.round((occ / total) * 100);
+        const barColor =
+          rate >= 80
+            ? "var(--success)"
+            : rate >= 50
+              ? "var(--warning)"
+              : "var(--danger)";
+        return `<div class="col-md-6 col-xl-4">
+        <div class="plaza-card">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="plaza-icon"><i class="bi bi-buildings"></i></div>
+            <div style="min-width:0;flex:1">
+              <div style="font-weight:800">${p.name}</div>
+              <div style="font-size:.78rem;color:var(--text-muted)">${p.location || "—"}</div>
+            </div>
+          </div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px">Landlord: <strong style="color:var(--text-main)">${p.landlord_name || p.landlord_username || "—"}</strong></div>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div><span style="font-size:.72rem;color:var(--text-muted)">OCCUPANCY</span><div style="font-weight:800">${occ}/${total} units</div></div>
+            <div style="text-align:right"><span style="font-size:.72rem;color:var(--text-muted)">VACANT</span><div style="font-weight:800;color:var(--warning-text)">${total - occ}</div></div>
+          </div>
+          <div class="occ-bar" style="margin-top:10px"><div class="occ-fill" style="width:${rate}%;background:${barColor}"></div></div>
+          <div style="font-size:.7rem;color:var(--text-muted);margin-top:4px">${rate}% occupied</div>
+        </div>
+      </div>`;
+      })
+      .join("");
+  }
+
+  function renderList() {
+    const tb = document.getElementById("plazasTableBody");
+    if (!tb) return;
+    if (!filtered.length) {
+      tb.innerHTML =
+        '<tr><td colspan="8"><div class="empty-state" style="padding:24px"><i class="bi bi-buildings"></i><p>No plazas found</p></div></td></tr>';
+      return;
+    }
+    tb.innerHTML = filtered
+      .map((p) => {
+        const occ = parseInt(p.occupied_units) || 0;
+        const total = parseInt(p.total_units) || 1;
+        const rate = Math.round((occ / total) * 100);
+        const barColor =
+          rate >= 80
+            ? "var(--success)"
+            : rate >= 50
+              ? "var(--warning)"
+              : "var(--danger)";
+        return `<tr>
+        <td style="font-weight:700">${p.name}</td>
+        <td>${p.landlord_name || p.landlord_username || "—"}</td>
+        <td style="font-size:.8rem;color:var(--text-muted)">${p.location || "—"}</td>
+        <td>${total}</td><td>${occ}</td>
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <div style="width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+            <div style="width:${rate}%;height:100%;background:${barColor};border-radius:3px"></div>
+          </div><span style="font-size:.75rem;font-weight:700">${rate}%</span>
+        </div></td>
+        <td>—</td>
+        <td><button class="btn btn-outline-secondary btn-xs" onclick="AdminPlazas.viewPlaza(${p.id})"><i class="bi bi-eye"></i></button></td>
+      </tr>`;
+      })
+      .join("");
+  }
+
+  function viewPlaza(id) {
+    const p = all.find((x) => x.id === id);
+    if (!p) return;
+    const body = document.getElementById("viewPlazaBody");
+    if (body)
+      body.innerHTML = `
+      <div class="row g-3">
+        <div class="col-12"><div class="form-label">Plaza Name</div><input type="text" class="form-control" id="editPlazaName" value="${p.name}"/></div>
+        <div class="col-12"><div class="form-label">Location</div><input type="text" class="form-control" id="editPlazaLocation" value="${p.location || ""}"/></div>
+        <div class="col-6"><div class="form-label">Landlord</div><div style="font-weight:700;margin-top:4px">${p.landlord_name || p.landlord_username || "—"}</div></div>
+        <div class="col-6"><div class="form-label">Total Units</div><div style="font-weight:700;margin-top:4px">${p.total_units || 0}</div></div>
+        <div class="col-6"><div class="form-label">Occupied</div><div style="font-weight:700;color:var(--success-text);margin-top:4px">${p.occupied_units || 0}</div></div>
+      </div>`;
+    bootstrap.Modal.getOrCreateInstance(
+      document.getElementById("viewPlazaModal"),
+    )?.show();
+  }
+
+  function savePlaza() {
+    Admin.toast("Plaza edit — coming soon", "info");
+    bootstrap.Modal.getInstance(
+      document.getElementById("viewPlazaModal"),
+    )?.hide();
+  }
+
+  return { init, filter, clearFilters, setView, render, viewPlaza, savePlaza };
 })();
 
 const AdminReports = (() => {
@@ -1502,22 +1647,157 @@ const AdminNotifications = (() => {
 })();
 
 const AdminLeases = (() => {
+  let all = [],
+    filtered = [],
+    page = 1;
+  const PER = 10;
+
   async function init() {
     Admin.initSidebar();
-    const el = document.getElementById("leasesBody");
-    if (el)
-      el.innerHTML =
-        '<tr><td colspan="9"><div class="empty-state" style="padding:32px"><i class="bi bi-file-text"></i><p>Leases coming soon</p></div></td></tr>';
+    const r = await Admin.api("GET", "/admin/leases");
+    all = Array.isArray(r?.data) ? r.data : r?.data?.leases || [];
+    filtered = [...all];
+    renderStats();
+    render();
   }
+
+  function renderStats() {
+    const set = (id, v) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = v;
+    };
+    set("leaseActive", all.filter((l) => l.status === "active").length);
+    set("leaseEnding", all.filter((l) => l.status === "ending_soon").length);
+    set("leaseExpired", all.filter((l) => l.status === "expired").length);
+    set("leaseTotal", all.length);
+    const endingSoon = all.filter((l) => l.status === "ending_soon");
+    const alert = document.getElementById("expiringAlert");
+    const alertTxt = document.getElementById("expiringAlertText");
+    if (alert) alert.style.display = endingSoon.length ? "" : "none";
+    if (alertTxt && endingSoon.length)
+      alertTxt.textContent = `${endingSoon.length} lease${endingSoon.length > 1 ? "s" : ""} expiring within 30 days.`;
+  }
+
+  function filter() {
+    const q = (
+      document.getElementById("leaseSearch")?.value || ""
+    ).toLowerCase();
+    const stat = document.getElementById("leaseStatus")?.value || "";
+    filtered = all.filter(
+      (l) =>
+        (!q ||
+          (l.tenant_name || "").toLowerCase().includes(q) ||
+          (l.plaza_name || "").toLowerCase().includes(q)) &&
+        (!stat || l.status === stat),
+    );
+    page = 1;
+    render();
+  }
+
+  function render() {
+    const tb = document.getElementById("leasesBody");
+    const info = document.getElementById("leasePaginInfo");
+    const nav = document.getElementById("leasePaginNav");
+    if (!tb) return;
+    const start = (page - 1) * PER;
+    const slice = filtered.slice(start, start + PER);
+    if (!slice.length) {
+      tb.innerHTML =
+        '<tr><td colspan="9"><div class="empty-state" style="padding:32px"><i class="bi bi-file-text"></i><p>No leases found</p></div></td></tr>';
+      return;
+    }
+    tb.innerHTML = slice
+      .map(
+        (l) => `
+      <tr>
+        <td style="font-weight:700">${l.tenant_name || l.tenant_username || "—"}</td>
+        <td style="font-size:.8rem">${l.plaza_name || "—"} · <strong>${l.unit_number || "—"}</strong></td>
+        <td style="font-size:.8rem;color:var(--text-muted)">${l.landlord_name || l.landlord_username || "—"}</td>
+        <td style="font-weight:800;color:var(--success-text)">${Admin.fmt.currency(l.rent_amount)}/mo</td>
+        <td style="font-size:.8rem">${Admin.fmt.date(l.lease_start)}</td>
+        <td style="font-size:.8rem">${Admin.fmt.date(l.lease_end)}</td>
+        <td>${Admin.badge(l.status)}</td>
+        <td>
+          <button class="btn btn-outline-secondary btn-xs" onclick="AdminLeases.viewLease(${l.id})"><i class="bi bi-eye"></i></button>
+        </td>
+      </tr>`,
+      )
+      .join("");
+    if (info)
+      info.textContent = `Showing ${start + 1}–${Math.min(start + PER, filtered.length)} of ${filtered.length}`;
+    if (nav)
+      nav.innerHTML =
+        filtered.length > PER
+          ? Admin.pagination(filtered.length, page, PER, "AdminLeases.goPage")
+          : "";
+  }
+
+  function goPage(p) {
+    page = p;
+    render();
+  }
+
+  function viewLease(id) {
+    const l = all.find((x) => x.id === id);
+    if (!l) return;
+    const body = document.getElementById("leaseDetailBody");
+    if (body)
+      body.innerHTML = `
+      <div class="row g-3">
+        <div class="col-6"><div class="form-label">Tenant</div><strong>${l.tenant_name || l.tenant_username || "—"}</strong></div>
+        <div class="col-6"><div class="form-label">Landlord</div>${l.landlord_name || l.landlord_username || "—"}</div>
+        <div class="col-6"><div class="form-label">Plaza / Unit</div>${l.plaza_name || "—"} · ${l.unit_number || "—"}</div>
+        <div class="col-6"><div class="form-label">Monthly Rent</div><strong style="color:var(--success-text)">${Admin.fmt.currency(l.rent_amount)}</strong></div>
+        <div class="col-6"><div class="form-label">Start Date</div>${Admin.fmt.date(l.lease_start)}</div>
+        <div class="col-6"><div class="form-label">End Date</div>${Admin.fmt.date(l.lease_end)}</div>
+        <div class="col-6"><div class="form-label">Status</div>${Admin.badge(l.status)}</div>
+        <div class="col-6"><div class="form-label">Location</div>${l.plaza_location || "—"}</div>
+      </div>`;
+    bootstrap.Modal.getOrCreateInstance(
+      document.getElementById("leaseDetailModal"),
+    )?.show();
+  }
+
+  function terminate(id) {
+    Admin.toast("Terminate — contact landlord directly", "warning");
+  }
+  function renew(id) {
+    Admin.toast("Renewal — contact landlord directly", "info");
+  }
+
+  function exportCsv() {
+    const rows = [
+      ["Tenant", "Landlord", "Plaza", "Unit", "Rent", "Start", "End", "Status"],
+    ];
+    filtered.forEach((l) =>
+      rows.push([
+        l.tenant_name,
+        l.landlord_name,
+        l.plaza_name,
+        l.unit_number,
+        l.rent_amount,
+        l.lease_start,
+        l.lease_end,
+        l.status,
+      ]),
+    );
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const a = document.createElement("a");
+    a.href = "data:text/csv," + encodeURIComponent(csv);
+    a.download = "leases.csv";
+    a.click();
+    Admin.toast("CSV downloaded", "success");
+  }
+
   return {
     init,
-    filter: () => {},
-    render: () => {},
-    goPage: () => {},
-    viewLease: () => {},
-    terminate: () => {},
-    renew: () => {},
-    exportCsv: () => {},
+    filter,
+    render,
+    goPage,
+    viewLease,
+    terminate,
+    renew,
+    exportCsv,
   };
 })();
 
