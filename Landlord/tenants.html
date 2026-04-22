@@ -15,7 +15,10 @@
     />
   </head>
   <body>
-    <div class="sidebar">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
           href="dashboard.html"
@@ -113,6 +116,9 @@
 
     <div class="main">
       <div class="topbar">
+        <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">
+          <i class="bi bi-list" style="font-size:1.2rem"></i>
+        </button>
         <span class="topbar-title">Tenants</span>
         <div class="d-flex align-items-center gap-2">
           <a href="notifications.html" class="topbar-btn"

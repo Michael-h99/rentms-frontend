@@ -2297,3 +2297,187 @@ p {
   color: var(--text-subtle) !important;
   opacity: 1 !important;
 }
+
+/* ================================================================
+   LANDLORD.CSS — MOBILE PATCH
+   Add this at the BOTTOM of css/landlord.css
+   Fixes mobile layout for all 14 landlord pages
+   ================================================================ */
+
+/* ── Sidebar toggle button (hidden on desktop) ── */
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.sidebar-toggle:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ── Mobile sidebar overlay ── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 999;
+}
+.sidebar-overlay.show {
+  display: block;
+}
+
+/* ── Topbar flex alignment fix ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Tablet / mobile breakpoint ── */
+@media (max-width: 992px) {
+  /* Sidebar slides off-screen */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: 1000;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Show hamburger */
+  .sidebar-toggle {
+    display: flex;
+  }
+
+  /* Main takes full width */
+  .main {
+    margin-left: 0 !important;
+  }
+
+  .content {
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+
+  .topbar {
+    padding: 0 16px;
+    height: 58px;
+  }
+
+  /* Stack plaza cards 1 col on small tablets */
+  .plaza-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Chat layout stacks */
+  .chat-wrap {
+    flex-direction: column;
+    height: auto;
+  }
+  .chat-left {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .chat-right {
+    flex: 1;
+    min-height: 400px;
+  }
+}
+
+/* ── Small phones ── */
+@media (max-width: 576px) {
+  .topbar {
+    padding: 0 12px;
+    height: 54px;
+  }
+  .topbar-title {
+    font-size: 0.95rem;
+  }
+  .content {
+    padding: 12px;
+    padding-bottom: 80px;
+  }
+
+  /* Stat cards */
+  .stat-card {
+    padding: 14px;
+    gap: 10px;
+  }
+  .stat-value {
+    font-size: 1.2rem;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+  }
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  /* Full-width buttons on mobile */
+  .btn-sm {
+    font-size: 0.78rem;
+  }
+
+  /* Modal padding */
+  .modal-body {
+    padding: 14px;
+  }
+
+  /* Quick action grid 2 cols */
+  .quick-action {
+    font-size: 0.78rem;
+    padding: 10px 8px;
+  }
+
+  /* Table — horizontal scroll */
+  .table-responsive {
+    font-size: 0.8rem;
+  }
+
+  /* Plaza card images taller on mobile */
+  .plaza-img {
+    height: 140px;
+  }
+
+  /* Message bubbles wider */
+  .msg {
+    max-width: 90%;
+  }
+
+  /* Welcome section stack */
+  .d-flex.align-items-center.justify-content-between {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
