@@ -84,8 +84,11 @@
     </style>
   </head>
   <body>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
 
     <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
@@ -184,8 +187,12 @@
 
     <div class="main">
       <div class="topbar">
-        <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">
-          <i class="bi bi-list" style="font-size:1.2rem"></i>
+        <button
+          class="sidebar-toggle"
+          onclick="openSidebar()"
+          aria-label="Open menu"
+        >
+          <i class="bi bi-list" style="font-size: 1.2rem"></i>
         </button>
         <span class="topbar-title">My Plazas</span>
         <div class="d-flex align-items-center gap-2">
@@ -473,6 +480,16 @@
       /* FIX: init first so landlord.js sets window.savePlaza,
          THEN override it so our version wraps the correct function */
       LandlordPlazas.init();
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
 
       /* ── Override savePlaza AFTER init so we wrap the real function ── */
       const _origSavePlaza = window.savePlaza;
