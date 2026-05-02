@@ -14,18 +14,93 @@
       rel="stylesheet"
     />
     <style>
-      /* ── page-specific ── */
+      .sidebar-toggle {
+        display: none;
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: inherit;
+      }
+      .sidebar-toggle:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 999;
+      }
+      .sidebar-overlay.show {
+        display: block;
+      }
+      @media (max-width: 992px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1000;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-toggle {
+          display: flex !important;
+        }
+        .main {
+          margin-left: 0 !important;
+        }
+        .topbar {
+          padding: 0 14px !important;
+          height: 56px;
+        }
+        .content {
+          padding: 14px !important;
+        }
+        .topbar .btn {
+          display: none;
+        }
+      }
+      @media (max-width: 576px) {
+        .stat-card {
+          padding: 14px;
+          gap: 10px;
+        }
+        .stat-value {
+          font-size: 1.15rem;
+        }
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+          font-size: 1rem;
+        }
+        .code-card {
+          flex-wrap: wrap;
+        }
+        .code-actions {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
       .code-card {
         background: var(--bg-card);
         border: 1.5px solid var(--border);
         border-radius: 14px;
-        padding: 20px 22px;
+        padding: 18px 20px;
         display: flex;
         align-items: center;
         gap: 16px;
         transition:
           box-shadow 0.15s,
           border-color 0.15s;
+        margin-bottom: 12px;
       }
       .code-card:hover {
         box-shadow: var(--shadow-elite);
@@ -33,10 +108,10 @@
       }
       .code-badge {
         font-family: "Courier New", monospace;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 900;
         letter-spacing: 0.18em;
-        padding: 8px 18px;
+        padding: 8px 16px;
         border-radius: 10px;
         background: var(--primary-glow);
         color: var(--primary);
@@ -120,21 +195,6 @@
       .step-text strong {
         color: var(--text-main);
       }
-      .usage-bar-wrap {
-        width: 80px;
-        height: 6px;
-        background: var(--border);
-        border-radius: 4px;
-        overflow: hidden;
-        display: inline-block;
-        vertical-align: middle;
-        margin-left: 6px;
-      }
-      .usage-bar-fill {
-        height: 100%;
-        background: var(--primary);
-        border-radius: 4px;
-      }
       .filter-tab {
         background: none;
         border: 1.5px solid var(--border);
@@ -155,10 +215,12 @@
     </style>
   </head>
   <body>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
 
-
-    <!-- ══ SIDEBAR ══════════════════════════════════════════════════ -->
     <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a
@@ -183,43 +245,46 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="plazas.html" class="nav-link"
+        <a href="plazas.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-buildings"></i> My Plazas</a
         >
-        <a href="tenants.html" class="nav-link"
+        <a href="tenants.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-people-fill"></i> Tenants</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Payments</a
         >
         <div class="nav-section">Management</div>
-        <a href="invite-codes.html" class="nav-link active"
+        <a
+          href="invite-codes.html"
+          class="nav-link active"
+          onclick="closeSidebar()"
           ><i class="bi bi-key-fill"></i> Invite Codes</a
         >
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Reports</div>
-        <a href="reports.html" class="nav-link"
+        <a href="reports.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bar-chart-fill"></i> Reports</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
-        <a href="settings.html" class="nav-link"
+        <a href="settings.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-gear-fill"></i> Settings</a
         >
       </nav>
@@ -255,12 +320,17 @@
     </div>
 
     <div class="main">
-      <!-- ══ TOPBAR ══════════════════════════════════════════════════ -->
-      <div class="topbar">
-        <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">
-          <i class="bi bi-list" style="font-size:1.2rem"></i>
-        </button>
-        <span class="topbar-title">Invite Codes</span>
+      <div class="topbar d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="sidebar-toggle"
+            onclick="openSidebar()"
+            aria-label="Open menu"
+          >
+            <i class="bi bi-list" style="font-size: 1.2rem"></i>
+          </button>
+          <span class="topbar-title">Invite Codes</span>
+        </div>
         <div class="d-flex align-items-center gap-2">
           <a href="notifications.html" class="topbar-btn"
             ><i class="bi bi-bell"></i
@@ -281,35 +351,8 @@
         </div>
       </div>
 
-      <div class="content" style="padding: 24px">
-        <!-- ── DEV banner ─────────────────────────────────────────── -->
-        <div
-          id="devBanner"
-          style="
-            display: none;
-            background: rgba(245, 158, 11, 0.12);
-            border: 1px solid rgba(245, 158, 11, 0.35);
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-size: 0.8rem;
-            color: #f59e0b;
-            font-weight: 600;
-            margin-bottom: 20px;
-          "
-        >
-          ⚙️ DEV MODE — Mock data active. Set
-          <code
-            style="
-              background: rgba(0, 0, 0, 0.2);
-              padding: 1px 5px;
-              border-radius: 4px;
-            "
-            >DEV_MODE = false</code
-          >
-          in landlord.js to go live.
-        </div>
-
-        <!-- ── How it works ──────────────────────────────────────── -->
+      <div class="content">
+        <!-- How it works -->
         <div class="card mb-4" style="padding: 0; overflow: hidden">
           <div class="card-header-custom">
             <h6 style="font-weight: 800; margin: 0">
@@ -324,16 +367,15 @@
             <div class="step-row">
               <div class="step-num">1</div>
               <div class="step-text">
-                <strong>Generate a code</strong> for a specific plaza and unit
-                below. You choose how many times it can be used and when it
-                expires.
+                <strong>Generate a code</strong> for a specific plaza and unit.
+                You choose how many times it can be used and when it expires.
               </div>
             </div>
             <div class="step-row">
               <div class="step-num">2</div>
               <div class="step-text">
                 <strong>Share the code</strong> with your tenant via WhatsApp,
-                SMS, or in person. The code is short and easy to type — e.g.
+                SMS, or in person. e.g.
                 <span
                   style="
                     font-family: monospace;
@@ -347,20 +389,15 @@
             <div class="step-row">
               <div class="step-num">3</div>
               <div class="step-text">
-                <strong>Tenant registers</strong> at
-                <a
-                  href="../register.html"
-                  style="color: var(--primary); font-weight: 700"
-                  >rentms.com/register</a
-                >
-                and enters the code. The system automatically links them to your
-                unit, sets the rent, and creates their lease.
+                <strong>Tenant registers</strong> and enters the code. The
+                system automatically links them to your unit, sets the rent, and
+                creates their lease.
               </div>
             </div>
           </div>
         </div>
 
-        <!-- ── Stats strip ─────────────────────────────────────────── -->
+        <!-- Stats -->
         <div class="row g-3 mb-4">
           <div class="col-6 col-lg-3">
             <div class="stat-card">
@@ -406,9 +443,9 @@
           </div>
         </div>
 
-        <!-- ── Filters ─────────────────────────────────────────────── -->
+        <!-- Filters -->
         <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2 flex-wrap">
             <button
               class="filter-tab active"
               onclick="InviteCodes.setFilter('all', this)"
@@ -434,7 +471,7 @@
               Expired
             </button>
           </div>
-          <div class="ms-auto d-flex gap-2">
+          <div class="ms-auto d-flex gap-2 flex-wrap">
             <select
               class="form-select form-select-sm"
               id="plazaFilter"
@@ -452,7 +489,7 @@
           </div>
         </div>
 
-        <!-- ── Code list ───────────────────────────────────────────── -->
+        <!-- Code list -->
         <div id="codeList">
           <div class="empty-state" style="padding: 60px 20px">
             <i class="bi bi-hourglass"></i>
@@ -460,11 +497,9 @@
           </div>
         </div>
       </div>
-      <!-- /content -->
     </div>
-    <!-- /main -->
 
-    <!-- ══ GENERATE MODAL ═══════════════════════════════════════════ -->
+    <!-- Generate Modal -->
     <div class="modal fade" id="generateModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -493,7 +528,6 @@
                 <option value="">— Select plaza —</option>
               </select>
             </div>
-
             <div class="mb-3">
               <label class="form-label fw-bold" style="font-size: 0.83rem"
                 >Unit *</label
@@ -502,7 +536,6 @@
                 <option value="">— Select plaza first —</option>
               </select>
             </div>
-
             <div class="row g-3 mb-3">
               <div class="col-6">
                 <label class="form-label fw-bold" style="font-size: 0.83rem"
@@ -530,7 +563,6 @@
                 />
               </div>
             </div>
-
             <div class="row g-3 mb-3">
               <div class="col-6">
                 <label class="form-label fw-bold" style="font-size: 0.83rem"
@@ -545,15 +577,12 @@
                 <input type="date" class="form-control" id="genLeaseEnd" />
               </div>
             </div>
-
             <div class="mb-3">
               <label class="form-label fw-bold" style="font-size: 0.83rem"
                 >Expires On</label
               >
               <input type="date" class="form-control" id="genExpiry" />
             </div>
-
-            <!-- Preview box -->
             <div
               id="genPreview"
               style="
@@ -599,7 +628,6 @@
                 "
               ></div>
             </div>
-
             <div id="genMsg"></div>
           </div>
           <div class="modal-footer" style="gap: 8px">
@@ -623,7 +651,7 @@
       </div>
     </div>
 
-    <!-- ══ CODE DETAIL MODAL ════════════════════════════════════════ -->
+    <!-- Detail Modal -->
     <div class="modal fade" id="detailModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -655,6 +683,16 @@
     <script src="../js/landlord.js"></script>
     <script>
       InviteCodes.init();
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
     </script>
   </body>
 </html>
