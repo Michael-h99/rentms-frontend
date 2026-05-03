@@ -18,14 +18,60 @@
       rel="stylesheet"
     />
     <style>
-      /* ── Layout ── */
+      .sidebar-toggle {
+        display: none;
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: inherit;
+      }
+      .sidebar-toggle:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 999;
+      }
+      .sidebar-overlay.show {
+        display: block;
+      }
+      @media (max-width: 992px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1000;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-toggle {
+          display: flex !important;
+        }
+        .main {
+          margin-left: 0 !important;
+        }
+        .topbar {
+          padding: 0 14px !important;
+          height: 56px;
+        }
+      }
+
       .chat-layout {
         display: flex;
         height: calc(100vh - 64px);
         overflow: hidden;
       }
-
-      /* ── Groups panel ── */
       .groups-panel {
         width: 300px;
         flex-shrink: 0;
@@ -34,7 +80,6 @@
         flex-direction: column;
         background: var(--sidebar-bg);
       }
-
       .groups-panel-header {
         padding: 20px 18px 14px;
         border-bottom: 1px solid var(--border);
@@ -42,7 +87,6 @@
         align-items: center;
         justify-content: space-between;
       }
-
       .groups-search {
         padding: 12px 14px;
         border-bottom: 1px solid var(--border);
@@ -58,12 +102,10 @@
         border-color: var(--primary) !important;
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
       }
-
       .groups-list {
         flex: 1;
         overflow-y: auto;
       }
-
       .group-item {
         display: flex;
         align-items: center;
@@ -80,7 +122,6 @@
         background: rgba(37, 99, 235, 0.12);
         border-left: 3px solid var(--primary);
       }
-
       .group-icon {
         width: 42px;
         height: 42px;
@@ -94,7 +135,6 @@
         justify-content: center;
         flex-shrink: 0;
       }
-
       .group-item-name {
         font-weight: 700;
         font-size: 0.875rem;
@@ -111,8 +151,6 @@
         text-overflow: ellipsis;
         margin-top: 2px;
       }
-
-      /* ── Chat panel ── */
       .chat-panel {
         flex: 1;
         display: flex;
@@ -120,8 +158,6 @@
         min-width: 0;
         background: var(--bg-body);
       }
-
-      /* Empty state */
       .empty-chat {
         flex: 1;
         display: flex;
@@ -147,8 +183,6 @@
         font-size: 0.82rem;
         margin: 0;
       }
-
-      /* Chat header */
       .chat-header {
         padding: 14px 20px;
         border-bottom: 1px solid var(--border);
@@ -171,8 +205,6 @@
         justify-content: center;
         flex-shrink: 0;
       }
-
-      /* Messages area */
       .chat-messages {
         flex: 1;
         overflow-y: auto;
@@ -182,8 +214,6 @@
         gap: 14px;
         scroll-behavior: smooth;
       }
-
-      /* Message bubbles */
       .msg {
         display: flex;
         flex-direction: column;
@@ -197,7 +227,6 @@
         align-self: flex-start;
         align-items: flex-start;
       }
-
       .msg-sender {
         font-size: 0.7rem;
         font-weight: 700;
@@ -229,8 +258,6 @@
         margin-top: 4px;
         padding: 0 4px;
       }
-
-      /* Image attachment */
       .msg-img {
         max-width: 260px;
         border-radius: 12px;
@@ -242,13 +269,7 @@
         width: 100%;
         display: block;
         border-radius: 12px;
-        transition: opacity 0.15s;
       }
-      .msg-img img:hover {
-        opacity: 0.9;
-      }
-
-      /* File attachment */
       .msg-file {
         display: flex;
         align-items: center;
@@ -262,17 +283,10 @@
         color: inherit;
         margin-top: 6px;
         max-width: 260px;
-        transition: background 0.15s;
       }
       .msg.theirs .msg-file {
         background: var(--bg-body);
         border-color: var(--border);
-      }
-      .msg-file:hover {
-        background: rgba(255, 255, 255, 0.18);
-      }
-      .msg.theirs .msg-file:hover {
-        background: var(--primary-glow);
       }
       .msg-file i {
         font-size: 1.4rem;
@@ -286,12 +300,6 @@
         text-overflow: ellipsis;
         max-width: 160px;
       }
-      .msg-file-size {
-        font-size: 0.68rem;
-        opacity: 0.7;
-      }
-
-      /* ── Input bar ── */
       .chat-input-bar {
         padding: 12px 16px 16px;
         border-top: 1px solid var(--border);
@@ -299,11 +307,6 @@
         flex-shrink: 0;
         width: 100%;
       }
-      .chat-input-bar .input-row {
-        width: 100%;
-      }
-
-      /* Attachment preview strip */
       .attach-strip {
         display: flex;
         flex-wrap: wrap;
@@ -313,7 +316,6 @@
       .attach-strip:empty {
         display: none;
       }
-
       .attach-thumb {
         position: relative;
         width: 64px;
@@ -332,29 +334,6 @@
         height: 100%;
         object-fit: cover;
       }
-      .attach-thumb .file-label {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-        padding: 6px;
-        text-align: center;
-      }
-      .attach-thumb .file-label i {
-        font-size: 1.3rem;
-        color: var(--primary);
-      }
-      .attach-thumb .file-label span {
-        font-size: 0.55rem;
-        color: var(--text-muted);
-        font-weight: 700;
-        word-break: break-all;
-        line-height: 1.2;
-        max-width: 52px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
       .attach-rm {
         position: absolute;
         top: 3px;
@@ -371,13 +350,10 @@
         justify-content: center;
         font-size: 0.6rem;
         padding: 0;
-        line-height: 1;
       }
       .attach-rm:hover {
         background: var(--danger);
       }
-
-      /* Input row */
       .input-row {
         display: flex;
         align-items: flex-end;
@@ -409,7 +385,6 @@
         color: var(--primary);
         background: var(--primary-glow);
       }
-
       .msg-textarea {
         flex: 1 1 auto;
         min-width: 0;
@@ -427,7 +402,6 @@
         max-height: 120px;
         overflow-y: auto;
         transition: border-color 0.2s;
-        -webkit-text-fill-color: var(--text-main) !important;
       }
       .msg-textarea:focus {
         border-color: var(--primary) !important;
@@ -435,9 +409,7 @@
       }
       .msg-textarea::placeholder {
         color: var(--text-subtle);
-        -webkit-text-fill-color: var(--text-subtle) !important;
       }
-
       .send-btn {
         width: 40px;
         height: 40px;
@@ -464,8 +436,6 @@
         cursor: not-allowed;
         transform: none;
       }
-
-      /* Date dividers */
       .date-divider {
         display: flex;
         align-items: center;
@@ -487,8 +457,6 @@
         letter-spacing: 0.04em;
         text-transform: uppercase;
       }
-
-      /* Invite code box */
       .invite-code-display {
         background: var(--bg-body);
         border: 2px dashed rgba(37, 99, 235, 0.4);
@@ -504,8 +472,6 @@
         letter-spacing: 0.2em;
         color: var(--primary);
       }
-
-      /* Empty groups state */
       .empty-groups {
         display: flex;
         flex-direction: column;
@@ -520,8 +486,6 @@
         font-size: 2rem;
         opacity: 0.3;
       }
-
-      /* Lightbox */
       .lightbox {
         display: none;
         position: fixed;
@@ -552,10 +516,6 @@
         border: none;
         opacity: 0.8;
       }
-      .lightbox-close:hover {
-        opacity: 1;
-      }
-
       @media (max-width: 768px) {
         .chat-layout {
           flex-direction: column;
@@ -570,12 +530,18 @@
         .chat-panel {
           height: calc(100vh - 284px);
         }
+        .chat-header .d-flex.gap-2 {
+          display: none !important;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
 
     <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
@@ -601,43 +567,43 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="plazas.html" class="nav-link"
+        <a href="plazas.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-buildings"></i> My Plazas</a
         >
-        <a href="tenants.html" class="nav-link"
+        <a href="tenants.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-people-fill"></i> Tenants</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Payments</a
         >
         <div class="nav-section">Management</div>
-        <a href="invite-codes.html" class="nav-link"
+        <a href="invite-codes.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-key-fill"></i> Invite Codes</a
         >
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link active"
+        <a href="messages.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Reports</div>
-        <a href="reports.html" class="nav-link"
+        <a href="reports.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bar-chart-fill"></i> Reports</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
-        <a href="settings.html" class="nav-link"
+        <a href="settings.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-gear-fill"></i> Settings</a
         >
       </nav>
@@ -673,11 +639,17 @@
     </div>
 
     <div class="main">
-      <div class="topbar">
-        <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">
-          <i class="bi bi-list" style="font-size:1.2rem"></i>
-        </button>
-        <span class="topbar-title">Group Messages</span>
+      <div class="topbar d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="sidebar-toggle"
+            onclick="openSidebar()"
+            aria-label="Open menu"
+          >
+            <i class="bi bi-list" style="font-size: 1.2rem"></i>
+          </button>
+          <span class="topbar-title">Group Messages</span>
+        </div>
         <div class="d-flex align-items-center gap-2">
           <a href="notifications.html" class="topbar-btn"
             ><i class="bi bi-bell"></i
@@ -693,7 +665,6 @@
       </div>
 
       <div class="chat-layout">
-        <!-- ── Groups panel ── -->
         <div class="groups-panel">
           <div class="groups-panel-header">
             <span
@@ -729,9 +700,7 @@
           </div>
         </div>
 
-        <!-- ── Chat panel ── -->
         <div class="chat-panel">
-          <!-- Empty state -->
           <div class="empty-chat" id="noChatSelected">
             <i class="bi bi-chat-dots"></i>
             <h6>Select a group to start chatting</h6>
@@ -745,12 +714,10 @@
             </button>
           </div>
 
-          <!-- Active chat -->
           <div
             id="chatActive"
             style="display: none; flex: 1; flex-direction: column; height: 100%"
           >
-            <!-- Header -->
             <div class="chat-header">
               <div class="chat-header-icon" id="chatIcon">?</div>
               <div style="flex: 1; min-width: 0">
@@ -791,7 +758,6 @@
               </div>
             </div>
 
-            <!-- Messages -->
             <div class="chat-messages" id="chatMessages">
               <div class="empty-chat" style="padding: 40px 0">
                 <i class="bi bi-chat-dots"></i>
@@ -799,7 +765,6 @@
               </div>
             </div>
 
-            <!-- Input bar -->
             <div class="chat-input-bar">
               <div class="attach-strip" id="attachStrip"></div>
               <div class="input-row">
@@ -830,7 +795,7 @@
                 <input
                   type="file"
                   id="filePicker"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,.csv"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.txt,.csv"
                   multiple
                   style="display: none"
                   onchange="handleFiles(this.files, 'file')"
@@ -840,7 +805,6 @@
                   id="msgInput"
                   placeholder="Type a message to all tenants…"
                   rows="1"
-                  style="flex: 1; min-width: 0"
                   oninput="
                     this.style.height = 'auto';
                     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
@@ -862,7 +826,7 @@
       </div>
     </div>
 
-    <!-- ── Create Group Modal ── -->
+    <!-- Create Group Modal -->
     <div class="modal fade" id="createGroupModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -924,7 +888,7 @@
       </div>
     </div>
 
-    <!-- ── Invite Code Modal ── -->
+    <!-- Invite Code Modal -->
     <div class="modal fade" id="inviteCodeModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -969,7 +933,7 @@
       </div>
     </div>
 
-    <!-- ── Members Modal ── -->
+    <!-- Members Modal -->
     <div class="modal fade" id="membersModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -998,6 +962,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
     <script>
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
+
       const BASE =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
@@ -1012,26 +987,19 @@
       let _activeGroupId = null;
       let _pollTimer = null;
 
-      /* ── Init ── */
       LandlordMessages.init();
 
-      /* FIX 2: Patch openGroup so messages render with new bubble styles
-         Also save last opened group so it reopens on page refresh */
       const _origOpenGroup = LandlordMessages.openGroup.bind(LandlordMessages);
       LandlordMessages.openGroup = async function (id) {
         clearInterval(_pollTimer);
         _activeGroupId = id;
         localStorage.setItem("l_activeGroupId", id);
         await _origOpenGroup(id);
-        /* Re-render messages using our styled builder */
         await reloadMessages(id);
         _pollTimer = setInterval(() => reloadMessages(id), 30000);
       };
 
-      /* FIX: After groups load, auto-open the last active group */
-      const _origLoadGroups = LandlordMessages.init;
       document.addEventListener("DOMContentLoaded", () => {
-        /* Wait for landlord.js init to complete then restore last group */
         setTimeout(async () => {
           const savedId = parseInt(localStorage.getItem("l_activeGroupId"), 10);
           if (savedId && !_activeGroupId) {
@@ -1046,9 +1014,7 @@
         try {
           const res = await fetch(
             BASE + `/landlord/groups/${groupId}/messages`,
-            {
-              headers: { Authorization: "Bearer " + getToken() },
-            },
+            { headers: { Authorization: "Bearer " + getToken() } },
           );
           const data = await res.json();
           const msgs = data?.data || [];
@@ -1079,12 +1045,10 @@
         if (!mine) {
           const snd = document.createElement("div");
           snd.className = "msg-sender";
-          /* FIX: fall back to email username if full_name is null */
-          const displayName =
+          snd.textContent =
             m.sender_name ||
             (m.sender_email ? m.sender_email.split("@")[0] : null) ||
             "Tenant";
-          snd.textContent = displayName;
           wrap.appendChild(snd);
         }
         const text = m.content || m.message;
@@ -1126,7 +1090,6 @@
         return wrap;
       }
 
-      /* FIX 3: Load members when Members modal opens */
       document
         .getElementById("membersModal")
         .addEventListener("show.bs.modal", async () => {
@@ -1139,128 +1102,63 @@
           el.innerHTML =
             '<div class="d-flex align-items-center gap-2" style="color:var(--text-muted);font-size:.85rem"><span class="spinner-border spinner-border-sm"></span> Loading…</div>';
           try {
-            /* Step 1: get all groups to find plaza_id for this group */
             const grpRes = await fetch(BASE + "/landlord/groups", {
               headers: { Authorization: "Bearer " + getToken() },
             });
             const grpData = await grpRes.json();
-            const allGrps = grpData?.data || [];
-            /* FIX: use == not === so number/string mismatch doesn't fail */
-            const grp = allGrps.find((g) => g.id == _activeGroupId);
-
+            const grp = (grpData?.data || []).find(
+              (g) => g.id == _activeGroupId,
+            );
             if (!grp) {
-              el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">Could not find group (ID: ${_activeGroupId}). Try reloading the page.</p>`;
+              el.innerHTML = `<p style="color:var(--text-muted)">Could not find group.</p>`;
               return;
             }
-
-            /* Step 2: get members who actually JOINED this group via invite code */
             const memRes = await fetch(
               BASE + `/landlord/groups/${_activeGroupId}/members`,
-              {
-                headers: { Authorization: "Bearer " + getToken() },
-              },
+              { headers: { Authorization: "Bearer " + getToken() } },
             );
-
-            let members = [];
-            if (memRes.ok) {
-              const memData = await memRes.json();
-              members = memData?.data || memData?.members || [];
-            }
-
-            /* Fallback: if no dedicated endpoint, get plaza tenants but note they may not all have joined */
-            if (!members.length) {
-              const tenRes = await fetch(
-                BASE + `/landlord/plazas/${grp.plaza_id}/tenants?status=active`,
-                {
-                  headers: { Authorization: "Bearer " + getToken() },
-                },
-              );
-              const tenData = await tenRes.json();
-              const tenants = tenData?.data || [];
-              /* Deduplicate by tenant_id */
-              const seen = new Set();
-              members = tenants
-                .filter((t) => {
-                  if (seen.has(t.tenant_id)) return false;
-                  seen.add(t.tenant_id);
-                  return true;
-                })
-                .map((t) => ({
-                  user_id: t.tenant_id,
-                  full_name: t.full_name,
-                  email: t.email,
-                  unit_number: t.unit_number,
-                  joined: false, // haven't necessarily joined via code
-                }));
-            }
-
+            let members = memRes.ok ? (await memRes.json())?.data || [] : [];
             if (!members.length) {
               el.innerHTML =
                 '<p style="color:var(--text-muted);font-size:.875rem">No members yet. Share the invite code with your tenants.</p>';
               return;
             }
-
-            el.innerHTML = `
-            <div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">
-              ${members.length} member${members.length !== 1 ? "s" : ""} · ${grp.plaza_name || "this group"}
-            </div>
-            ${members
-              .map((t) => {
-                const displayName =
-                  t.full_name || (t.email ? t.email.split("@")[0] : "—");
-                const initial = displayName.charAt(0).toUpperCase();
-                const joinedBadge =
-                  t.joined === false
-                    ? `<span style="font-size:.65rem;font-weight:700;color:var(--text-muted);background:var(--bg-body);border:1px solid var(--border);border-radius:20px;padding:2px 8px">Invited</span>`
-                    : `<span class="badge-status badge-active">Joined</span>`;
-                return `
-              <div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid var(--border)">
-                <div style="width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.9rem;flex-shrink:0">
-                  ${initial}
-                </div>
-                <div style="flex:1;min-width:0">
-                  <div style="font-weight:700;font-size:.875rem;color:var(--text-main)">${displayName}</div>
-                  <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">
-                    <i class="bi bi-envelope me-1"></i>${t.email || "—"}
-                    ${t.unit_number ? `&nbsp;·&nbsp;<i class="bi bi-house me-1"></i>Unit ${t.unit_number}` : ""}
-                  </div>
-                </div>
-                ${joinedBadge}
-              </div>`;
-              })
-              .join("")}
-          `;
+            el.innerHTML =
+              `<div style="font-size:.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">${members.length} member${members.length !== 1 ? "s" : ""}</div>` +
+              members
+                .map((t) => {
+                  const n =
+                    t.full_name || (t.email ? t.email.split("@")[0] : "—");
+                  return `<div class="d-flex align-items-center gap-3 py-2" style="border-bottom:1px solid var(--border)"><div style="width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex-shrink:0">${n.charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:.875rem">${n}</div><div style="font-size:.72rem;color:var(--text-muted)">${t.email || "—"}${t.unit_number ? ` · Unit ${t.unit_number}` : ""}</div></div></div>`;
+                })
+                .join("");
           } catch (err) {
-            el.innerHTML = `<p style="color:var(--danger-text);font-size:.875rem">Error: ${err.message}</p>`;
+            el.innerHTML = `<p style="color:var(--danger-text)">Error: ${err.message}</p>`;
           }
         });
 
-      /* ── File handling ── */
       function handleFiles(files, type) {
         Array.from(files).forEach((file) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
+          const r = new FileReader();
+          r.onload = (e) => {
             pendingFiles.push({ type, file, dataUrl: e.target.result });
             renderAttachStrip();
           };
-          reader.readAsDataURL(file);
+          r.readAsDataURL(file);
         });
         document.getElementById("imgPicker").value = "";
         document.getElementById("filePicker").value = "";
       }
-
       function renderAttachStrip() {
         const strip = document.getElementById("attachStrip");
         strip.innerHTML = "";
         pendingFiles.forEach((item, i) => {
-          const thumb = document.createElement("div");
-          thumb.className = "attach-thumb";
-          if (item.type === "image") {
-            thumb.innerHTML = `<img src="${item.dataUrl}" alt="" />`;
-          } else {
-            const ext = item.file.name.split(".").pop().toUpperCase();
-            thumb.innerHTML = `<div class="file-label"><i class="bi ${fileIcon(ext)}"></i><span>${item.file.name}</span></div>`;
-          }
+          const t = document.createElement("div");
+          t.className = "attach-thumb";
+          t.innerHTML =
+            item.type === "image"
+              ? `<img src="${item.dataUrl}" />`
+              : `<div class="file-label"><i class="bi ${fileIcon(item.file.name.split(".").pop().toUpperCase())}"></i></div>`;
           const rm = document.createElement("button");
           rm.className = "attach-rm";
           rm.innerHTML = "&times;";
@@ -1268,38 +1166,33 @@
             pendingFiles.splice(i, 1);
             renderAttachStrip();
           };
-          thumb.appendChild(rm);
-          strip.appendChild(thumb);
+          t.appendChild(rm);
+          strip.appendChild(t);
         });
       }
-
       function fileIcon(ext) {
-        const m = {
-          PDF: "bi-file-pdf-fill",
-          DOC: "bi-file-word-fill",
-          DOCX: "bi-file-word-fill",
-          XLS: "bi-file-excel-fill",
-          XLSX: "bi-file-excel-fill",
-          ZIP: "bi-file-zip-fill",
-          RAR: "bi-file-zip-fill",
-          TXT: "bi-file-text-fill",
-          CSV: "bi-filetype-csv",
-        };
-        return m[ext] || "bi-file-earmark-fill";
+        return (
+          {
+            PDF: "bi-file-pdf-fill",
+            DOC: "bi-file-word-fill",
+            DOCX: "bi-file-word-fill",
+            XLS: "bi-file-excel-fill",
+            XLSX: "bi-file-excel-fill",
+            ZIP: "bi-file-zip-fill",
+            RAR: "bi-file-zip-fill",
+            TXT: "bi-file-text-fill",
+            CSV: "bi-filetype-csv",
+          }[ext] || "bi-file-earmark-fill"
+        );
       }
 
-      /* ── Override sendMsg to support attachments + optimistic render ── */
       window.sendMsg = async function () {
         const input = document.getElementById("msgInput");
         const text = input?.value.trim();
         if (!text && !pendingFiles.length) return;
-
         const box = document.getElementById("chatMessages");
-        /* Remove empty state if present */
         const emptyEl = box?.querySelector(".empty-chat");
         if (emptyEl) emptyEl.remove();
-
-        /* Optimistic: show text bubble immediately */
         if (text && box) {
           box.appendChild(
             buildBubble(
@@ -1313,23 +1206,21 @@
           );
           box.scrollTop = box.scrollHeight;
         }
-
-        /* Optimistic: show file previews immediately */
         if (pendingFiles.length && box) {
           pendingFiles.forEach((item) => {
-            const wrap = document.createElement("div");
-            wrap.className = "msg mine";
+            const w = document.createElement("div");
+            w.className = "msg mine";
             if (item.type === "image") {
-              const imgDiv = document.createElement("div");
-              imgDiv.className = "msg-img";
-              imgDiv.innerHTML = `<img src="${item.dataUrl}" alt="" onclick="openLightbox('${item.dataUrl}')" />`;
-              wrap.appendChild(imgDiv);
+              const d = document.createElement("div");
+              d.className = "msg-img";
+              d.innerHTML = `<img src="${item.dataUrl}" />`;
+              w.appendChild(d);
             } else {
               const ext = item.file.name.split(".").pop().toUpperCase();
-              const fDiv = document.createElement("a");
-              fDiv.className = "msg-file";
-              fDiv.innerHTML = `<i class="bi ${fileIcon(ext)}"></i><div><div class="msg-file-name">${item.file.name}</div><div class="msg-file-size">${formatBytes(item.file.size)}</div></div>`;
-              wrap.appendChild(fDiv);
+              const f = document.createElement("a");
+              f.className = "msg-file";
+              f.innerHTML = `<i class="bi ${fileIcon(ext)}"></i><div><div class="msg-file-name">${item.file.name}</div></div>`;
+              w.appendChild(f);
             }
             const ts = document.createElement("div");
             ts.className = "msg-time";
@@ -1337,21 +1228,17 @@
               hour: "2-digit",
               minute: "2-digit",
             });
-            wrap.appendChild(ts);
-            box.appendChild(wrap);
+            w.appendChild(ts);
+            box.appendChild(w);
           });
           box.scrollTop = box.scrollHeight;
           pendingFiles = [];
           renderAttachStrip();
         }
-
-        /* Clear input */
         if (input) {
           input.value = "";
           input.style.height = "auto";
         }
-
-        /* Send to API */
         if (_activeGroupId && text) {
           try {
             await fetch(BASE + `/landlord/groups/${_activeGroupId}/messages`, {
@@ -1366,13 +1253,6 @@
         }
       };
 
-      function formatBytes(b) {
-        if (b < 1024) return b + " B";
-        if (b < 1048576) return (b / 1024).toFixed(1) + " KB";
-        return (b / 1048576).toFixed(1) + " MB";
-      }
-
-      /* ── Lightbox ── */
       function openLightbox(src) {
         document.getElementById("lightboxImg").src = src;
         document.getElementById("lightbox").classList.add("open");
