@@ -14,7 +14,57 @@
       rel="stylesheet"
     />
     <style>
-      /* ── Plaza image upload ── */
+      .sidebar-toggle {
+        display: none;
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: inherit;
+      }
+      .sidebar-toggle:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 999;
+      }
+      .sidebar-overlay.show {
+        display: block;
+      }
+      @media (max-width: 992px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1000;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-toggle {
+          display: flex !important;
+        }
+        .main {
+          margin-left: 0 !important;
+        }
+        .topbar {
+          padding: 0 14px !important;
+          height: 56px;
+        }
+        .content {
+          padding: 14px !important;
+        }
+      }
       .img-upload-zone {
         border: 2px dashed var(--border);
         border-radius: 12px;
@@ -114,43 +164,43 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="plazas.html" class="nav-link active"
+        <a href="plazas.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-buildings"></i> My Plazas</a
         >
-        <a href="tenants.html" class="nav-link"
+        <a href="tenants.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-people-fill"></i> Tenants</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Payments</a
         >
         <div class="nav-section">Management</div>
-        <a href="invite-codes.html" class="nav-link"
+        <a href="invite-codes.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-key-fill"></i> Invite Codes</a
         >
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Reports</div>
-        <a href="reports.html" class="nav-link"
+        <a href="reports.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bar-chart-fill"></i> Reports</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
-        <a href="settings.html" class="nav-link"
+        <a href="settings.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-gear-fill"></i> Settings</a
         >
       </nav>
@@ -186,18 +236,26 @@
     </div>
 
     <div class="main">
-      <div class="topbar">
-        <button
-          class="sidebar-toggle"
-          onclick="openSidebar()"
-          aria-label="Open menu"
-        >
-          <i class="bi bi-list" style="font-size: 1.2rem"></i>
-        </button>
-        <span class="topbar-title">My Plazas</span>
+      <div class="topbar d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="sidebar-toggle"
+            onclick="openSidebar()"
+            aria-label="Open menu"
+          >
+            <i class="bi bi-list" style="font-size: 1.2rem"></i>
+          </button>
+          <span class="topbar-title">My Plazas</span>
+        </div>
         <div class="d-flex align-items-center gap-2">
           <a href="notifications.html" class="topbar-btn"
             ><i class="bi bi-bell"></i
+          ></a>
+          <a href="messages.html" class="topbar-btn"
+            ><i class="bi bi-chat-dots"></i
+          ></a>
+          <a href="profile.html" class="topbar-btn"
+            ><i class="bi bi-person"></i
           ></a>
           <button
             class="btn btn-primary btn-sm px-3"
@@ -210,17 +268,16 @@
       </div>
 
       <div class="content">
-        <!-- Search -->
         <div class="card mb-4 p-3">
           <div class="row g-2 align-items-center">
             <div class="col-md-5">
               <div class="input-group">
-                <span class="input-group-text bg-white border-end-0"
+                <span class="input-group-text"
                   ><i class="bi bi-search text-muted"></i
                 ></span>
                 <input
                   type="text"
-                  class="form-control border-start-0"
+                  class="form-control"
                   placeholder="Search plazas..."
                   id="searchInput"
                   oninput="filterPlazas()"
@@ -246,10 +303,7 @@
           </div>
         </div>
 
-        <!-- Grid -->
         <div class="row g-3" id="plazaGrid"></div>
-
-        <!-- Empty state -->
         <div id="emptyState" class="empty-state">
           <i class="bi bi-buildings"></i>
           <h6 style="font-weight: 700; color: var(--text-main)">
@@ -283,8 +337,6 @@
           </div>
           <div class="modal-body p-4">
             <input type="hidden" id="editPlazaId" />
-
-            <!-- Image upload -->
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Plaza Photo
@@ -331,12 +383,10 @@
                 onchange="onImgSelected(this)"
               />
             </div>
-
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Plaza Name *</label
-              >
-              <input
+              ><input
                 type="text"
                 class="form-control"
                 id="plazaName"
@@ -346,8 +396,7 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Location *</label
-              >
-              <input
+              ><input
                 type="text"
                 class="form-control"
                 id="plazaLocation"
@@ -357,8 +406,7 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Total Units *</label
-              >
-              <input
+              ><input
                 type="number"
                 class="form-control"
                 id="plazaUnits"
@@ -400,7 +448,6 @@
       let _pendingImgFile = null;
       let _pendingImgDataUrl = null;
 
-      /* ── Image selection — upload immediately and store URL ── */
       async function onImgSelected(input) {
         const file = input.files[0];
         input.value = "";
@@ -413,21 +460,13 @@
           alert("Image must be under 5MB.");
           return;
         }
-
-        /* Show local preview immediately */
         const reader = new FileReader();
-        reader.onload = (e) => {
-          showPreview(e.target.result);
-        };
+        reader.onload = (e) => showPreview(e.target.result);
         reader.readAsDataURL(file);
-
-        /* Upload to backend immediately and cache the URL */
         try {
           const url = await uploadPlazaImage(file);
           window._pendingPlazaImageUrl = url;
-          console.log("Plaza image ready:", url);
         } catch (e) {
-          console.warn("Image upload failed:", e.message);
           window._pendingPlazaImageUrl = null;
           alert("Image upload failed: " + e.message);
         }
@@ -457,7 +496,6 @@
         removeImg();
       }
 
-      /* ── Upload image to backend, returns full URL ── */
       async function uploadPlazaImage(file) {
         const formData = new FormData();
         formData.append("image", file);
@@ -470,16 +508,14 @@
         if (!res.ok || data.error)
           throw new Error(data.message || "Upload failed");
         const raw = data.data?.image_url || data.image_url || "";
-        /* FIX: always return full absolute URL so it works cross-origin */
         if (!raw) throw new Error("No image URL returned");
         return raw.startsWith("http")
           ? raw
           : BACKEND + "/" + raw.replace(/^\//, "");
       }
 
-      /* FIX: init first so landlord.js sets window.savePlaza,
-         THEN override it so our version wraps the correct function */
       LandlordPlazas.init();
+
       function openSidebar() {
         document.getElementById("sidebar").classList.add("open");
         document.getElementById("sidebarOverlay").classList.add("show");
@@ -491,7 +527,6 @@
         document.body.style.overflow = "";
       }
 
-      /* ── Override savePlaza AFTER init so we wrap the real function ── */
       const _origSavePlaza = window.savePlaza;
       window.savePlaza = async function () {
         const saveBtn = document.querySelector(
@@ -502,7 +537,6 @@
           saveBtn.textContent = "Saving…";
         }
         try {
-          console.log("Saving plaza with image:", window._pendingPlazaImageUrl);
           await _origSavePlaza();
           resetImgUpload();
         } finally {
