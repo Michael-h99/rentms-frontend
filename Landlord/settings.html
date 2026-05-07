@@ -13,10 +13,72 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
+    <style>
+      .sidebar-toggle {
+        display: none;
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: inherit;
+      }
+      .sidebar-toggle:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 999;
+      }
+      .sidebar-overlay.show {
+        display: block;
+      }
+      @media (max-width: 992px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1000;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-toggle {
+          display: flex !important;
+        }
+        .main {
+          margin-left: 0 !important;
+        }
+        .topbar {
+          padding: 0 14px !important;
+          height: 56px;
+        }
+        .content {
+          padding: 14px !important;
+        }
+      }
+      @media (max-width: 576px) {
+        .nav-tabs .nav-link {
+          font-size: 0.8rem;
+          padding: 0.5rem 0.75rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
 
     <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
@@ -42,43 +104,43 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="plazas.html" class="nav-link"
+        <a href="plazas.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-buildings"></i> My Plazas</a
         >
-        <a href="tenants.html" class="nav-link"
+        <a href="tenants.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-people-fill"></i> Tenants</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Payments</a
         >
         <div class="nav-section">Management</div>
-        <a href="invite-codes.html" class="nav-link"
+        <a href="invite-codes.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-key-fill"></i> Invite Codes</a
         >
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Reports</div>
-        <a href="reports.html" class="nav-link"
+        <a href="reports.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bar-chart-fill"></i> Reports</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
-        <a href="settings.html" class="nav-link active"
+        <a href="settings.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-gear-fill"></i> Settings</a
         >
       </nav>
@@ -112,22 +174,37 @@
         </div>
       </div>
     </div>
-    <!-- end .sidebar -->
 
     <div class="main">
-      <div class="topbar">
-        <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">
-          <i class="bi bi-list" style="font-size:1.2rem"></i>
-        </button>
-        <span class="topbar-title">Settings</span>
-        <a href="notifications.html" class="topbar-btn"
-          ><i class="bi bi-bell"></i
-        ></a>
+      <div class="topbar d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="sidebar-toggle"
+            onclick="openSidebar()"
+            aria-label="Open menu"
+          >
+            <i class="bi bi-list" style="font-size: 1.2rem"></i>
+          </button>
+          <span class="topbar-title">Settings</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+          <a href="messages.html" class="topbar-btn"
+            ><i class="bi bi-chat-dots"></i
+          ></a>
+          <a href="profile.html" class="topbar-btn"
+            ><i class="bi bi-person"></i
+          ></a>
+        </div>
       </div>
 
       <div class="content">
-        <!-- Tabs -->
-        <ul class="nav nav-tabs mb-4">
+        <ul
+          class="nav nav-tabs mb-4"
+          style="flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none"
+        >
           <li class="nav-item">
             <a class="nav-link active" data-bs-toggle="tab" href="#tabGeneral"
               ><i class="bi bi-sliders me-1"></i> General</a
@@ -146,7 +223,7 @@
         </ul>
 
         <div class="tab-content">
-          <!-- General Tab -->
+          <!-- General -->
           <div class="tab-pane fade show active" id="tabGeneral">
             <div class="card mb-4">
               <div class="card-header-custom">
@@ -157,8 +234,8 @@
                 <div id="generalMsg"></div>
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label">Business / Company Name</label>
-                    <input
+                    <label class="form-label">Business / Company Name</label
+                    ><input
                       type="text"
                       class="form-control"
                       id="bizName"
@@ -166,8 +243,8 @@
                     />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Business Email</label>
-                    <input
+                    <label class="form-label">Business Email</label
+                    ><input
                       type="email"
                       class="form-control"
                       id="bizEmail"
@@ -175,8 +252,8 @@
                     />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label">Phone</label>
-                    <input
+                    <label class="form-label">Phone</label
+                    ><input
                       type="tel"
                       class="form-control"
                       id="bizPhone"
@@ -227,7 +304,7 @@
             </div>
           </div>
 
-          <!-- Notifications Tab -->
+          <!-- Notifications -->
           <div class="tab-pane fade" id="tabNotifications">
             <div class="card mb-4">
               <div class="card-header-custom">
@@ -341,7 +418,6 @@
                 </div>
               </div>
             </div>
-
             <div class="card">
               <div class="card-header-custom">
                 <i class="bi bi-phone text-primary"></i>
@@ -383,7 +459,7 @@
             </div>
           </div>
 
-          <!-- Security Tab -->
+          <!-- Security -->
           <div class="tab-pane fade" id="tabSecurity">
             <div class="card mb-4">
               <div class="card-header-custom">
@@ -392,8 +468,7 @@
               </div>
               <div class="p-4">
                 <p style="font-size: 0.875rem; color: var(--text-muted)">
-                  Active sessions for your account. You can sign out of other
-                  devices below.
+                  Active sessions for your account.
                 </p>
                 <div id="sessionList">
                   <div
@@ -439,8 +514,6 @@
                 <div id="secMsg" class="mt-2"></div>
               </div>
             </div>
-
-            <!-- Danger Zone -->
             <div class="danger-zone">
               <h6 style="font-weight: 700; color: #991b1b; margin-bottom: 4px">
                 <i class="bi bi-exclamation-triangle me-2"></i>Danger Zone
@@ -452,8 +525,7 @@
                   margin-bottom: 16px;
                 "
               >
-                These actions are irreversible. Please be certain before
-                proceeding.
+                These actions are irreversible.
               </p>
               <button
                 class="btn btn-outline-danger btn-sm"
@@ -497,8 +569,7 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Type <strong>DELETE</strong> to confirm</label
-              >
-              <input
+              ><input
                 type="text"
                 class="form-control"
                 id="deleteConfirmInput"
@@ -508,8 +579,7 @@
             <div class="mb-3">
               <label class="form-label fw-semibold" style="font-size: 0.875rem"
                 >Enter your password</label
-              >
-              <input
+              ><input
                 type="password"
                 class="form-control"
                 id="deleteConfirmPw"
@@ -535,34 +605,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script src="../js/landlord.js"></script>
     <script>
       LandlordSettings.init();
-    </script>
-    <!-- DEV MODE BANNER — remove when going live -->
-    <div
-      id="devBanner"
-      style="
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 9999;
-        background: #f59e0b;
-        color: #000;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-align: center;
-        padding: 5px;
-        letter-spacing: 0.05em;
-      "
-    >
-      ⚙️ DEV MODE — Authentication disabled. Set
-      <code>DEV_MODE = false</code> in landlord.js to go live.
-    </div>
-    <script>
-      // Hide banner automatically when DEV_MODE is off
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
       document.addEventListener("DOMContentLoaded", () => {
         if (typeof DEV_MODE !== "undefined" && !DEV_MODE) {
           const b = document.getElementById("devBanner");

@@ -13,10 +13,76 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
       rel="stylesheet"
     />
+    <style>
+      .sidebar-toggle {
+        display: none;
+        background: none;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        width: 36px;
+        height: 36px;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        font-family: inherit;
+      }
+      .sidebar-toggle:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 999;
+      }
+      .sidebar-overlay.show {
+        display: block;
+      }
+      @media (max-width: 992px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1000;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .sidebar-toggle {
+          display: flex !important;
+        }
+        .main {
+          margin-left: 0 !important;
+        }
+        .topbar {
+          padding: 0 10px !important;
+          height: 56px;
+        }
+        .content {
+          padding: 14px !important;
+        }
+      }
+      @media (max-width: 576px) {
+        .col-md-4,
+        .col-md-8 {
+          width: 100%;
+        }
+        .topbar .btn {
+          font-size: 0.72rem;
+          padding: 0.3rem 0.5rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="closeSidebar()"
+    ></div>
 
     <div class="sidebar" id="sidebar">
       <div class="sidebar-brand">
@@ -42,43 +108,43 @@
       </div>
       <nav class="sidebar-nav">
         <div class="nav-section">Main</div>
-        <a href="dashboard.html" class="nav-link"
+        <a href="dashboard.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-grid-1x2-fill"></i> Dashboard</a
         >
-        <a href="plazas.html" class="nav-link"
+        <a href="plazas.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-buildings"></i> My Plazas</a
         >
-        <a href="tenants.html" class="nav-link active"
+        <a href="tenants.html" class="nav-link active" onclick="closeSidebar()"
           ><i class="bi bi-people-fill"></i> Tenants</a
         >
-        <a href="payments.html" class="nav-link"
+        <a href="payments.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-credit-card-fill"></i> Payments</a
         >
         <div class="nav-section">Management</div>
-        <a href="invite-codes.html" class="nav-link"
+        <a href="invite-codes.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-key-fill"></i> Invite Codes</a
         >
-        <a href="maintenance.html" class="nav-link"
+        <a href="maintenance.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-tools"></i> Maintenance</a
         >
-        <a href="messages.html" class="nav-link"
+        <a href="messages.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-chat-dots-fill"></i> Messages</a
         >
-        <a href="announcement.html" class="nav-link"
+        <a href="announcement.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-megaphone-fill"></i> Announcements</a
         >
-        <a href="notifications.html" class="nav-link"
+        <a href="notifications.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bell-fill"></i> Notifications</a
         >
         <div class="nav-section">Reports</div>
-        <a href="reports.html" class="nav-link"
+        <a href="reports.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-bar-chart-fill"></i> Reports</a
         >
         <div class="nav-section">Account</div>
-        <a href="profile.html" class="nav-link"
+        <a href="profile.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-person-fill"></i> Profile</a
         >
-        <a href="settings.html" class="nav-link"
+        <a href="settings.html" class="nav-link" onclick="closeSidebar()"
           ><i class="bi bi-gear-fill"></i> Settings</a
         >
       </nav>
@@ -114,23 +180,28 @@
     </div>
 
     <div class="main">
-      <div class="topbar">
+      <div class="topbar d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center gap-2">
           <a href="tenants.html" class="topbar-btn"
             ><i class="bi bi-arrow-left"></i
           ></a>
-          <button class="sidebar-toggle" onclick="openSidebar()" aria-label="Open menu">
-          <i class="bi bi-list" style="font-size:1.2rem"></i>
-        </button>
-        <span class="topbar-title">Tenant Details</span>
+          <button
+            class="sidebar-toggle"
+            onclick="openSidebar()"
+            aria-label="Open menu"
+          >
+            <i class="bi bi-list" style="font-size: 1.2rem"></i>
+          </button>
+          <span class="topbar-title">Tenant Details</span>
         </div>
-        <a href="notifications.html" class="topbar-btn"
-          ><i class="bi bi-bell"></i
-        ></a>
+        <div class="d-flex align-items-center gap-2">
+          <a href="notifications.html" class="topbar-btn"
+            ><i class="bi bi-bell"></i
+          ></a>
+        </div>
       </div>
 
       <div class="content" id="pageContent">
-        <!-- Loading state -->
         <div id="loadingState" class="text-center py-5">
           <div
             class="spinner-border text-primary"
@@ -146,8 +217,6 @@
             Loading tenant details…
           </div>
         </div>
-
-        <!-- Error state -->
         <div id="errorState" style="display: none" class="text-center py-5">
           <i
             class="bi bi-exclamation-circle"
@@ -173,9 +242,7 @@
           >
         </div>
 
-        <!-- Main content (hidden until loaded) -->
         <div id="mainContent" style="display: none">
-          <!-- Profile banner -->
           <div class="card mb-4 p-4">
             <div class="d-flex align-items-center gap-4 flex-wrap">
               <div
@@ -260,9 +327,7 @@
           </div>
 
           <div class="row g-4">
-            <!-- Left: lease info + contact -->
             <div class="col-md-4">
-              <!-- Lease details -->
               <div class="card mb-4">
                 <div class="card-header-custom">
                   <i class="bi bi-file-text-fill text-primary"></i>
@@ -363,8 +428,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Contact -->
               <div class="card">
                 <div class="card-header-custom">
                   <i class="bi bi-person-lines-fill text-primary"></i>
@@ -434,9 +497,7 @@
               </div>
             </div>
 
-            <!-- Right: payments + maintenance -->
             <div class="col-md-8">
-              <!-- Payment history -->
               <div class="card mb-4">
                 <div class="card-header-custom">
                   <i class="bi bi-credit-card-fill text-primary"></i>
@@ -471,8 +532,6 @@
                   </table>
                 </div>
               </div>
-
-              <!-- Maintenance requests -->
               <div class="card">
                 <div class="card-header-custom">
                   <i class="bi bi-tools text-primary"></i>
@@ -512,7 +571,7 @@
       </div>
     </div>
 
-    <!-- Remove modal -->
+    <!-- Remove Modal -->
     <div class="modal fade" id="removeModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
@@ -555,6 +614,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/landlord.js"></script>
     <script>
+      function openSidebar() {
+        document.getElementById("sidebar").classList.add("open");
+        document.getElementById("sidebarOverlay").classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+      function closeSidebar() {
+        document.getElementById("sidebar").classList.remove("open");
+        document.getElementById("sidebarOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
+
       const BASE =
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
@@ -564,7 +634,6 @@
         localStorage.getItem("landlord_token") ||
         localStorage.getItem("token") ||
         "";
-
       const fmt = (d) =>
         d
           ? new Date(d).toLocaleDateString("en-GB", {
@@ -574,7 +643,6 @@
             })
           : "—";
 
-      /* Get tenant_id from URL: tenants-detail.html?id=3 */
       const params = new URLSearchParams(window.location.search);
       const tenantId = parseInt(params.get("id"), 10);
       let tenancyId = null;
@@ -590,20 +658,16 @@
 
       async function loadTenant() {
         try {
-          /* Get all tenants then find this one */
           const res = await fetch(BASE + "/landlord/plazas", {
             headers: { Authorization: "Bearer " + getToken() },
           });
           const data = await res.json();
           const plazas = data?.data || [];
-
           let tenant = null;
           for (const plaza of plazas) {
             const tr = await fetch(
               BASE + `/landlord/plazas/${plaza.id}/tenants`,
-              {
-                headers: { Authorization: "Bearer " + getToken() },
-              },
+              { headers: { Authorization: "Bearer " + getToken() } },
             );
             const td = await tr.json();
             const found = (td?.data || []).find((t) => t.tenant_id == tenantId);
@@ -612,17 +676,14 @@
               break;
             }
           }
-
           if (!tenant) {
             showError("Tenant not found or access denied.");
             return;
           }
-
           tenancyId = tenant.id;
           renderProfile(tenant);
           loadPayments(tenant);
           loadMaintenance(tenant);
-
           document.getElementById("loadingState").style.display = "none";
           document.getElementById("mainContent").style.display = "";
         } catch (err) {
@@ -632,17 +693,16 @@
 
       function renderProfile(t) {
         const name = t.full_name || t.email?.split("@")[0] || "—";
-        const initial = name.charAt(0).toUpperCase();
-
-        document.getElementById("tenantAvatarWrap").textContent = initial;
+        document.getElementById("tenantAvatarWrap").textContent = name
+          .charAt(0)
+          .toUpperCase();
         if (t.avatar_url) {
-          const wrap = document.getElementById("tenantAvatarWrap");
-          wrap.style.backgroundImage = `url(${t.avatar_url.startsWith("http") ? t.avatar_url : "https://rentms-backend-5.onrender.com/" + t.avatar_url})`;
-          wrap.style.backgroundSize = "cover";
-          wrap.style.backgroundPosition = "center";
-          wrap.textContent = "";
+          const w = document.getElementById("tenantAvatarWrap");
+          w.style.backgroundImage = `url(${t.avatar_url.startsWith("http") ? t.avatar_url : "https://rentms-backend-5.onrender.com/" + t.avatar_url})`;
+          w.style.backgroundSize = "cover";
+          w.style.backgroundPosition = "center";
+          w.textContent = "";
         }
-
         document.getElementById("tenantName").textContent = name;
         document.getElementById("tenantEmail").textContent = t.email || "—";
         document.getElementById("tenantUnit").textContent =
@@ -658,26 +718,19 @@
           : "—";
         document.getElementById("leaseStart").textContent = fmt(t.lease_start);
         document.getElementById("leaseEnd").textContent = fmt(t.lease_end);
-
-        /* Days remaining */
         if (t.lease_end) {
           const days = Math.ceil(
             (new Date(t.lease_end) - new Date()) / 86400000,
           );
           const el = document.getElementById("daysRemaining");
-          if (days < 0) {
-            el.textContent = "Expired";
-            el.style.color = "var(--danger)";
-          } else if (days <= 30) {
-            el.textContent = `${days} days`;
-            el.style.color = "var(--warning)";
-          } else {
-            el.textContent = `${days} days`;
-            el.style.color = "var(--success)";
-          }
+          el.textContent = days < 0 ? "Expired" : `${days} days`;
+          el.style.color =
+            days < 0
+              ? "var(--danger)"
+              : days <= 30
+                ? "var(--warning)"
+                : "var(--success)";
         }
-
-        /* Status badge */
         const badge = document.getElementById("tenantStatusBadge");
         badge.textContent = t.status || "—";
         badge.className = `badge-status badge-${t.status === "active" ? "active" : "expired"}`;
@@ -687,9 +740,7 @@
         try {
           const res = await fetch(
             BASE + `/landlord/payments?tenant_id=${t.tenant_id}`,
-            {
-              headers: { Authorization: "Bearer " + getToken() },
-            },
+            { headers: { Authorization: "Bearer " + getToken() } },
           );
           const data = await res.json();
           const rows = data?.data || [];
@@ -701,14 +752,8 @@
           }
           tbody.innerHTML = rows
             .map(
-              (p) => `
-            <tr>
-              <td style="font-size:.82rem">${fmt(p.payment_date)}</td>
-              <td style="font-size:.82rem;font-weight:700">GHS ${parseFloat(p.amount).toFixed(2)}</td>
-              <td style="font-size:.82rem">${p.payment_method || "—"}</td>
-              <td><span class="badge-status badge-${p.status === "paid" ? "active" : "expired"}">${p.status}</span></td>
-              <td style="font-size:.75rem;color:var(--text-muted)">${p.reference || "—"}</td>
-            </tr>`,
+              (p) =>
+                `<tr><td style="font-size:.82rem">${fmt(p.payment_date)}</td><td style="font-size:.82rem;font-weight:700">GHS ${parseFloat(p.amount).toFixed(2)}</td><td style="font-size:.82rem">${p.payment_method || "—"}</td><td><span class="badge-status badge-${p.status === "paid" ? "active" : "expired"}">${p.status}</span></td><td style="font-size:.75rem;color:var(--text-muted)">${p.reference || "—"}</td></tr>`,
             )
             .join("");
         } catch {
@@ -721,9 +766,7 @@
         try {
           const res = await fetch(
             BASE + `/landlord/maintenance?tenant_id=${t.tenant_id}`,
-            {
-              headers: { Authorization: "Bearer " + getToken() },
-            },
+            { headers: { Authorization: "Bearer " + getToken() } },
           );
           const data = await res.json();
           const rows = data?.data || [];
@@ -740,13 +783,8 @@
           };
           tbody.innerHTML = rows
             .map(
-              (m) => `
-            <tr>
-              <td style="font-size:.82rem;font-weight:600">${m.title || "—"}</td>
-              <td><span style="font-size:.72rem;font-weight:700;color:${pColors[m.priority] || "var(--text-muted)"}">${m.priority || "—"}</span></td>
-              <td><span class="badge-status badge-${m.status === "resolved" ? "active" : "expired"}">${m.status}</span></td>
-              <td style="font-size:.75rem;color:var(--text-muted)">${fmt(m.created_at)}</td>
-            </tr>`,
+              (m) =>
+                `<tr><td style="font-size:.82rem;font-weight:600">${m.title || "—"}</td><td><span style="font-size:.72rem;font-weight:700;color:${pColors[m.priority] || "var(--text-muted)"}">${m.priority || "—"}</span></td><td><span class="badge-status badge-${m.status === "resolved" ? "active" : "expired"}">${m.status}</span></td><td style="font-size:.75rem;color:var(--text-muted)">${fmt(m.created_at)}</td></tr>`,
             )
             .join("");
         } catch {
