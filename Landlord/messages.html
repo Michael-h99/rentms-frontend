@@ -354,10 +354,7 @@
       .attach-rm:hover {
         background: var(--danger);
       }
-      .input-row {
-        display: flex;
-        align-items: flex-end;
-        gap: 8px;
+      .input-row { display:flex; align-items:flex-end; gap:8px; width:100%; }
       }
       .input-attach-btns {
         display: flex;
@@ -813,6 +810,7 @@
                   id="msgInput"
                   placeholder="Type a message to all tenants…"
                   rows="1"
+                  style="flex: 1; min-width: 0; width: 100%"
                   oninput="
                     this.style.height = 'auto';
                     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
