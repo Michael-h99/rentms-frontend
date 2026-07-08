@@ -478,14 +478,15 @@ const TenantMaintenance = {
     await _T.initSidebar();
     const el = (id) => document.getElementById(id);
     const data = await _T.api("GET", "/tenant/dashboard");
-    const phone = data?.lease?.landlord_phone || "—";
+    const phone =
+      data?.data?.lease?.landlord_phone || data?.lease?.landlord_phone || "—";
     if (el("emergLandlord")) el("emergLandlord").textContent = phone;
     if (el("emergLandlordLink")) el("emergLandlordLink").href = `tel:${phone}`;
     await this.load();
   },
   async load() {
-    const data = await _T.api("GET", "/tenant/maintenance");
-    this.all = data?.requests || [];
+    const data = await _T.api("GET", "/maintenance/my");
+    this.all = data?.data || data?.requests || [];
     this.render(this.all);
     this.stats(this.all);
   },
@@ -493,7 +494,7 @@ const TenantMaintenance = {
     const el = (id) => document.getElementById(id);
     if (el("statOpen"))
       el("statOpen").textContent = list.filter(
-        (r) => r.status === "open",
+        (r) => r.status === "pending",
       ).length;
     if (el("statInProgress"))
       el("statInProgress").textContent = list.filter(
@@ -549,7 +550,7 @@ const TenantMaintenance = {
       alert("Please fill in title and description.");
       return;
     }
-    const result = await _T.api("POST", "/tenant/maintenance", {
+    const result = await _T.api("POST", "/maintenance", {
       title,
       description: desc,
       category: document.getElementById("mCategory")?.value,
