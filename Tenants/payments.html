@@ -634,7 +634,7 @@
             headers: { Authorization: "Bearer " + token },
           });
           const data = await res.json();
-          const l = data?.lease;
+          const l = data?.data?.lease;
           if (!l) return;
           PINFO.tenancy_id = l.id;
           const ghs = (n) =>
@@ -657,7 +657,7 @@
           document.getElementById("balDueDate").textContent = fmt(
             l.next_due_date,
           );
-          document.getElementById("balRent").textContent = ghs(l.rent);
+          document.getElementById("balRent").textContent = ghs(l.rent_amount);
           document.getElementById("payAmount").value = l.amount_due || "";
         } catch {}
       }
