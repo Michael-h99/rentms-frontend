@@ -506,9 +506,14 @@ const API = (() => {
     getLease: () => get("/tenant/lease"),
 
     /* Payments */
-    getPayments: (params = {}) => get("/tenant/payments" + toQuery(params)),
-    makePayment: (data) => post("/tenant/payments", data),
-    getReceipt: (id) => get(`/tenant/payments/${id}/receipt`),
+    // FIX — these previously pointed at /tenant/payments*, which was
+    // never mounted on the backend (payment routes live at /payments,
+    // not under /tenant). Corrected to match routes/paymentroutes.js.
+    getPayments: (params = {}) => get("/payments" + toQuery(params)),
+    makePayment: (data) => post("/payments", data),
+    getReceipt: (id) => get(`/payments/${id}/receipt`),
+    initializePayment: (data) => post("/payments/initialize", data),
+    verifyPayment: (reference) => get(`/payments/verify/${reference}`),
 
     /* Maintenance */
     getMaintenance: () => get("/tenant/maintenance"),
