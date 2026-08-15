@@ -11,13 +11,13 @@
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border-color: #1e293b;
-  --primary: #2563eb;
-  --primary-glow: rgba(37, 99, 235, 0.1);
-  --primary-rgb: 37, 99, 235;
+  --primary: #22c55e;
+  --primary-glow: rgba(34, 197, 94, 0.1);
+  --primary-rgb: 34, 197, 94;
   --snap: cubic-bezier(0.4, 0, 0.2, 1);
   --radius-lg: 24px;
   --shadow-elite: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-  --shadow-primary: 0 20px 30px -10px rgba(37, 99, 235, 0.4);
+  --shadow-primary: 0 20px 30px -10px rgba(34, 197, 94, 0.4);
   --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
@@ -207,23 +207,43 @@ h1 {
   font-size: 0.8rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  border: 1px solid rgba(37, 99, 235, 0.25);
+  border: 1px solid rgba(34, 197, 94, 0.25);
 }
 
 .hero-mini-badges {
   display: flex;
-  gap: 10px;
+  gap: 24px;
   margin: 2rem 0;
   flex-wrap: wrap;
 }
 .hero-mini-badges span {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
   font-weight: 700;
+  color: var(--text-muted);
+}
+.hero-mini-badges svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--primary);
+  flex-shrink: 0;
+}
+
+.hero-text-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.9rem 0.25rem;
   color: var(--text-main);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.hero-text-link:hover {
+  border-color: var(--primary);
 }
 
 .hero-btns {
@@ -240,7 +260,7 @@ h1 {
   height: 480px;
   box-shadow:
     0 32px 80px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(37, 99, 235, 0.12);
+    0 0 0 1px rgba(34, 197, 94, 0.12);
 }
 
 .hero-photo {
@@ -278,7 +298,7 @@ h1 {
   background: rgba(2, 6, 23, 0.75);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 100px;
   padding: 8px 16px;
   font-size: 0.75rem;
@@ -341,6 +361,29 @@ h1 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
 }
+.feature-icon svg,
+.step-icon svg,
+.role-icon svg,
+.contact-icon svg {
+  stroke: var(--primary);
+  display: block;
+}
+.feature-icon svg {
+  width: 32px;
+  height: 32px;
+}
+.step-icon svg {
+  width: 34px;
+  height: 34px;
+}
+.role-icon svg {
+  width: 36px;
+  height: 36px;
+}
+.contact-icon svg {
+  width: 20px;
+  height: 20px;
+}
 
 /* --- How It Works --- */
 .steps-grid {
@@ -376,39 +419,76 @@ h1 {
   line-height: 1.6;
 }
 
-.step-icon-wrapper {
+/* --- How It Works: connected timeline, not another card grid --- */
+.timeline {
   position: relative;
-  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
 }
-.step-number {
+.timeline::before {
+  content: "";
   position: absolute;
-  top: -10px;
-  right: -10px;
-  background: var(--primary);
-  color: white;
-  width: 32px;
-  height: 32px;
+  top: 27px;
+  left: 60px;
+  right: 60px;
+  height: 2px;
+  background: var(--border-color);
+  z-index: 0;
+}
+.timeline-step {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+}
+.timeline-marker {
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
+  background: var(--bg-main);
+  border: 2px solid var(--primary);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 0.8rem;
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
 }
-.step-icon {
-  width: 80px;
-  height: 80px;
-  background: var(--primary-glow);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  border: 1px solid rgba(37, 99, 235, 0.2);
+.timeline-content h4 {
+  color: var(--text-main);
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
-.step-actions {
-  margin-top: auto;
-  padding-top: 1.5rem;
+.timeline-content p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+@media (max-width: 768px) {
+  .timeline {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .timeline::before {
+    top: 0;
+    bottom: 0;
+    left: 27px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
+  .timeline-step {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+  .timeline-marker {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
 }
 .step-link {
   text-decoration: none;

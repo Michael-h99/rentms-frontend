@@ -38,23 +38,18 @@
       .nav-actions-mobile a:hover {
         opacity: 0.85;
       }
-      /* Only show when nav is open on mobile */
       @media (max-width: 768px) {
         .nav-links.open + .nav-actions-mobile,
         .nav-links.active + .nav-actions-mobile {
           display: flex;
         }
-        /* Also always show the mobile actions when menu is open */
         .nav-container.menu-open .nav-actions-mobile {
           display: flex;
         }
-        /* Hide desktop nav-actions on mobile */
         .nav-actions {
           display: none !important;
         }
-        /* Show mobile actions below nav-links */
         .nav-links {
-          /* ensure flex column */
           flex-direction: column;
         }
         .nav-actions-mobile {
@@ -65,7 +60,6 @@
     </style>
   </head>
   <body class="dark-mode">
-    <!-- ── HEADER ── -->
     <header id="main-header">
       <div class="container">
         <nav class="nav-container">
@@ -93,7 +87,6 @@
             <li><a href="#how-it-works">How It Works</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#contact">Contact</a></li>
-            <!-- FIX: Login/Register inside the mobile nav list so they show when hamburger opens -->
             <li class="nav-mobile-actions">
               <a
                 href="auth/login.html"
@@ -118,59 +111,103 @@
     </header>
 
     <main>
-      <!-- ── HERO ── -->
       <section class="hero">
         <div class="container">
           <div class="hero-content reveal">
-            <span class="badge">100% Free Early Access</span>
             <h1>Smart Property Management<br />for Modern Ghana</h1>
             <p>
-              Experience the full power of RentMS at no cost. Manage payments,
-              tenants, and maintenance through our secure, cloud-based platform.
+              Built around how rent actually works here — advance payments,
+              Mobile Money, and everything in between. Manage payments, tenants,
+              and maintenance through one secure platform.
             </p>
             <div class="hero-mini-badges">
-              <span>💬 Messaging</span>
-              <span>🛠️ Maintenance</span>
-              <span>📄 PDF Receipts</span>
-              <span>📊 Analytics</span>
-              <span>🔑 Invite Codes</span>
+              <span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+                  /></svg
+                >Messaging</span
+              >
+              <span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"
+                  /></svg
+                >Maintenance</span
+              >
+              <span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" /></svg
+                >PDF Receipts</span
+              >
+              <span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="20" x2="12" y2="10" />
+                  <line x1="18" y1="20" x2="18" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="16" /></svg
+                >Analytics</span
+              >
+              <span
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="8" cy="8" r="4" />
+                  <line x1="11" y1="11" x2="21" y2="21" />
+                  <line x1="16" y1="16" x2="19" y2="13" />
+                  <line x1="19" y1="19" x2="22" y2="16" /></svg
+                >Invite Codes</span
+              >
             </div>
             <div class="hero-btns">
               <a href="auth/register.html" class="btn btn-primary btn-lg"
                 >Create Your Free Account</a
               >
-              <a href="#how-it-works" class="btn btn-secondary btn-lg"
-                >See How It Works</a
+              <a href="#how-it-works" class="hero-text-link"
+                >See how it works →</a
               >
-            </div>
-          </div>
-
-          <!-- Stats bar -->
-          <div class="hero-stats reveal">
-            <div class="hero-stat">
-              <span class="hero-stat-num">500+</span>
-              <span class="hero-stat-label">Properties Managed</span>
-            </div>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat">
-              <span class="hero-stat-num">1,200+</span>
-              <span class="hero-stat-label">Active Tenants</span>
-            </div>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat">
-              <span class="hero-stat-num">GHS 2M+</span>
-              <span class="hero-stat-label">Rent Collected</span>
-            </div>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat">
-              <span class="hero-stat-num">100%</span>
-              <span class="hero-stat-label">Free Forever</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ── FEATURES ── -->
       <section id="features" class="section-padding">
         <div class="container">
           <div class="section-header reveal">
@@ -183,7 +220,19 @@
           </div>
           <div class="features-grid">
             <div class="feature-card reveal">
-              <div class="feature-icon">💳</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="1" y="4" width="22" height="16" rx="2" />
+                  <line x1="1" y1="9" x2="23" y2="9" />
+                </svg>
+              </div>
               <h3>Rent Management</h3>
               <p>
                 Track due dates and process Mobile Money payments (MTN, Telecel)
@@ -192,7 +241,20 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">🛠️</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"
+                  />
+                </svg>
+              </div>
               <h3>Maintenance Tracking</h3>
               <p>
                 Tenants report issues with photos. Landlords assign, monitor,
@@ -200,7 +262,23 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">📄</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+              </div>
               <h3>Digital PDF Receipts</h3>
               <p>
                 Professional receipts automatically generated and emailed for
@@ -208,7 +286,20 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">💬</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
+                  />
+                </svg>
+              </div>
               <h3>Direct Messaging</h3>
               <p>
                 Built-in group chat per plaza. Landlords can broadcast
@@ -216,7 +307,23 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">🏢</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="4" y="2" width="16" height="20" rx="1" />
+                  <rect x="8" y="6" width="2" height="2" />
+                  <rect x="14" y="6" width="2" height="2" />
+                  <rect x="8" y="11" width="2" height="2" />
+                  <rect x="14" y="11" width="2" height="2" />
+                  <rect x="10" y="16" width="4" height="6" />
+                </svg>
+              </div>
               <h3>Plaza Control</h3>
               <p>
                 Organize multiple units into plazas. Track occupancy, lease
@@ -224,7 +331,20 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">📊</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="20" x2="12" y2="10" />
+                  <line x1="18" y1="20" x2="18" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="16" />
+                </svg>
+              </div>
               <h3>Analytics & Reports</h3>
               <p>
                 Visual dashboards showing revenue trends, occupancy rates, and
@@ -232,7 +352,21 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">🔑</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="8" cy="8" r="4" />
+                  <line x1="11" y1="11" x2="21" y2="21" />
+                  <line x1="16" y1="16" x2="19" y2="13" />
+                  <line x1="19" y1="19" x2="22" y2="16" />
+                </svg>
+              </div>
               <h3>Invite Code System</h3>
               <p>
                 Generate secure invite codes per unit. Tenants join your plaza
@@ -240,7 +374,19 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">🔔</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+              </div>
               <h3>Smart Notifications</h3>
               <p>
                 Automated alerts for rent due dates, maintenance updates, lease
@@ -248,7 +394,19 @@
               </p>
             </div>
             <div class="feature-card reveal">
-              <div class="feature-icon">🔒</div>
+              <div class="feature-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
               <h3>Secure & Private</h3>
               <p>
                 Bank-grade encryption, role-based access control, and secure
@@ -259,7 +417,6 @@
         </div>
       </section>
 
-      <!-- ── HOW IT WORKS ── -->
       <section id="how-it-works" class="section-padding alternate-bg">
         <div class="container">
           <div class="section-header reveal">
@@ -270,50 +427,41 @@
               we've streamlined the journey.
             </p>
           </div>
-          <div class="steps-grid">
-            <div class="step-card reveal">
-              <div class="step-icon-wrapper">
-                <span class="step-number">01</span>
-                <div class="step-icon">👤</div>
-              </div>
-              <h4>Create Account</h4>
-              <p>
-                Sign up as a Landlord or Tenant in under 60 seconds. Just your
-                name, email, and phone number.
-              </p>
-              <div class="step-actions">
+          <div class="timeline">
+            <div class="timeline-step reveal">
+              <div class="timeline-marker">01</div>
+              <div class="timeline-content">
+                <h4>Create Account</h4>
+                <p>
+                  Sign up as a Landlord or Tenant in under 60 seconds. Just your
+                  name, email, and phone number.
+                </p>
                 <a href="auth/register.html" class="step-link"
                   >Register Now →</a
                 >
               </div>
             </div>
-            <div class="step-card reveal" style="animation-delay: 0.1s">
-              <div class="step-icon-wrapper">
-                <span class="step-number">02</span>
-                <div class="step-icon">🏠</div>
-              </div>
-              <h4>Setup Your Plaza</h4>
-              <p>
-                Landlords create plazas and generate invite codes per unit.
-                Tenants join instantly using the code their landlord sends.
-              </p>
-              <div class="step-actions">
+            <div class="timeline-step reveal" style="animation-delay: 0.1s">
+              <div class="timeline-marker">02</div>
+              <div class="timeline-content">
+                <h4>Setup Your Plaza</h4>
+                <p>
+                  Landlords create plazas and generate invite codes per unit.
+                  Tenants join instantly using the code their landlord sends.
+                </p>
                 <a href="#features" class="step-link">See How Setup Works →</a>
               </div>
             </div>
-            <div class="step-card reveal" style="animation-delay: 0.2s">
-              <div class="step-icon-wrapper">
-                <span class="step-number">03</span>
-                <div class="step-icon">🚀</div>
-              </div>
-              <h4>Start Managing</h4>
-              <p>
-                Collect MoMo payments, send automated PDF receipts, track
-                maintenance, and message tenants — all in one place.
-              </p>
-              <div class="step-actions">
-                <a href="auth/login.html" class="btn btn-primary btn-sm"
-                  >Launch Dashboard</a
+            <div class="timeline-step reveal" style="animation-delay: 0.2s">
+              <div class="timeline-marker">03</div>
+              <div class="timeline-content">
+                <h4>Start Managing</h4>
+                <p>
+                  Collect MoMo payments, send automated PDF receipts, track
+                  maintenance, and message tenants — all in one place.
+                </p>
+                <a href="auth/login.html" class="step-link"
+                  >Launch Dashboard →</a
                 >
               </div>
             </div>
@@ -321,7 +469,6 @@
         </div>
       </section>
 
-      <!-- ── ROLES ── -->
       <section class="section-padding">
         <div class="container">
           <div class="section-header reveal">
@@ -334,7 +481,19 @@
           </div>
           <div class="roles-grid">
             <div class="role-card reveal">
-              <div class="role-icon">🏠</div>
+              <div class="role-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+              </div>
               <h3>For Landlords</h3>
               <ul class="role-list">
                 <li>Manage multiple plazas and units</li>
@@ -352,7 +511,22 @@
               >
             </div>
             <div class="role-card reveal" style="animation-delay: 0.15s">
-              <div class="role-icon">🪪</div>
+              <div class="role-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="16" rx="2" />
+                  <circle cx="9" cy="10" r="2" />
+                  <line x1="15" y1="8" x2="18" y2="8" />
+                  <line x1="15" y1="12" x2="18" y2="12" />
+                  <line x1="6" y1="16" x2="18" y2="16" />
+                </svg>
+              </div>
               <h3>For Tenants</h3>
               <ul class="role-list">
                 <li>Pay rent via MoMo in seconds</li>
@@ -373,7 +547,6 @@
         </div>
       </section>
 
-      <!-- ── PRICING ── -->
       <section id="pricing" class="section-padding alternate-bg">
         <div class="container">
           <div class="section-header reveal">
@@ -409,7 +582,6 @@
         </div>
       </section>
 
-      <!-- ── CONTACT ── -->
       <section id="contact" class="section-padding">
         <div class="container">
           <div class="contact-grid">
@@ -422,21 +594,56 @@
               </p>
               <div class="contact-details">
                 <div class="contact-item">
-                  <span class="contact-icon">📧</span>
+                  <span class="contact-icon"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <polyline points="2 7 12 13 22 7" /></svg
+                  ></span>
                   <div>
                     <strong>Email</strong>
                     <p>support@rentms.com</p>
                   </div>
                 </div>
                 <div class="contact-item">
-                  <span class="contact-icon">📍</span>
+                  <span class="contact-icon"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                      />
+                      <circle cx="12" cy="10" r="3" /></svg
+                  ></span>
                   <div>
                     <strong>Location</strong>
                     <p>Spintex Road, Accra, Ghana</p>
                   </div>
                 </div>
                 <div class="contact-item">
-                  <span class="contact-icon">⏰</span>
+                  <span class="contact-icon"
+                    ><svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" /></svg
+                  ></span>
                   <div>
                     <strong>Support Hours</strong>
                     <p>Mon – Fri, 8am – 6pm GMT</p>
@@ -475,7 +682,6 @@
       </section>
     </main>
 
-    <!-- ── FOOTER ── -->
     <footer class="section-padding alternate-bg">
       <div class="container">
         <div class="footer-top">
@@ -527,7 +733,6 @@
 
     <script src="js/main.js"></script>
     <script>
-      /* FIX: hide .nav-mobile-actions on desktop, show on mobile inside open menu */
       (function () {
         const style = document.createElement("style");
         style.textContent = `
