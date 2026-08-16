@@ -182,8 +182,19 @@ const API = (() => {
       }
       clearTimeout(timer);
 
-      /* Session expired */
+      /* Session expired — but NOT for endpoints where a 401 means
+         something else entirely (wrong login password, wrong current
+         password, etc). Those pass skipSessionRedirect and get their
+         real server message instead of being bounced to the login page. */
       if (res.status === 401) {
+        if (opts.skipSessionRedirect) {
+          const data = await res.json().catch(() => ({}));
+          return {
+            ok: false,
+            error: true,
+            message: data.message || "Invalid credentials.",
+          };
+        }
         clearSession();
         const loginPage = window.location.pathname.includes("/admin/")
           ? "/auth/admin-login.html"
@@ -250,7 +261,7 @@ const API = (() => {
      HTTP CONVENIENCE METHODS
   ══════════════════════════════════════════════════════════ */
   const get = (url) => request("GET", url);
-  const post = (url, body) => request("POST", url, body);
+  const post = (url, body, opts) => request("POST", url, body, opts);
   const put = (url, body) => request("PUT", url, body);
   const patch = (url, body) => request("PATCH", url, body);
   const del = (url) => request("DELETE", url);
@@ -259,21 +270,33 @@ const API = (() => {
      AUTH ENDPOINTS
   ══════════════════════════════════════════════════════════ */
   const Auth = {
-    login: (email, password) => post("/auth/login", { email, password }),
-    adminLogin: (email, password) => post("/auth/login", { email, password }),
-    register: (data) => post("/auth/register", data),
-    /*
-     * FIX 4 — Auth.getMe was missing:
-     * landlord.js (LandlordProfile.load) calls GET /auth/me to fetch the
-     * current user's profile. There was no corresponding method in Auth.
-     */
+    login: (email, password) =>
+      post("/auth/login", { email, password }, { skipSessionRedirect: true }),
+    adminLogin: (email, password) =>
+      post("/auth/login", { email, password }, { skipSessionRedirect: true }),
+    register: (data) =>
+      post("/auth/register", data, { skipSessionRedirect: true }),
     getMe: () => get("/auth/me"),
-    forgotPassword: (email) => post("/auth/forgot-password", { email }),
-    verifyResetToken: (token) => post("/auth/verify-reset-token", { token }),
+    forgotPassword: (email) =>
+      post("/auth/forgot-password", { email }, { skipSessionRedirect: true }),
+    verifyResetToken: (token) =>
+      post(
+        "/auth/verify-reset-token",
+        { token },
+        { skipSessionRedirect: true },
+      ),
     resetPassword: (token, password) =>
-      post("/auth/reset-password", { token, password }),
+      post(
+        "/auth/reset-password",
+        { token, password },
+        { skipSessionRedirect: true },
+      ),
     changePassword: (current_password, new_password) =>
-      post("/auth/change-password", { current_password, new_password }),
+      post(
+        "/auth/change-password",
+        { current_password, new_password },
+        { skipSessionRedirect: true },
+      ),
     logoutAll: () => post("/auth/logout-all", {}),
   };
 
