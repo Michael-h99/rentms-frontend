@@ -1,14 +1,14 @@
 /* ================================================================
    RENTMS — ADMIN PORTAL STYLESHEET  v2
-   All 17 admin pages · Dark theme · Violet (#8b5cf6) + Blue (#2563eb)
+   All 17 admin pages · Dark theme · Violet (#8b5cf6) + Blue (#22c55e)
    ================================================================ */
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 /* ── CSS VARIABLES ─────────────────────────────────────────── */
 :root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-glow: rgba(37, 99, 235, 0.15);
+  --primary: #22c55e;
+  --primary-hover: #16a34a;
+  --primary-glow: rgba(34, 197, 94, 0.15);
   --bg-body: #020617;
   --bg-header: rgba(2, 6, 23, 0.88);
   --bg-card: #0f172a;
@@ -20,7 +20,7 @@
   --border: #1e293b;
   --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --shadow-elite: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-  --shadow-primary: 0 20px 30px -10px rgba(37, 99, 235, 0.4);
+  --shadow-primary: 0 20px 30px -10px rgba(34, 197, 94, 0.4);
   --success: #10b981;
   --success-light: rgba(16, 185, 129, 0.15);
   --success-text: #34d399;
@@ -626,7 +626,7 @@ textarea.form-control {
   border-bottom: none;
 }
 .table tbody tr:hover td {
-  background: rgba(37, 99, 235, 0.04);
+  background: rgba(34, 197, 94, 0.04);
 }
 .table-responsive {
   overflow-x: auto;
@@ -693,7 +693,7 @@ textarea.form-control {
 }
 .badge-in-progress {
   background: var(--primary-glow);
-  color: #60a5fa;
+  color: #4ade80;
 }
 .badge-resolved {
   background: var(--success-light);
@@ -1439,7 +1439,7 @@ textarea.form-control {
   border-bottom: none;
 }
 .user-row:hover td {
-  background: rgba(37, 99, 235, 0.04);
+  background: rgba(34, 197, 94, 0.04);
 }
 
 /* ── KPI STRIP (dashboard) ──────────────────────────────────── */
