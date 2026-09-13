@@ -566,7 +566,7 @@ const LandlordPlazas = (() => {
     if (empty) empty.style.display = "none";
     const gradients = [
       "linear-gradient(135deg,#0f172a,#1e293b)",
-      "linear-gradient(135deg,#0c1445,#1e3a8a)",
+      "linear-gradient(135deg,#0c1445,#155e75)",
       "linear-gradient(135deg,#064e3b,#047857)",
       "linear-gradient(135deg,#7c2d12,#c2410c)",
     ];
@@ -1807,10 +1807,7 @@ const LandlordAnnouncements = (() => {
   }
 
   async function load() {
-    const f = document.getElementById("annFilter")?.value || "";
-    const data = await RentMs.get(
-      "/landlord/announcements" + (f === "pinned" ? "?pinned=true" : ""),
-    );
+    const data = await RentMs.get("/landlord/announcements");
     all = data.data || [];
     render(all);
   }
@@ -1829,24 +1826,16 @@ const LandlordAnnouncements = (() => {
     el.innerHTML = list
       .map(
         (a) => `
-      <div class="ann-card ${a.is_pinned ? "pinned" : ""}">
+      <div class="ann-card">
         <div class="d-flex align-items-start justify-content-between mb-2 gap-2">
-          <div class="d-flex align-items-center gap-2 flex-wrap">
-            ${a.is_pinned ? '<i class="bi bi-pin-fill" style="color:var(--primary)"></i>' : ""}
-            <span style="font-weight:800;color:var(--text-main)">${a.title}</span>
-          </div>
-          <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="badge-pill">${a.target_label || "All Tenants"}</span>
-            <button class="btn btn-sm btn-outline-danger" style="font-size:.7rem;padding:2px 8px"
-                    onclick="LandlordAnnouncements.askDelete(${a.id})"><i class="bi bi-trash"></i></button>
-          </div>
-        </div>
-        <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:10px;line-height:1.6">${a.message}</p>
-        <div class="d-flex gap-3 flex-wrap">
           <span style="font-size:.75rem;color:var(--text-muted)"><i class="bi bi-calendar me-1"></i>${RentMs.fmt(a.created_at)}</span>
-          ${a.sent_count ? `<span style="font-size:.75rem;color:var(--success)"><i class="bi bi-check-circle me-1"></i>Sent to ${a.sent_count}</span>` : ""}
-          ${a.email_sent ? `<span style="font-size:.75rem;color:var(--primary)"><i class="bi bi-envelope me-1"></i>Email sent</span>` : ""}
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
+            <span class="badge-pill">Sent to ${a.sent_count || 0}</span>
+            <button class="btn btn-sm btn-outline-danger" style="font-size:.7rem;padding:2px 8px"
+                    onclick="LandlordAnnouncements.askDelete('${a.id}')"><i class="bi bi-trash"></i></button>
+          </div>
         </div>
+        <p style="font-size:.875rem;color:var(--text-main);margin-bottom:0;line-height:1.6;white-space:pre-line">${a.message}</p>
       </div>`,
       )
       .join("");
@@ -1856,8 +1845,6 @@ const LandlordAnnouncements = (() => {
     const title = document.getElementById("annTitle")?.value.trim();
     const message = document.getElementById("annMessage")?.value.trim();
     const target = document.getElementById("annTarget")?.value || "all";
-    const pinned = document.getElementById("annPin")?.checked || false;
-    const email = document.getElementById("annEmail")?.checked || false;
     const errEl = document.getElementById("annError");
     const sucEl = document.getElementById("annSuccess");
     if (errEl) errEl.style.display = "none";
@@ -1873,8 +1860,6 @@ const LandlordAnnouncements = (() => {
       title,
       message,
       target_type: target.startsWith("plaza_") ? "plaza" : "all",
-      send_email: email,
-      is_pinned: pinned,
     };
     if (target.startsWith("plaza_"))
       body.plaza_id = target.replace("plaza_", "");
@@ -2718,8 +2703,8 @@ const InviteCodes = (() => {
       bottom: "24px",
       left: "50%",
       transform: "translateX(-50%)",
-      background: "#1e3a5f",
-      color: "#60a5fa",
+      background: "#0d3b45",
+      color: "#22d3ee",
       padding: "10px 20px",
       borderRadius: "10px",
       fontWeight: "700",
@@ -2780,7 +2765,7 @@ const InviteCodes = (() => {
       ${
         c.status === "active"
           ? `
-        <div style="background:var(--primary-glow);border:1px solid rgba(37,99,235,.25);border-radius:10px;padding:14px;margin-top:16px;font-size:.82rem;color:var(--text-muted)">
+        <div style="background:var(--primary-glow);border:1px solid rgba(21, 94, 117, .25);border-radius:10px;padding:14px;margin-top:16px;font-size:.82rem;color:var(--text-muted)">
           <strong style="color:var(--primary)"><i class="bi bi-share me-1"></i>Share this code:</strong><br>
           "Join my property on RentMS! Use invite code <strong style="font-family:monospace;font-size:.95rem;color:var(--primary)">${c.code}</strong> when you register at rentms.com/register — it will link you directly to your unit at ${c.plaza_name}."
         </div>`

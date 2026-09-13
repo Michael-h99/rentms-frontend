@@ -262,29 +262,6 @@
                   <option value="all">All Tenants</option>
                 </select>
               </div>
-              <div class="mb-2 form-check">
-                <input type="checkbox" class="form-check-input" id="annPin" />
-                <label
-                  class="form-check-label"
-                  for="annPin"
-                  style="font-size: 0.875rem"
-                  >Pin this announcement</label
-                >
-              </div>
-              <div class="mb-3 form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="annEmail"
-                  checked
-                />
-                <label
-                  class="form-check-label"
-                  for="annEmail"
-                  style="font-size: 0.875rem"
-                  >Also send via email</label
-                >
-              </div>
               <div
                 id="annError"
                 class="text-danger mb-2"
@@ -311,15 +288,6 @@
               <span style="font-weight: 700; color: var(--text-main)"
                 >Previous Announcements</span
               >
-              <select
-                class="form-select form-select-sm"
-                style="width: auto"
-                id="annFilter"
-                onchange="loadAnnouncements()"
-              >
-                <option value="">All</option>
-                <option value="pinned">Pinned only</option>
-              </select>
             </div>
             <div id="annList"></div>
             <div id="emptyAnn" class="empty-state">
