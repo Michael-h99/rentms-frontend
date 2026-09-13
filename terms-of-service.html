@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms of Service | RentMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+    <style>
+      .legal-shell {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 48px;
+        align-items: start;
+      }
+      .legal-toc {
+        position: sticky;
+        top: 24px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 18px;
+        background: var(--bg-card);
+      }
+      .legal-toc h4 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+      }
+      .legal-toc a {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        padding: 5px 0;
+      }
+      .legal-toc a:hover {
+        color: var(--primary);
+      }
+      .legal-wrap h1 {
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        margin-bottom: 0.5rem;
+      }
+      .legal-updated {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      .legal-intro {
+        color: var(--text-muted);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .legal-wrap section {
+        margin-bottom: 2.25rem;
+        scroll-margin-top: 24px;
+      }
+      .legal-wrap h2 {
+        font-size: 1.3rem;
+        margin-bottom: 0.9rem;
+        color: var(--text-main);
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .legal-wrap h2 .num {
+        color: var(--primary);
+        font-size: 1rem;
+        font-weight: 700;
+      }
+      .legal-wrap h3 {
+        font-size: 1.02rem;
+        margin: 1.1rem 0 0.5rem;
+        color: var(--text-main);
+      }
+      .legal-wrap p,
+      .legal-wrap li {
+        color: var(--text-muted);
+        line-height: 1.75;
+        font-size: 0.975rem;
+      }
+      .legal-wrap ul,
+      .legal-wrap ol {
+        margin: 0 0 1rem;
+        padding-left: 1.25rem;
+      }
+      .legal-wrap li {
+        margin-bottom: 0.4rem;
+      }
+      .legal-wrap a {
+        color: var(--primary);
+      }
+      @media (max-width: 860px) {
+        .legal-shell {
+          grid-template-columns: 1fr;
+        }
+        .legal-toc {
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header" id="header">
+      <nav class="navbar container">
+        <a href="index.html" class="logo">
+          <svg
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>RentMS</span>
+        </a>
+        <button class="mobile-nav-toggle" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="index.html#features">Features</a></li>
+          <li><a href="index.html#how-it-works">How It Works</a></li>
+          <li><a href="index.html#pricing">Pricing</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+          <li class="nav-mobile-actions">
+            <a
+              href="auth/login.html"
+              class="btn btn-secondary"
+              style="display: inline-block; margin-right: 8px"
+              >Login</a
+            >
+            <a
+              href="auth/register.html"
+              class="btn btn-primary"
+              style="display: inline-block"
+              >Get Started</a
+            >
+          </li>
+        </ul>
+        <div class="nav-actions">
+          <a href="auth/login.html" class="btn btn-secondary">Login</a>
+          <a href="auth/register.html" class="btn btn-primary">Get Started</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class="legal-shell">
+      <aside class="legal-toc">
+        <h4>On this page</h4>
+        <a href="#acceptance">1. Acceptance of Terms</a>
+        <a href="#definitions">2. Definitions</a>
+        <a href="#eligibility">3. Eligibility</a>
+        <a href="#accounts">4. Accounts and Roles</a>
+        <a href="#invites">5. Invite Codes &amp; Onboarding</a>
+        <a href="#payments">6. Payments and Fees</a>
+        <a href="#acceptable-use">7. Acceptable Use</a>
+        <a href="#content">8. User Content &amp; IP</a>
+        <a href="#messaging">9. Messaging &amp; Maintenance</a>
+        <a href="#availability">10. Service Availability</a>
+        <a href="#disclaimer">11. Disclaimer of Warranties</a>
+        <a href="#liability">12. Limitation of Liability</a>
+        <a href="#indemnification">13. Indemnification</a>
+        <a href="#termination">14. Termination</a>
+        <a href="#disputes">15. Dispute Resolution</a>
+        <a href="#law">16. Governing Law</a>
+        <a href="#general">17. General Provisions</a>
+        <a href="#changes">18. Changes to These Terms</a>
+        <a href="#contact">19. Contact Us</a>
+      </aside>
+
+      <main class="legal-wrap">
+        <h1>Terms of Service</h1>
+        <p class="legal-updated">
+          Last updated: September 2026 &nbsp;·&nbsp; Version 1.1
+        </p>
+        <p class="legal-intro">
+          These Terms of Service ("Terms") form a binding agreement between you
+          and RentMS ("we," "our," "the Platform") governing your access to and
+          use of our rent and property management services in Ghana. Please read
+          them alongside our
+          <a href="privacy-policy.html">Privacy Policy</a>. By creating an
+          account or using RentMS in any way, you agree to be bound by these
+          Terms.
+        </p>
+
+        <section id="acceptance">
+          <h2><span class="num">1.</span> Acceptance of Terms</h2>
+          <p>
+            By registering for or using RentMS, you confirm that you have read,
+            understood, and agree to these Terms and our Privacy Policy. If you
+            do not agree, you must not use the Platform.
+          </p>
+        </section>
+
+        <section id="definitions">
+          <h2><span class="num">2.</span> Definitions</h2>
+          <ul>
+            <li>
+              <strong>"Services"</strong> means the RentMS website, web
+              application, and related features.
+            </li>
+            <li>
+              <strong>"Plaza"</strong> means a property or group of rental units
+              managed on RentMS by a landlord.
+            </li>
+            <li>
+              <strong>"Payment Partner"</strong> means Paystack, our third-party
+              licensed payment processor.
+            </li>
+            <li>
+              <strong>"Content"</strong> means any text, message, file, or data
+              submitted by a User through the Services.
+            </li>
+            <li>
+              <strong>"User," "you"</strong> means any landlord, tenant, or
+              administrator with a RentMS account.
+            </li>
+          </ul>
+        </section>
+
+        <section id="eligibility">
+          <h2><span class="num">3.</span> Eligibility</h2>
+          <p>
+            You must be at least 18 years old and capable of entering into a
+            legally binding agreement under the laws of Ghana to create a RentMS
+            account. By registering, you represent that you meet these
+            requirements and that all information you provide is accurate and
+            current.
+          </p>
+        </section>
+
+        <section id="accounts">
+          <h2><span class="num">4.</span> Accounts and Roles</h2>
+          <h3>4.1 Landlords</h3>
+          <p>
+            Landlords may create and manage plazas and units, invite tenants,
+            collect rent, respond to maintenance requests, and communicate with
+            tenants. Landlords are responsible for the accuracy of lease terms,
+            rent amounts, and property information they enter.
+          </p>
+          <h3>4.2 Tenants</h3>
+          <p>
+            Tenants join a plaza using an invite code provided by a landlord.
+            Tenants may pay rent, view lease and payment history, submit
+            maintenance requests, and message their landlord.
+          </p>
+          <h3>4.3 Administrators</h3>
+          <p>
+            Administrators oversee platform-wide operations, including user
+            management, system monitoring, and dispute support, and are bound by
+            the same confidentiality expectations described in Section 8.
+          </p>
+          <h3>4.4 Account Security</h3>
+          <p>
+            You are responsible for maintaining the confidentiality of your
+            login credentials and for all activity under your account. You must
+            notify us immediately of any unauthorized use of your account.
+          </p>
+        </section>
+
+        <section id="invites">
+          <h2><span class="num">5.</span> Invite Codes and Onboarding</h2>
+          <p>
+            Invite codes are generated by landlords to onboard tenants to a
+            specific plaza and unit. Codes are intended for single use by the
+            intended recipient. Sharing a code with someone other than the
+            intended tenant may result in incorrect account association and is
+            done at the landlord's own risk.
+          </p>
+        </section>
+
+        <section id="payments">
+          <h2><span class="num">6.</span> Payments and Fees</h2>
+          <h3>6.1 Processing</h3>
+          <p>
+            Rent payments made through RentMS are processed by our Payment
+            Partner, Paystack, using Mobile Money (MTN, Telecel, AirtelTigo) or
+            debit/credit card. RentMS records each completed payment and
+            automatically generates a PDF receipt.
+          </p>
+          <h3>6.2 No Party to the Lease</h3>
+          <p>
+            RentMS is a management tool, not a party to any lease agreement. The
+            rent amount, due dates, deposit terms, and any penalties for late
+            payment remain a private arrangement between landlord and tenant,
+            governed by their own lease and applicable Ghanaian tenancy law.
+          </p>
+          <h3>6.3 Failed or Delayed Payments</h3>
+          <p>
+            RentMS is not responsible for payment delays, failures, or reversals
+            caused by a mobile network operator, bank, or our Payment Partner.
+            Disputes about a specific transaction should first be raised through
+            the Platform's support contact; disputes about whether rent was
+            actually owed remain between landlord and tenant.
+          </p>
+          <h3>6.4 No Platform Fee Guarantee</h3>
+          <p>
+            Any transaction fee charged by the Payment Partner is separate from
+            RentMS and may change based on the Payment Partner's own pricing.
+          </p>
+        </section>
+
+        <section id="acceptable-use">
+          <h2><span class="num">7.</span> Acceptable Use</h2>
+          <p>You agree not to:</p>
+          <ul>
+            <li>
+              Provide false, misleading, or fraudulent information when creating
+              an account, listing a plaza, or recording a payment.
+            </li>
+            <li>
+              Use the messaging or maintenance-request features to harass,
+              threaten, defame, or abuse another User.
+            </li>
+            <li>
+              Attempt to access another User's account, data, or plaza without
+              authorization.
+            </li>
+            <li>
+              Interfere with, disrupt, or attempt to reverse-engineer the
+              Platform or its underlying systems.
+            </li>
+            <li>
+              Use RentMS for any unlawful purpose, including circumventing a
+              lawful eviction or misrepresenting property ownership.
+            </li>
+          </ul>
+          <p>
+            We reserve the right to investigate suspected violations and to
+            suspend or terminate accounts under Section 14.
+          </p>
+        </section>
+
+        <section id="content">
+          <h2>
+            <span class="num">8.</span> User Content and Intellectual Property
+          </h2>
+          <p>
+            You retain ownership of the Content you submit — messages,
+            maintenance photos, and lease information. By submitting Content,
+            you grant RentMS a limited license to store, process, and display it
+            to the relevant landlord, tenant, or administrator solely to operate
+            the Services.
+          </p>
+          <p>
+            The RentMS name, logo, interface design, and underlying software are
+            the property of RentMS and its developer and may not be copied,
+            modified, or redistributed without permission.
+          </p>
+        </section>
+
+        <section id="messaging">
+          <h2>
+            <span class="num">9.</span> Messaging and Maintenance Requests
+          </h2>
+          <p>
+            Group messaging is provided per plaza to facilitate communication
+            between a landlord and their tenants. Maintenance requests submitted
+            through the Platform are visible to the relevant landlord, who is
+            responsible for responding within a reasonable time. RentMS does not
+            guarantee that any maintenance issue will be resolved by a specific
+            deadline — this remains the landlord's responsibility.
+          </p>
+        </section>
+
+        <section id="availability">
+          <h2>
+            <span class="num">10.</span> Service Availability and Modifications
+          </h2>
+          <p>
+            RentMS is under active development. We may add, change, or remove
+            features at any time, and the Services may occasionally be
+            unavailable for maintenance, updates, or reasons outside our control
+            (including outages at our hosting or Payment Partner). We will aim
+            to minimize disruption but do not guarantee uninterrupted
+            availability.
+          </p>
+        </section>
+
+        <section id="disclaimer">
+          <h2><span class="num">11.</span> Disclaimer of Warranties</h2>
+          <p>
+            The Services are provided on an "as is" and "as available" basis,
+            without warranties of any kind, whether express or implied,
+            including but not limited to warranties of merchantability, fitness
+            for a particular purpose, or non-infringement. We do not warrant
+            that the Platform will be error-free or uninterrupted.
+          </p>
+        </section>
+
+        <section id="liability">
+          <h2><span class="num">12.</span> Limitation of Liability</h2>
+          <p>
+            To the fullest extent permitted by Ghanaian law, RentMS and its
+            developer shall not be liable for any indirect, incidental, or
+            consequential damages arising from your use of the Platform,
+            including but not limited to disputes between landlords and tenants,
+            missed or delayed rent payments, or issues caused by our Payment
+            Partner or hosting providers. Our total liability for any claim
+            arising from these Terms shall not exceed the fees, if any, paid by
+            you to RentMS in the twelve months preceding the claim.
+          </p>
+        </section>
+
+        <section id="indemnification">
+          <h2><span class="num">13.</span> Indemnification</h2>
+          <p>
+            You agree to indemnify and hold RentMS and its developer harmless
+            from any claim, loss, or damage, including reasonable legal fees,
+            arising from your violation of these Terms, your misuse of the
+            Services, or content you submit.
+          </p>
+        </section>
+
+        <section id="termination">
+          <h2><span class="num">14.</span> Termination</h2>
+          <p>
+            We may suspend or terminate any account that violates these Terms,
+            with or without notice, where reasonably necessary to protect the
+            Platform or other Users. You may stop using RentMS and request
+            account closure at any time. Certain records, such as payment
+            history, may be retained after termination as described in our
+            <a href="privacy-policy.html">Privacy Policy</a>.
+          </p>
+        </section>
+
+        <section id="disputes">
+          <h2><span class="num">15.</span> Dispute Resolution</h2>
+          <p>
+            If a dispute arises between you and RentMS, we encourage you to
+            first contact us to seek an informal resolution. Disputes between a
+            landlord and tenant regarding their lease are the responsibility of
+            those parties and, where unresolved, may be referred to the
+            appropriate Ghanaian rent or housing tribunal.
+          </p>
+        </section>
+
+        <section id="law">
+          <h2><span class="num">16.</span> Governing Law and Jurisdiction</h2>
+          <p>
+            These Terms are governed by the laws of the Republic of Ghana,
+            without regard to conflict-of-law principles. Any legal action
+            arising from these Terms shall be brought exclusively in the courts
+            of Ghana.
+          </p>
+        </section>
+
+        <section id="general">
+          <h2><span class="num">17.</span> General Provisions</h2>
+          <h3>17.1 Severability</h3>
+          <p>
+            If any provision of these Terms is found unenforceable, the
+            remaining provisions will continue in full force and effect.
+          </p>
+          <h3>17.2 Entire Agreement</h3>
+          <p>
+            These Terms, together with our Privacy Policy, constitute the entire
+            agreement between you and RentMS regarding the Services, superseding
+            any prior agreements.
+          </p>
+          <h3>17.3 Assignment</h3>
+          <p>
+            You may not assign or transfer your rights under these Terms. RentMS
+            may assign these Terms in connection with a merger, acquisition, or
+            sale of assets.
+          </p>
+          <h3>17.4 Force Majeure</h3>
+          <p>
+            RentMS is not liable for delays or failures in performance resulting
+            from causes beyond our reasonable control, including power or
+            internet outages, natural disasters, or failures of third-party
+            providers.
+          </p>
+        </section>
+
+        <section id="changes">
+          <h2><span class="num">18.</span> Changes to These Terms</h2>
+          <p>
+            We may update these Terms from time to time. Continued use of RentMS
+            after a change takes effect constitutes acceptance of the updated
+            Terms. Material changes will be reflected by updating the "Last
+            updated" date above.
+          </p>
+        </section>
+
+        <section id="contact">
+          <h2><span class="num">19.</span> Contact Us</h2>
+          <p>
+            Questions about these Terms can be sent through the
+            <a href="index.html#contact">contact section</a> of our site.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="index.html" class="logo">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>RentMS</span>
+            </a>
+            <p>
+              Smart property management for modern Ghana. Free, secure, and
+              built for landlords and tenants alike.
+            </p>
+          </div>
+          <div class="footer-links-group">
+            <h5>Product</h5>
+            <a href="index.html#features">Features</a>
+            <a href="index.html#how-it-works">How It Works</a>
+            <a href="index.html#pricing">Pricing</a>
+          </div>
+          <div class="footer-links-group">
+            <h5>Account</h5>
+            <a href="auth/login.html">Login</a>
+            <a href="auth/register.html">Register</a>
+          </div>
+          <div class="footer-links-group">
+            <h5>Support</h5>
+            <a href="index.html#contact">Contact Us</a>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="terms-of-service.html">Terms of Service</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 RentMS Ghana. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

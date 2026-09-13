@@ -198,6 +198,21 @@ const TenantDashboard = {
       el("welcomeAvatar").textContent = displayName.charAt(0).toUpperCase();
     const data = await _T.api("GET", "/tenant/dashboard");
     if (!data) return;
+    /* FIX: dashboard endpoint doesn't include a payments list, only a
+       summary — fetch the actual list separately for the widget below */
+    const payResp = await _T.api("GET", "/tenant/payments?limit=5");
+    const payments = payResp?.data || [];
+    /* FIX: this endpoint already existed (/api/maintenance/my) — the
+       dashboard just never called it, so `maintenance` was undefined */
+    const maintResp = await _T.api("GET", "/maintenance/my?limit=4");
+    const maintenance = maintResp?.data || [];
+    /* FIX: "announcements" are notifications with type=announcement —
+       there's no separate announcements table/endpoint */
+    const annResp = await _T.api(
+      "GET",
+      "/notifications/filter?type=announcement&limit=3",
+    );
+    const announcements = annResp?.data || [];
     /* FIX: API returns data.data not data directly */
     const d = data.data || data;
     const lease = d.lease || {};
@@ -286,7 +301,7 @@ const TenantDashboard = {
           .map(
             (a) => `
           <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-            <div style="font-size:0.82rem;font-weight:700">${a.title}</div>
+            <div style="font-size:0.82rem;font-weight:700">${a.message}</div>
             <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px">${_T.ago(a.created_at)}</div>
           </div>`,
           )
@@ -324,7 +339,8 @@ const TenantPaymentHistory = {
   async init() {
     await _T.initSidebar();
     const data = await _T.api("GET", "/tenant/payments");
-    this.all = data?.payments || [];
+    /* FIX: endpoint returns { success, data: [...], pagination } */
+    this.all = data?.data || [];
     this.render(this.all);
     this.renderStats(this.all);
   },
@@ -642,8 +658,19 @@ const TenantAnnouncements = {
   all: [],
   async init() {
     await _T.initSidebar();
-    const data = await _T.api("GET", "/tenant/announcements");
-    this.all = data?.announcements || [];
+    const data = await _T.api(
+      "GET",
+      "/notifications/filter?type=announcement&limit=50",
+    );
+    /* FIX: real shape is data.data; rows have message/is_read/sender_name,
+       not the title/body/tag fields this page was originally written for */
+    this.all = (data?.data || []).map((a) => ({
+      id: a.id,
+      message: a.message,
+      sender_name: a.sender_name,
+      created_at: a.created_at,
+      read: !!a.is_read,
+    }));
     this.render(this.all);
   },
   filter(type, linkEl) {
@@ -651,9 +678,7 @@ const TenantAnnouncements = {
       .querySelectorAll("#annTabs .nav-link")
       .forEach((l) => l.classList.remove("active"));
     if (linkEl) linkEl.classList.add("active");
-    this.render(
-      type === "all" ? this.all : this.all.filter((a) => a.tag === type),
-    );
+    this.render(type === "unread" ? this.all.filter((a) => !a.read) : this.all);
   },
   render(list) {
     const el = document.getElementById("annList");
@@ -669,12 +694,10 @@ const TenantAnnouncements = {
         <div class="d-flex align-items-start justify-content-between gap-3">
           <div style="flex:1;min-width:0">
             <div class="d-flex gap-2 align-items-center mb-2">
-              <span class="ann-tag ${a.tag || "general"}">${a.tag || "General"}</span>
-              <span style="font-size:0.72rem;color:var(--text-muted)">${_T.ago(a.created_at)}</span>
+              <span style="font-size:0.72rem;color:var(--text-muted)">${a.sender_name || "Landlord"} · ${_T.ago(a.created_at)}</span>
               ${!a.read ? `<span style="width:7px;height:7px;border-radius:50%;background:var(--primary);display:inline-block;margin-left:auto"></span>` : ""}
             </div>
-            <div style="font-weight:800;font-size:0.9rem;margin-bottom:4px">${a.title}</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${a.body || ""}</div>
+            <div style="font-size:0.85rem;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${a.message}</div>
           </div>
           <i class="bi bi-chevron-right" style="color:var(--text-muted);flex-shrink:0;margin-top:4px"></i>
         </div>
@@ -682,25 +705,26 @@ const TenantAnnouncements = {
       )
       .join("");
   },
-  open(id) {
+  async open(id) {
     const a = this.all.find((x) => x.id === id);
     if (!a) return;
-    a.read = true;
-    this.render(this.all);
+    if (!a.read) {
+      a.read = true;
+      this.render(this.all);
+      await _T.api("PATCH", `/notifications/${id}/read`, {});
+    }
     const el = (id) => document.getElementById(id);
-    if (el("annModalTitle")) el("annModalTitle").textContent = a.title;
-    if (el("annModalBody")) el("annModalBody").textContent = a.body;
+    if (el("annModalTitle"))
+      el("annModalTitle").textContent = a.sender_name || "Announcement";
+    if (el("annModalBody")) el("annModalBody").textContent = a.message;
     if (el("annModalDate"))
       el("annModalDate").textContent = _T.fmt(a.created_at);
-    if (el("annModalTag"))
-      el("annModalTag").innerHTML =
-        `<span class="ann-tag ${a.tag || "general"}">${a.tag || "General"}</span>`;
     new bootstrap.Modal(document.getElementById("annModal")).show();
   },
-  markAllRead() {
+  async markAllRead() {
     this.all.forEach((a) => (a.read = true));
     this.render(this.all);
-    _T.api("POST", "/notifications/read-all", {});
+    await _T.api("PATCH", "/notifications/read-type/announcement", {});
   },
 };
 
