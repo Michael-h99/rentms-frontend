@@ -330,9 +330,19 @@
           <div class="row g-4">
             <div class="col-md-4">
               <div class="card mb-4">
-                <div class="card-header-custom">
-                  <i class="bi bi-file-text-fill text-primary"></i>
-                  <h6>Lease Details</h6>
+                <div
+                  class="card-header-custom d-flex align-items-center justify-content-between"
+                >
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-file-text-fill text-primary"></i>
+                    <h6 class="mb-0">Lease Details</h6>
+                  </div>
+                  <button
+                    class="btn btn-sm btn-outline-primary"
+                    onclick="RentMs.modal('renewModal')"
+                  >
+                    <i class="bi bi-pencil-fill me-1"></i>Edit
+                  </button>
                 </div>
                 <div class="p-4">
                   <div class="d-flex flex-column gap-3">
@@ -607,6 +617,63 @@
                 Remove
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Renew/Edit Lease Modal -->
+    <div class="modal fade" id="renewModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title fw-bold">Edit Lease</h6>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div
+              id="renewError"
+              class="alert alert-danger py-2"
+              style="display: none; font-size: 0.85rem"
+            ></div>
+            <div class="mb-3">
+              <label
+                class="form-label"
+                style="font-size: 0.8rem; font-weight: 700"
+                >New Lease End Date *</label
+              >
+              <input type="date" class="form-control" id="newLeaseEnd" />
+            </div>
+            <div class="mb-1">
+              <label
+                class="form-label"
+                style="font-size: 0.8rem; font-weight: 700"
+                >Monthly Rent (GHS)</label
+              >
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                class="form-control"
+                id="newRent"
+                placeholder="Leave blank to keep current rent"
+              />
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted)">
+              Setting a future end date reactivates an expired tenancy.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-primary btn-sm px-3" onclick="renewLease()">
+              Save Changes
+            </button>
           </div>
         </div>
       </div>
