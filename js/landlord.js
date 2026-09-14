@@ -1127,30 +1127,48 @@ const LandlordTenantDetails = (() => {
       plazas.map((p) => RentMs.get("/landlord/plazas/" + p.id + "/tenants")),
     );
     const allTenants = results.flatMap((r) => r.data || []);
-    const t = allTenants.find((x) => String(x.id) === tenantId);
+    /* FIX: match on tenant_id (the user), not id (the tenancy row) —
+       ?id= in the URL is the tenant's user id */
+    const t = allTenants.find((x) => String(x.tenant_id) === tenantId);
     if (!t) return;
-    /* API returns full_name (may be null), id = tenancy row id, tenant_id = user id */
-    const name = t.full_name || t.username || t.email || "—";
-    tenancyId = t.id; /* id is the tenancy row id */
-    RentMs.setText("pageTitle", name);
+    tenancyId =
+      t.id; /* id is the tenancy row id, needed for PUT/DELETE calls */
+    /* FIX: these are the real element IDs on this page (renderProfile() in
+       the page's own inline script uses the same ones) — the old code here
+       targeted ids like pageTitle/infoRent/leaseDays that don't exist */
+    const name = t.full_name || t.email?.split("@")[0] || "—";
     RentMs.setText("tenantName", name);
     RentMs.setText("tenantEmail", t.email || "—");
-    RentMs.setText("tenantPhone", t.phone || "—");
-    const avEl = document.getElementById("avatarEl");
-    if (avEl) avEl.textContent = name.charAt(0).toUpperCase();
-    RentMs.setText("infoPlaza", t.plaza_name || "—");
-    RentMs.setText("infoUnit", t.unit_number || "—");
-    RentMs.setText("infoRent", RentMs.ghs(t.rent_amount));
+    RentMs.setText("tenantUnit", `Unit ${t.unit_number || "—"}`);
+    RentMs.setText("tenantPlaza", t.plaza_name || "—");
+    RentMs.setText("contactEmail", t.email || "—");
+    RentMs.setText("contactPhone", t.phone || "—");
+    RentMs.setText(
+      "tenantRent",
+      t.rent_amount ? `GHS ${parseFloat(t.rent_amount).toFixed(2)}` : "—",
+    );
     RentMs.setText("leaseStart", RentMs.fmt(t.lease_start));
     RentMs.setText("leaseEnd", RentMs.fmt(t.lease_end));
-    RentMs.setText("leaseStatus", t.status || "active");
     RentMs.setValue("newRent", t.rent_amount || "");
+    const badge = document.getElementById("tenantStatusBadge");
+    if (badge) {
+      badge.textContent = t.status || "—";
+      badge.className = `badge-status badge-${t.status === "active" ? "active" : "expired"}`;
+    }
     if (t.lease_end) {
-      const days = Math.max(
-        0,
-        Math.ceil((new Date(t.lease_end).getTime() - Date.now()) / 86400000),
+      const days = Math.ceil(
+        (new Date(t.lease_end).getTime() - Date.now()) / 86400000,
       );
-      RentMs.setText("leaseDays", days);
+      const el = document.getElementById("daysRemaining");
+      if (el) {
+        el.textContent = days < 0 ? "Expired" : `${days} days`;
+        el.style.color =
+          days < 0
+            ? "var(--danger)"
+            : days <= 30
+              ? "var(--warning)"
+              : "var(--success)";
+      }
     }
   }
 
