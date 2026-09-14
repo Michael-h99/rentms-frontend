@@ -749,6 +749,7 @@
             return;
           }
           tenancyId = tenant.id;
+          window.currentTenancyId = tenant.id;
           renderProfile(tenant);
           loadPayments(tenant);
           loadMaintenance(tenant);

@@ -1221,9 +1221,9 @@ const LandlordTenantDetails = (() => {
   }
 
   window.sendReminder = async function () {
-    if (!tenancyId) return;
+    if (!window.currentTenancyId) return;
     const res = await RentMs.post("/email/payment-reminder", {
-      tenancy_id: tenancyId,
+      tenancy_id: window.currentTenancyId,
     });
     RentMs.modal("reminderModal", "hide");
     RentMs.showMsg(
@@ -1246,7 +1246,10 @@ const LandlordTenantDetails = (() => {
     }
     const body = { lease_end: newEnd };
     if (newRent) body.rent_amount = parseFloat(newRent);
-    const res = await RentMs.put("/landlord/tenancies/" + tenancyId, body);
+    const res = await RentMs.put(
+      "/landlord/tenancies/" + window.currentTenancyId,
+      body,
+    );
     if (res.data || (res.message && !res.error)) {
       RentMs.modal("renewModal", "hide");
       loadTenant();
@@ -1259,8 +1262,10 @@ const LandlordTenantDetails = (() => {
   };
 
   window.removeTenant = async function () {
-    if (!tenancyId) return;
-    await RentMs.del("/landlord/tenancies/" + tenancyId + "/tenant");
+    if (!window.currentTenancyId) return;
+    await RentMs.del(
+      "/landlord/tenancies/" + window.currentTenancyId + "/tenant",
+    );
     location.href = "tenants.html";
   };
 
