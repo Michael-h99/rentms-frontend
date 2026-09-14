@@ -1864,11 +1864,14 @@ const LandlordAnnouncements = (() => {
     if (target.startsWith("plaza_"))
       body.plaza_id = target.replace("plaza_", "");
     const res = await RentMs.post("/landlord/announcements", body);
-    if (res.data || (res.message && !res.error)) {
+    if (res.success) {
       RentMs.setValue("annTitle", "");
       RentMs.setValue("annMessage", "");
       if (sucEl) {
-        sucEl.textContent = "Announcement sent successfully!";
+        sucEl.textContent =
+          res.sent > 0
+            ? `Announcement sent to ${res.sent} tenant(s).`
+            : "No active tenants matched — nothing was actually sent. Check that your tenants' leases are marked active.";
         sucEl.style.display = "block";
       }
       load();

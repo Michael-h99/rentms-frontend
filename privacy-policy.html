@@ -130,52 +130,54 @@
     </style>
   </head>
   <body>
-    <header class="header" id="header">
-      <nav class="navbar container">
-        <a href="index.html" class="logo">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-          <span>RentMS</span>
-        </a>
-        <button class="mobile-nav-toggle" aria-label="Toggle Menu">
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links">
-          <li><a href="index.html#features">Features</a></li>
-          <li><a href="index.html#how-it-works">How It Works</a></li>
-          <li><a href="index.html#pricing">Pricing</a></li>
-          <li><a href="index.html#contact">Contact</a></li>
-          <li class="nav-mobile-actions">
-            <a
-              href="auth/login.html"
-              class="btn btn-secondary"
-              style="display: inline-block; margin-right: 8px"
-              >Login</a
+    <header id="main-header">
+      <div class="container">
+        <nav class="nav-container">
+          <a href="index.html" class="logo">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-            <a
-              href="auth/register.html"
-              class="btn btn-primary"
-              style="display: inline-block"
-              >Get Started</a
-            >
-          </li>
-        </ul>
-        <div class="nav-actions">
-          <a href="auth/login.html" class="btn btn-secondary">Login</a>
-          <a href="auth/register.html" class="btn btn-primary">Get Started</a>
-        </div>
-      </nav>
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>RentMS</span>
+          </a>
+          <button class="mobile-nav-toggle" aria-label="Toggle Menu">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="nav-links">
+            <li><a href="index.html#features">Features</a></li>
+            <li><a href="index.html#how-it-works">How It Works</a></li>
+            <li><a href="index.html#pricing">Pricing</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+            <li class="nav-mobile-actions">
+              <a
+                href="auth/login.html"
+                class="btn btn-secondary"
+                style="display: inline-block; margin-right: 8px"
+                >Login</a
+              >
+              <a
+                href="auth/register.html"
+                class="btn btn-primary"
+                style="display: inline-block"
+                >Get Started</a
+              >
+            </li>
+          </ul>
+          <div class="nav-actions">
+            <a href="auth/login.html" class="btn btn-secondary">Login</a>
+            <a href="auth/register.html" class="btn btn-primary">Get Started</a>
+          </div>
+        </nav>
+      </div>
     </header>
 
     <div class="legal-shell">
@@ -600,5 +602,33 @@
         </div>
       </div>
     </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+      (function () {
+        const style = document.createElement("style");
+        style.textContent = `
+          .nav-mobile-actions { display: none; }
+          @media (max-width: 900px) {
+            .nav-mobile-actions {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              padding: 14px 0 6px;
+              border-top: 1px solid rgba(255,255,255,.1);
+              margin-top: 6px;
+              list-style: none;
+            }
+            .nav-mobile-actions .btn {
+              flex: 1;
+              text-align: center;
+              padding: 10px 8px;
+              font-size: .875rem;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      })();
+    </script>
   </body>
 </html>
