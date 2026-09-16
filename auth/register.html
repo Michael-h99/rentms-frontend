@@ -65,13 +65,13 @@
         width: 100%;
       }
       .role-option:hover {
-        border-color: rgba(37, 99, 235, 0.5);
+        border-color: rgba(21, 94, 117, 0.5);
         color: #f8fafc;
       }
       .role-option.selected {
-        border-color: #2563eb;
-        background: rgba(37, 99, 235, 0.12);
-        color: #60a5fa;
+        border-color: #155e75;
+        background: rgba(21, 94, 117, 0.12);
+        color: #22d3ee;
       }
       .role-option svg {
         width: 22px;
@@ -98,8 +98,8 @@
       /* ── Invite code section ── */
       #inviteSection {
         display: none;
-        background: rgba(37, 99, 235, 0.07);
-        border: 1.5px solid rgba(37, 99, 235, 0.22);
+        background: rgba(21, 94, 117, 0.07);
+        border: 1.5px solid rgba(21, 94, 117, 0.22);
         border-radius: 12px;
         padding: 16px 18px;
       }
@@ -109,7 +109,7 @@
       .invite-label {
         font-size: 0.72rem;
         font-weight: 800;
-        color: #60a5fa;
+        color: #22d3ee;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         margin-bottom: 10px;
@@ -198,14 +198,14 @@
       }
       .unit-badge {
         display: inline-block;
-        background: rgba(37, 99, 235, 0.14);
-        border: 1px solid rgba(37, 99, 235, 0.3);
+        background: rgba(21, 94, 117, 0.14);
+        border: 1px solid rgba(21, 94, 117, 0.3);
         border-radius: 10px;
         padding: 9px 20px;
         font-family: "Courier New", monospace;
         font-weight: 800;
         font-size: 0.95rem;
-        color: #60a5fa;
+        color: #22d3ee;
         letter-spacing: 0.1em;
         margin: 14px 0 20px;
       }
@@ -393,6 +393,42 @@
                       placeholder="••••••••"
                       required
                     />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      onclick="togglePasswordField('password', this)"
+                      aria-label="Show password"
+                    >
+                      <svg
+                        class="icon-eye"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      <svg
+                        class="icon-eye-off"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        style="display: none"
+                      >
+                        <path
+                          d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.6 18.6 0 0 1 4.22-5.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a18.6 18.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                        />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
@@ -407,6 +443,42 @@
                       placeholder="••••••••"
                       required
                     />
+                    <button
+                      type="button"
+                      class="password-toggle"
+                      onclick="togglePasswordField('confirm_password', this)"
+                      aria-label="Show password"
+                    >
+                      <svg
+                        class="icon-eye"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path
+                          d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"
+                        />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                      <svg
+                        class="icon-eye-off"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        style="display: none"
+                      >
+                        <path
+                          d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.6 18.6 0 0 1 4.22-5.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 7 11 7a18.6 18.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                        />
+                        <line x1="1" y1="1" x2="23" y2="23" />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -457,7 +529,8 @@
       </div>
     </main>
 
-    <script src="../js/api.js"></script><script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
     <script>
       const API_BASE =
         window.location.hostname === "localhost" ||
@@ -467,6 +540,23 @@
       let currentRole = "landlord";
       let codeTimer = null;
       let validCode = null;
+
+      /* ── Password show/hide toggle ── */
+      function togglePasswordField(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const isHidden = input.type === "password";
+        input.type = isHidden ? "text" : "password";
+        btn.querySelector(".icon-eye").style.display = isHidden
+          ? "none"
+          : "block";
+        btn.querySelector(".icon-eye-off").style.display = isHidden
+          ? "block"
+          : "none";
+        btn.setAttribute(
+          "aria-label",
+          isHidden ? "Hide password" : "Show password",
+        );
+      }
 
       /* ── Role toggle ── */
       function selectRole(role) {
@@ -671,5 +761,3 @@
     </script>
   </body>
 </html>
-
-
